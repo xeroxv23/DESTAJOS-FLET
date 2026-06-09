@@ -1,9 +1,10 @@
 import flet as ft
 
 from database_manager import (
-    listar_obras,
     buscar_obras
 )
+
+from views.obra_view import obra_view
 
 
 def obras_view(page):
@@ -18,6 +19,24 @@ def obras_view(page):
         lista_view.controls.clear()
 
         for clave, nombre in obras:
+
+            def abrir_obra(
+                e,
+                clave=clave,
+                nombre=nombre
+            ):
+
+                page.views.append(
+
+                    obra_view(
+                        page,
+                        clave,
+                        nombre
+                    )
+
+                )
+
+                page.update()
 
             lista_view.controls.append(
 
@@ -41,12 +60,15 @@ def obras_view(page):
                                 ft.ElevatedButton(
                                     content=ft.Text(
                                         "Abrir"
-                                    )
+                                    ),
+                                    on_click=abrir_obra
                                 )
+
                             ]
                         )
                     )
                 )
+
             )
 
         page.update()
