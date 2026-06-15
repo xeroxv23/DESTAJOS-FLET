@@ -1,5 +1,4 @@
-from database_manager import buscar_trabajador
+from database_manager import listar_conceptos
 
-print(
-    buscar_trabajador(3516)
-)
+for concepto in listar_conceptos()[:5]:
+    print(concepto)

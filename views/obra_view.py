@@ -1,6 +1,9 @@
 import flet as ft
 
-from database_manager import buscar_trabajador
+from database_manager import (
+    buscar_trabajador,
+    buscar_concepto
+)
 
 def calcular_valor(texto):
 
@@ -139,16 +142,14 @@ def obra_view(page, clave_obra, nombre_obra):
                         )
                     ])
                 
-                for concepto in subtitulo["conceptos"]:
+                    for concepto in subtitulo["conceptos"]:
 
-                    trabajadores_controls.append(
-
-                        ft.Text(
-                            f"• {concepto['clave']}"
+                        trabajadores_controls.append(
+                            ft.Text(
+                                f"{concepto['clave']}"
+                            )
                         )
-
-                    )
-
+                              
                 lista_cuadrillas.controls.append(
 
                     ft.Card(
