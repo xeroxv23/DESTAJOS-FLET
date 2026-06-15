@@ -5,65 +5,22 @@ from database_manager import (
     buscar_concepto
 )
 
-def calcular_valor(texto):
+from services.captura_service import (
+    crear_cuadrilla,
+    crear_trabajador,
+    crear_subtitulo,
+    crear_concepto
+)
 
-    texto = texto.strip()
+from services.cuadrilla_service import (
+    calcular_valor,
+    recalcular_cuadrilla
+)
 
-    if texto.startswith("="):
-        texto = texto[1:]
+from components.cuadrilla_card import crear_cuadrilla_card
 
-    try:
-
-        return float(
-            eval(
-                texto,
-                {"__builtins__": {}},
-                {}
-            )
-        )
-
-    except:
-
-        return None
+from components.dialogs import abrir_dialogo_nueva_cuadrilla
     
-def recalcular_cuadrilla(cuadrilla):
-
-    total_puntos = 0
-
-    for trabajador in cuadrilla["trabajadores"]:
-
-        if trabajador["puesto"] == "OF":
-            ponderacion = 60
-        else:
-            ponderacion = 40
-
-        trabajador["ponderacion"] = ponderacion
-
-        trabajador["puntos"] = (
-            ponderacion *
-            trabajador["dias"]
-        )
-
-        total_puntos += trabajador["puntos"]
-
-    if total_puntos > 0:
-
-        for trabajador in cuadrilla["trabajadores"]:
-
-            trabajador["porcentaje"] = (
-
-                trabajador["puntos"]
-                /
-                total_puntos
-
-            ) * 100
-
-    else:
-
-        for trabajador in cuadrilla["trabajadores"]:
-
-            trabajador["porcentaje"] = 0
-
 def obra_view(page, clave_obra, nombre_obra):
 
     cuadrillas = []
@@ -96,33 +53,15 @@ def obra_view(page, clave_obra, nombre_obra):
 
                 for trabajador in cuadrilla["trabajadores"]:
 
-                    trabajadores_controls.extend([
+                    trabajadores_controls.append(
 
                         ft.Text(
                             f"{trabajador['clave']} - "
-                            f"{trabajador['nombre']}"
-                        ),
+                            f"{trabajador['nombre']} "
+                            f"({trabajador['porcentaje']:.2f}%)"
+                        )
 
-                        ft.Text(
-                            f"Puesto: {trabajador['puesto']}"
-                        ),
-
-                        ft.Text(
-                            f"Días: {trabajador['dias']:.2f}"
-                        ),
-
-                        ft.Text(
-                            f"Puntos: {trabajador['puntos']:.2f}"
-                        ),
-
-                        ft.Text(
-                            f"Participación: "
-                            f"{trabajador['porcentaje']:.2f}%"
-                        ),
-
-                        ft.Divider()
-
-                    ])
+                    )
                 
                 for subtitulo in cuadrilla["subtitulos"]:
 
@@ -144,65 +83,33 @@ def obra_view(page, clave_obra, nombre_obra):
                 
                     for concepto in subtitulo["conceptos"]:
 
+                        nota = concepto.get("notas", "").strip()
+
+                        if nota:
+                            descripcion = nota
+                        else:
+                            descripcion = concepto.get("descripcion", "")
+
                         trabajadores_controls.append(
+
                             ft.Text(
-                                f"{concepto['clave']}"
+                                f"{concepto['clave']} : {descripcion} | "
+                                f"{concepto.get('largo', '')} | "
+                                f"{concepto.get('ancho', '')} | "
+                                f"{concepto.get('alto', '')} | "
+                                f"{concepto.get('piezas', '')} | "
+                                f"{descripcion}"
                             )
+
                         )
                               
                 lista_cuadrillas.controls.append(
-
-                    ft.Card(
-
-                        content=ft.Container(
-
-                            padding=15,
-
-                            content=ft.Column(
-
-                                controls=[
-
-                                    ft.Text(
-                                        f"Cuadrilla {cuadrilla['numero']}",
-                                        size=18,
-                                        weight=ft.FontWeight.BOLD
-                                    ),
-
-                                    ft.Text(
-                                        f"Tipo: {cuadrilla['tipo']}"
-                                    ),
-
-                                    ft.Text(
-                                        f"Trabajadores: "
-                                        f"{len(cuadrilla['trabajadores'])}"
-                                    ),
-
-                                    ft.ElevatedButton(
-                                        content=ft.Text(
-                                            "Agregar Trabajador"
-                                        ),
-                                        on_click=lambda e,
-                                        c=cuadrilla:
-                                        agregar_trabajador(c)
-                                    ),
-
-                                    ft.ElevatedButton(
-                                        content=ft.Text(
-                                            "Agregar Subtítulo"
-                                        ),
-                                        on_click=lambda e,
-                                        c=cuadrilla:
-                                        agregar_subtitulo(c)
-                                    )
-
-                                ] + trabajadores_controls
-
-                            )
-
-                        )
-
+                    crear_cuadrilla_card(
+                        cuadrilla,
+                        agregar_trabajador,
+                        agregar_subtitulo,
+                        agregar_concepto
                     )
-
                 )
 
         page.update()
@@ -241,24 +148,14 @@ def obra_view(page, clave_obra, nombre_obra):
                 )
                 return
 
-            cuadrilla["trabajadores"].append({
-
-                "clave": trabajador[0],
-                "nombre": trabajador[1],
-                "puesto": trabajador[2],
-                "salario_diario": float(
-                    trabajador[3]
-                ),
-                "dias": dias,
-                "ponderacion": 0,
-                "puntos": 0,
-                "porcentaje": 0
-
-            })
-
-            recalcular_cuadrilla(
-                cuadrilla
+            cuadrilla["trabajadores"].append(
+                crear_trabajador(
+                    trabajador,
+                    dias
+                )
             )
+
+            recalcular_cuadrilla(cuadrilla)
 
             dialog.open = False
 
@@ -325,12 +222,9 @@ def obra_view(page, clave_obra, nombre_obra):
             if nombre == "":
                 return
 
-            cuadrilla["subtitulos"].append({
-
-                "nombre": nombre,
-                "conceptos": []
-
-            })
+            cuadrilla["subtitulos"].append(
+                crear_subtitulo(nombre)
+            )
 
             dialog.open = False
 
@@ -399,18 +293,45 @@ def obra_view(page, clave_obra, nombre_obra):
             multiline=True
         )
 
+        concepto_info = ft.Text("")
+
+        def consultar_concepto(e):
+
+            concepto_bd = buscar_concepto(
+                clave_input.value.strip()
+            )
+
+            if concepto_bd:
+                concepto_info.value = (
+                    f"{concepto_bd[1]} | Unidad: {concepto_bd[2]}"
+                )
+            else:
+                concepto_info.value = "Concepto no encontrado"
+
+            page.update()
+
+        clave_input.on_change = consultar_concepto
+
         def guardar(ev):
 
-            subtitulo["conceptos"].append({
+            concepto_bd = buscar_concepto(
+                clave_input.value.strip()
+            )
 
-                "clave": clave_input.value,
-                "largo": largo_input.value,
-                "ancho": ancho_input.value,
-                "alto": alto_input.value,
-                "piezas": piezas_input.value,
-                "notas": notas_input.value
+            if not concepto_bd:
+                print("Concepto no encontrado")
+                return
 
-            })
+            subtitulo["conceptos"].append(
+                crear_concepto(
+                    concepto_bd,
+                    largo_input.value.strip(),
+                    ancho_input.value.strip(),
+                    alto_input.value.strip(),
+                    piezas_input.value.strip(),
+                    notas_input.value.strip()
+                )
+            )
 
             dialog.open = False
 
@@ -433,6 +354,7 @@ def obra_view(page, clave_obra, nombre_obra):
                 controls=[
 
                     clave_input,
+                    concepto_info,
                     largo_input,
                     ancho_input,
                     alto_input,
@@ -469,84 +391,12 @@ def obra_view(page, clave_obra, nombre_obra):
 
     def nueva_cuadrilla(e):
 
-        tipo = ft.RadioGroup(
-
-            content=ft.Column(
-
-                controls=[
-
-                    ft.Radio(
-                        value="dia",
-                        label="Por Día"
-                    ),
-
-                    ft.Radio(
-                        value="destajo",
-                        label="Destajo"
-                    )
-
-                ]
-
-            )
-
+        abrir_dialogo_nueva_cuadrilla(
+            page,
+            cuadrillas,
+            crear_cuadrilla,
+            actualizar_cuadrillas
         )
-
-        def guardar(ev):
-
-            if not tipo.value:
-                return
-
-            numero = len(cuadrillas) + 1
-
-            cuadrillas.append({
-
-                "numero": numero,
-                "tipo": tipo.value,
-                "trabajadores": [],
-                "subtitulos": [],
-                "conceptos": []
-
-            })
-
-            dialog.open = False
-
-            actualizar_cuadrillas()
-
-        def cancelar(ev):
-
-            dialog.open = False
-
-            page.update()
-
-        dialog = ft.AlertDialog(
-
-            title=ft.Text(
-                "Nueva Cuadrilla"
-            ),
-
-            content=tipo,
-
-            actions=[
-
-                ft.TextButton(
-                    "Cancelar",
-                    on_click=cancelar
-                ),
-
-                ft.TextButton(
-                    "Guardar",
-                    on_click=guardar
-                )
-
-            ]
-
-        )
-
-        page.overlay.append(dialog)
-
-        dialog.open = True
-
-        page.update()
 
     actualizar_cuadrillas()
 
