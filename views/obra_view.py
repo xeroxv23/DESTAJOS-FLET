@@ -22,6 +22,44 @@ def calcular_valor(texto):
     except:
 
         return None
+    
+def recalcular_cuadrilla(cuadrilla):
+
+    total_puntos = 0
+
+    for trabajador in cuadrilla["trabajadores"]:
+
+        if trabajador["puesto"] == "OF":
+            ponderacion = 60
+        else:
+            ponderacion = 40
+
+        trabajador["ponderacion"] = ponderacion
+
+        trabajador["puntos"] = (
+            ponderacion *
+            trabajador["dias"]
+        )
+
+        total_puntos += trabajador["puntos"]
+
+    if total_puntos > 0:
+
+        for trabajador in cuadrilla["trabajadores"]:
+
+            trabajador["porcentaje"] = (
+
+                trabajador["puntos"]
+                /
+                total_puntos
+
+            ) * 100
+
+    else:
+
+        for trabajador in cuadrilla["trabajadores"]:
+
+            trabajador["porcentaje"] = 0
 
 def obra_view(page, clave_obra, nombre_obra):
 
@@ -55,12 +93,58 @@ def obra_view(page, clave_obra, nombre_obra):
 
                 for trabajador in cuadrilla["trabajadores"]:
 
-                    trabajadores_controls.append(
+                    trabajadores_controls.extend([
 
                         ft.Text(
                             f"{trabajador['clave']} - "
-                            f"{trabajador['nombre']} "
-                            f"({trabajador['dias']} días)"
+                            f"{trabajador['nombre']}"
+                        ),
+
+                        ft.Text(
+                            f"Puesto: {trabajador['puesto']}"
+                        ),
+
+                        ft.Text(
+                            f"Días: {trabajador['dias']:.2f}"
+                        ),
+
+                        ft.Text(
+                            f"Puntos: {trabajador['puntos']:.2f}"
+                        ),
+
+                        ft.Text(
+                            f"Participación: "
+                            f"{trabajador['porcentaje']:.2f}%"
+                        ),
+
+                        ft.Divider()
+
+                    ])
+                
+                for subtitulo in cuadrilla["subtitulos"]:
+
+                    trabajadores_controls.extend([
+
+                        ft.Text(
+                            f"📁 {subtitulo['nombre']}",
+                            size=16,
+                            weight=ft.FontWeight.BOLD
+                        ),
+
+                        ft.ElevatedButton(
+                            "Agregar Concepto",
+                            on_click=lambda e,
+                            s=subtitulo:
+                            agregar_concepto(s)
+                        )
+                    ])
+                
+                for concepto in subtitulo["conceptos"]:
+
+                    trabajadores_controls.append(
+
+                        ft.Text(
+                            f"• {concepto['clave']}"
                         )
 
                     )
@@ -99,6 +183,15 @@ def obra_view(page, clave_obra, nombre_obra):
                                         on_click=lambda e,
                                         c=cuadrilla:
                                         agregar_trabajador(c)
+                                    ),
+
+                                    ft.ElevatedButton(
+                                        content=ft.Text(
+                                            "Agregar Subtítulo"
+                                        ),
+                                        on_click=lambda e,
+                                        c=cuadrilla:
+                                        agregar_subtitulo(c)
                                     )
 
                                 ] + trabajadores_controls
@@ -155,9 +248,16 @@ def obra_view(page, clave_obra, nombre_obra):
                 "salario_diario": float(
                     trabajador[3]
                 ),
-                "dias": dias
+                "dias": dias,
+                "ponderacion": 0,
+                "puntos": 0,
+                "porcentaje": 0
 
             })
+
+            recalcular_cuadrilla(
+                cuadrilla
+            )
 
             dialog.open = False
 
@@ -182,6 +282,161 @@ def obra_view(page, clave_obra, nombre_obra):
                     clave_input,
 
                     dias_input
+
+                ],
+
+                tight=True
+
+            ),
+
+            actions=[
+
+                ft.TextButton(
+                    "Cancelar",
+                    on_click=cancelar
+                ),
+
+                ft.TextButton(
+                    "Guardar",
+                    on_click=guardar
+                )
+
+            ]
+
+        )
+
+        page.overlay.append(dialog)
+
+        dialog.open = True
+
+        page.update()
+
+    def agregar_subtitulo(cuadrilla):
+
+        nombre_input = ft.TextField(
+            label="Nombre del subtítulo"
+        )
+
+        def guardar(ev):
+
+            nombre = nombre_input.value.strip()
+
+            if nombre == "":
+                return
+
+            cuadrilla["subtitulos"].append({
+
+                "nombre": nombre,
+                "conceptos": []
+
+            })
+
+            dialog.open = False
+
+            actualizar_cuadrillas()
+
+        def cancelar(ev):
+
+            dialog.open = False
+
+            page.update()
+
+        dialog = ft.AlertDialog(
+
+            title=ft.Text(
+                "Nuevo Subtítulo"
+            ),
+
+            content=nombre_input,
+
+            actions=[
+
+                ft.TextButton(
+                    "Cancelar",
+                    on_click=cancelar
+                ),
+
+                ft.TextButton(
+                    "Guardar",
+                    on_click=guardar
+                )
+
+            ]
+
+        )
+
+        page.overlay.append(dialog)
+
+        dialog.open = True
+
+        page.update()
+
+    def agregar_concepto(subtitulo):
+
+        clave_input = ft.TextField(
+            label="Clave Concepto"
+        )
+
+        largo_input = ft.TextField(
+            label="Largo"
+        )
+
+        ancho_input = ft.TextField(
+            label="Ancho"
+        )
+
+        alto_input = ft.TextField(
+            label="Alto"
+        )
+
+        piezas_input = ft.TextField(
+            label="Piezas"
+        )
+
+        notas_input = ft.TextField(
+            label="Notas",
+            multiline=True
+        )
+
+        def guardar(ev):
+
+            subtitulo["conceptos"].append({
+
+                "clave": clave_input.value,
+                "largo": largo_input.value,
+                "ancho": ancho_input.value,
+                "alto": alto_input.value,
+                "piezas": piezas_input.value,
+                "notas": notas_input.value
+
+            })
+
+            dialog.open = False
+
+            actualizar_cuadrillas()
+
+        def cancelar(ev):
+
+            dialog.open = False
+
+            page.update()
+
+        dialog = ft.AlertDialog(
+
+            title=ft.Text(
+                "Nuevo Concepto"
+            ),
+
+            content=ft.Column(
+
+                controls=[
+
+                    clave_input,
+                    largo_input,
+                    ancho_input,
+                    alto_input,
+                    piezas_input,
+                    notas_input
 
                 ],
 
