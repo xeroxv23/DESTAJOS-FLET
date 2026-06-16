@@ -7,19 +7,78 @@ from database_manager import (
 from views.obra_view import obra_view
 
 
+# !! ==========================================================
+# !! OBRAS_VIEW.PY
+# !!
+# !! Segunda pantalla del sistema.
+# !!
+# !! Flujo:
+# !!
+# !! login_view.py
+# !!       ↓
+# !! obras_view.py
+# !!       ↓
+# !! obra_view.py
+# !!
+# !! Funciones principales:
+# !! - Buscar obras por clave
+# !! - Mostrar resultados encontrados
+# !! - Permitir abrir una obra
+# !!
+# !! Esta pantalla NO captura destajos.
+# !! Solamente permite seleccionar una obra.
+# !!
+# !! Las consultas se realizan mediante:
+# !! database_manager.py
+# !!
+# !! La captura de cuadrillas se realiza en:
+# !! obra_view.py
+# !! ==========================================================
+
+
 def obras_view(page):
 
+    # ! Lista visual donde se mostrarán
+    # ! las obras encontradas.
     lista_view = ft.ListView(
         expand=True,
         spacing=10
     )
 
+    # !! ----------------------------------------------------------
+    # !! cargar_obras()
+    # !!
+    # !! Recibe una lista de obras desde SQLite
+    # !! y construye visualmente las tarjetas.
+    # !!
+    # !! Cada tarjeta contiene:
+    # !! - Clave de obra
+    # !! - Nombre de obra
+    # !! - Botón Abrir
+    # !!
+    # !! Ejemplo:
+    # !!
+    # !! A-001
+    # !! CASA HABITACION
+    # !! [ Abrir ]
+    # !! ----------------------------------------------------------
     def cargar_obras(obras):
 
         lista_view.controls.clear()
 
         for clave, nombre in obras:
 
+            # !! --------------------------------------------------
+            # !! abrir_obra()
+            # !!
+            # !! Abre la pantalla de captura de la obra.
+            # !!
+            # !! Envía:
+            # !! - clave
+            # !! - nombre
+            # !!
+            # !! a obra_view.py
+            # !! --------------------------------------------------
             def abrir_obra(
                 e,
                 clave=clave,
@@ -38,6 +97,7 @@ def obras_view(page):
 
                 page.update()
 
+            # ! Tarjeta visual de cada obra
             lista_view.controls.append(
 
                 ft.Card(
@@ -47,16 +107,19 @@ def obras_view(page):
                         content=ft.Column(
                             controls=[
 
+                                # ! Clave de obra
                                 ft.Text(
                                     clave,
                                     size=18,
                                     weight=ft.FontWeight.BOLD
                                 ),
 
+                                # ! Nombre de obra
                                 ft.Text(
                                     nombre
                                 ),
 
+                                # ! Abrir captura
                                 ft.ElevatedButton(
                                     content=ft.Text(
                                         "Abrir"
@@ -73,10 +136,26 @@ def obras_view(page):
 
         page.update()
 
+    # !! ----------------------------------------------------------
+    # !! filtrar_obras()
+    # !!
+    # !! Se ejecuta cada vez que el usuario escribe.
+    # !!
+    # !! Busca coincidencias por:
+    # !! clave_inter
+    # !!
+    # !! Ejemplos:
+    # !!
+    # !! A
+    # !! A-001
+    # !! ID-1211
+    # !! ----------------------------------------------------------
     def filtrar_obras(e):
 
         texto = e.control.value.strip()
 
+        # ! Si no hay texto
+        # ! mostrar mensaje inicial
         if texto == "":
 
             lista_view.controls.clear()
@@ -93,16 +172,25 @@ def obras_view(page):
 
             return
 
+        # ! Consulta a SQLite
         resultados = buscar_obras(texto)
 
+        # ! Mostrar resultados
         cargar_obras(resultados)
 
+    # !! ----------------------------------------------------------
+    # !! Buscador principal
+    # !!
+    # !! Filtra en tiempo real conforme
+    # !! el usuario escribe.
+    # !! ----------------------------------------------------------
     buscador = ft.TextField(
         label="Buscar obra por clave",
         width=400,
         on_change=filtrar_obras
     )
 
+    # ! Mensaje inicial antes de buscar
     lista_view.controls.append(
 
         ft.Text(
@@ -111,21 +199,38 @@ def obras_view(page):
 
     )
 
+    # !! ==========================================================
+    # !! RETURN DE LA VISTA
+    # !!
+    # !! Pantalla:
+    # !!
+    # !! LISTADO DE OBRAS
+    # !!
+    # !! [ Buscar obra ]
+    # !!
+    # !! Resultado 1
+    # !! Resultado 2
+    # !! Resultado 3
+    # !!
+    # !! ==========================================================
     return ft.View(
         route="/obras",
 
         controls=[
 
+            # ! Encabezado principal
             ft.Text(
                 "LISTADO DE OBRAS",
                 size=28,
                 weight=ft.FontWeight.BOLD
             ),
 
+            # ! Buscador
             buscador,
 
             ft.Divider(),
 
+            # ! Resultados
             lista_view
 
         ]
