@@ -36,7 +36,7 @@ from views.obra_view import obra_view
 # !! ==========================================================
 
 
-def obras_view(page):
+def obras_view(page, semana_actual):
 
     # ! Lista visual donde se mostrarán
     # ! las obras encontradas.
@@ -90,7 +90,8 @@ def obras_view(page):
                     obra_view(
                         page,
                         clave,
-                        nombre
+                        nombre,
+                        semana_actual
                     )
 
                 )
@@ -178,12 +179,18 @@ def obras_view(page):
         # ! Mostrar resultados
         cargar_obras(resultados)
 
+    def regresar_semanas(e):
+
+        page.views.pop()
+        page.update()
+
     # !! ----------------------------------------------------------
     # !! Buscador principal
     # !!
     # !! Filtra en tiempo real conforme
     # !! el usuario escribe.
     # !! ----------------------------------------------------------
+
     buscador = ft.TextField(
         label="Buscar obra por clave",
         width=400,
@@ -218,19 +225,26 @@ def obras_view(page):
 
         controls=[
 
-            # ! Encabezado principal
             ft.Text(
                 "LISTADO DE OBRAS",
                 size=28,
                 weight=ft.FontWeight.BOLD
             ),
 
-            # ! Buscador
+            ft.Text(
+                f"Semana {semana_actual['numero']} "
+                f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
+            ),
+
+            ft.ElevatedButton(
+                content=ft.Text("Regresar a Semanas"),
+                on_click=regresar_semanas
+            ),
+
             buscador,
 
             ft.Divider(),
 
-            # ! Resultados
             lista_view
 
         ]

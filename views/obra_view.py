@@ -49,7 +49,12 @@ from components.dialogs import (
 # !! ==========================================================
 
 
-def obra_view(page, clave_obra, nombre_obra):
+def obra_view(
+        page, 
+        clave_obra, 
+        nombre_obra, 
+        semana_actual
+    ):
 
     # ! Lista temporal en memoria.
     # ! Aquí se guardan las cuadrillas capturadas mientras el usuario trabaja.
@@ -57,6 +62,7 @@ def obra_view(page, clave_obra, nombre_obra):
     from services.estado_captura import obtener_captura_obra
 
     captura = obtener_captura_obra(
+        semana_actual,
         clave_obra,
         nombre_obra
     )
@@ -98,11 +104,14 @@ def obra_view(page, clave_obra, nombre_obra):
                 # ! components/cuadrilla_card.py
                 lista_cuadrillas.controls.append(
                     crear_cuadrilla_card(
-                        cuadrilla,
-                        agregar_trabajador,
-                        agregar_subtitulo,
-                        agregar_concepto
-                    )
+                    cuadrilla,
+                    agregar_trabajador,
+                    agregar_subtitulo,
+                    agregar_concepto,
+                    eliminar_trabajador,
+                    eliminar_subtitulo,
+                    eliminar_concepto
+                )
                 )
 
         page.update()
@@ -193,6 +202,28 @@ def obra_view(page, clave_obra, nombre_obra):
             actualizar_cuadrillas
         )
 
+    def eliminar_trabajador(cuadrilla, trabajador):
+
+        cuadrilla["trabajadores"].remove(trabajador)
+
+        recalcular_cuadrilla(cuadrilla)
+
+        actualizar_cuadrillas()
+
+
+    def eliminar_subtitulo(cuadrilla, subtitulo):
+
+        cuadrilla["subtitulos"].remove(subtitulo)
+
+        actualizar_cuadrillas()
+
+
+    def eliminar_concepto(subtitulo, concepto):
+
+        subtitulo["conceptos"].remove(concepto)
+
+        actualizar_cuadrillas()
+
     # !! ----------------------------------------------------------
     # !! regresar_obras()
     # !!
@@ -240,6 +271,12 @@ def obra_view(page, clave_obra, nombre_obra):
                     ft.Text(
                         f"Obra: {nombre_obra}",
                         size=18
+                    ),
+
+                    ft.Text(
+                        f"Semana: {semana_actual['numero']} "
+                        f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})",
+                        size=16
                     ),
 
                     ft.Divider(),

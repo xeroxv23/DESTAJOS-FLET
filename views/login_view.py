@@ -1,8 +1,7 @@
 import flet as ft
 
 from database_manager import validar_usuario
-from views.obras_view import obras_view
-
+from views.semanas_view import semanas_view
 
 # !! ==========================================================
 # !! LOGIN_VIEW.PY
@@ -87,7 +86,7 @@ def login_view(page):
 
             # !! Abrir listado de obras
             page.views.append(
-                obras_view(page)
+                semanas_view(page)
             )
 
             page.update()

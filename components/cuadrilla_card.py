@@ -42,7 +42,10 @@ def crear_cuadrilla_card(
     cuadrilla,
     agregar_trabajador,
     agregar_subtitulo,
-    agregar_concepto
+    agregar_concepto,
+    eliminar_trabajador,
+    eliminar_subtitulo,
+    eliminar_concepto
 ):
 
     # ! Lista dinámica de controles visuales.
@@ -92,12 +95,23 @@ def crear_cuadrilla_card(
 
         controles.append(
 
-            ft.Text(
+            ft.Row(
+                controls=[
 
-                f"{trabajador['clave']} - "
-                f"{trabajador['nombre']} "
-                f"({trabajador['porcentaje']:.2f}%)"
+                    ft.Text(
+                        f"{trabajador['clave']} - "
+                        f"{trabajador['nombre']} "
+                        f"({trabajador['porcentaje']:.2f}%)"
+                    ),
 
+                    ft.TextButton(
+                        "Eliminar",
+                        on_click=lambda e,
+                        t=trabajador:
+                        eliminar_trabajador(cuadrilla, t)
+                    )
+
+                ]
             )
 
         )
@@ -105,16 +119,35 @@ def crear_cuadrilla_card(
     # !! =======================================================
     # !! SECCIÓN SUBTÍTULOS
     # !! =======================================================
+    
     for subtitulo in cuadrilla["subtitulos"]:
 
         controles.extend([
 
             ft.Divider(),
 
-            ft.Text(
-                f"📁 {subtitulo['nombre']}",
-                size=16,
-                weight=ft.FontWeight.BOLD
+            ft.Row(
+
+                controls=[
+
+                    ft.Text(
+                        f"📁 {subtitulo['nombre']}",
+                        size=16,
+                        weight=ft.FontWeight.BOLD
+                    ),
+
+                    ft.TextButton(
+                        "Eliminar",
+                        on_click=lambda e,
+                        s=subtitulo:
+                        eliminar_subtitulo(
+                            cuadrilla,
+                            s
+                        )
+                    )
+
+                ]
+
             ),
 
             # ! Agregar concepto al subtítulo
@@ -156,14 +189,28 @@ def crear_cuadrilla_card(
 
             controles.append(
 
-                ft.Text(
+                ft.Row(
+                    controls=[
 
-                    f"{concepto['clave']} | "
-                    f"{concepto.get('largo', '')} | "
-                    f"{concepto.get('ancho', '')} | "
-                    f"{concepto.get('alto', '')} | "
-                    f"{concepto.get('piezas', '')} | "
-                    f"{descripcion}"
+                        ft.Text(
+                            f"{concepto['clave']} | "
+                            f"{concepto.get('largo', '')} | "
+                            f"{concepto.get('ancho', '')} | "
+                            f"{concepto.get('alto', '')} | "
+                            f"{concepto.get('piezas', '')} | "
+                            f"{descripcion}",
+                            expand=True
+                        ),
+
+                        ft.TextButton(
+                            "Eliminar",
+                            on_click=lambda e,
+                            s=subtitulo,
+                            c=concepto:
+                            eliminar_concepto(s, c)
+                        )
+
+                    ]
 
                 )
 
