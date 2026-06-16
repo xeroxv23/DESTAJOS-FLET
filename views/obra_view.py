@@ -54,7 +54,14 @@ def obra_view(page, clave_obra, nombre_obra):
     # ! Lista temporal en memoria.
     # ! Aquí se guardan las cuadrillas capturadas mientras el usuario trabaja.
     # ! Más adelante esta información será la base para exportar a Excel.
-    cuadrillas = []
+    from services.estado_captura import obtener_captura_obra
+
+    captura = obtener_captura_obra(
+        clave_obra,
+        nombre_obra
+    )
+
+    cuadrillas = captura["cuadrillas"]
 
     # ! ListView permite scroll cuando hay muchas cuadrillas.
     lista_cuadrillas = ft.ListView(
@@ -186,6 +193,21 @@ def obra_view(page, clave_obra, nombre_obra):
             actualizar_cuadrillas
         )
 
+    # !! ----------------------------------------------------------
+    # !! regresar_obras()
+    # !!
+    # !! Regresa al listado de obras.
+    # !!
+    # !! No elimina información capturada.
+    # !! Solamente vuelve a la vista anterior.
+    # !!
+    # !! ----------------------------------------------------------
+    def regresar_obras(e):
+
+        page.views.pop()
+
+        page.update()
+
     # ! Primera carga visual de la lista.
     actualizar_cuadrillas()
 
@@ -242,14 +264,23 @@ def obra_view(page, clave_obra, nombre_obra):
                         controls=[
 
                             ft.ElevatedButton(
-                                content=ft.Text("Nueva Cuadrilla"),
+                                content=ft.Text(
+                                    "Nueva Cuadrilla"
+                                ),
                                 on_click=nueva_cuadrilla
                             ),
 
-                            # ! Este botón se implementará más adelante.
-                            # ! Su función será cerrar la captura total de la obra.
                             ft.ElevatedButton(
-                                content=ft.Text("Cerrar Destajo")
+                                content=ft.Text(
+                                    "Regresar a Obras"
+                                ),
+                                on_click=regresar_obras
+                            ),
+
+                            ft.ElevatedButton(
+                                content=ft.Text(
+                                    "Cerrar Destajo"
+                                )
                             )
 
                         ]
