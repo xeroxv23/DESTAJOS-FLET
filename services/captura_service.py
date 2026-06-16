@@ -47,7 +47,9 @@ def crear_cuadrilla(numero, tipo):
 
         "subtitulos": [],
 
-        "conceptos": []
+        "conceptos": [],
+
+        "actividades": ""
 
     }
 

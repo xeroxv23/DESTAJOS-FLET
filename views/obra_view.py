@@ -23,7 +23,8 @@ from components.dialogs import (
     abrir_dialogo_nueva_cuadrilla,
     abrir_dialogo_agregar_subtitulo,
     abrir_dialogo_agregar_trabajador,
-    abrir_dialogo_agregar_concepto
+    abrir_dialogo_agregar_concepto,
+    abrir_dialogo_agregar_actividades
 )
 
 
@@ -104,14 +105,15 @@ def obra_view(
                 # ! components/cuadrilla_card.py
                 lista_cuadrillas.controls.append(
                     crear_cuadrilla_card(
-                    cuadrilla,
-                    agregar_trabajador,
-                    agregar_subtitulo,
-                    agregar_concepto,
-                    eliminar_trabajador,
-                    eliminar_subtitulo,
-                    eliminar_concepto
-                )
+                        cuadrilla,
+                        agregar_trabajador,
+                        agregar_subtitulo,
+                        agregar_concepto,
+                        eliminar_trabajador,
+                        eliminar_subtitulo,
+                        eliminar_concepto,
+                        agregar_actividades
+                    )
                 )
 
         page.update()
@@ -239,6 +241,14 @@ def obra_view(
 
         page.update()
 
+    def agregar_actividades(cuadrilla):
+
+        abrir_dialogo_agregar_actividades(
+            page,
+            cuadrilla,
+            actualizar_cuadrillas
+        )
+
     # ! Primera carga visual de la lista.
     actualizar_cuadrillas()
 
@@ -327,3 +337,4 @@ def obra_view(
             )
         ]
     )
+

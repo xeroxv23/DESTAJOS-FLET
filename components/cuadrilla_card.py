@@ -38,6 +38,7 @@ import flet as ft
 # !! EXC01 | 2.00 | 0.50 | 0.40 | 1
 # !!
 # !! ----------------------------------------------------------
+
 def crear_cuadrilla_card(
     cuadrilla,
     agregar_trabajador,
@@ -45,7 +46,8 @@ def crear_cuadrilla_card(
     agregar_concepto,
     eliminar_trabajador,
     eliminar_subtitulo,
-    eliminar_concepto
+    eliminar_concepto,
+    agregar_actividades
 ):
 
     # ! Lista dinámica de controles visuales.
@@ -80,10 +82,14 @@ def crear_cuadrilla_card(
         # ! Agregar subtítulo
         ft.ElevatedButton(
             content=ft.Text(
-                "Agregar Subtítulo"
+                "Agregar Actividades"
+                if cuadrilla["tipo"] == "dia"
+                else "Agregar Subtítulo"
             ),
             on_click=lambda e:
-            agregar_subtitulo(cuadrilla)
+            agregar_actividades(cuadrilla)
+            if cuadrilla["tipo"] == "dia"
+            else agregar_subtitulo(cuadrilla)
         ),
 
     ]
@@ -99,9 +105,18 @@ def crear_cuadrilla_card(
                 controls=[
 
                     ft.Text(
-                        f"{trabajador['clave']} - "
-                        f"{trabajador['nombre']} "
-                        f"({trabajador['porcentaje']:.2f}%)"
+                        (
+                            f"{trabajador['clave']} - "
+                            f"{trabajador['nombre']} "
+                            f"({trabajador['porcentaje']:.2f}%)"
+                        )
+                        if cuadrilla["tipo"] == "destajo"
+                        else
+                        (
+                            f"{trabajador['clave']} - "
+                            f"{trabajador['nombre']} "
+                            f"({trabajador['dias']:.2f} días)"
+                        )
                     ),
 
                     ft.TextButton(
@@ -115,6 +130,31 @@ def crear_cuadrilla_card(
             )
 
         )
+    
+    # !! =======================================================
+    # !! ACTIVIDADES DE CUADRILLA POR DIA
+    # !! =======================================================
+
+    if (
+        cuadrilla["tipo"] == "dia"
+        and
+        cuadrilla.get("actividades", "")
+    ):
+
+        controles.extend([
+
+            ft.Divider(),
+
+            ft.Text(
+                "ACTIVIDADES",
+                weight=ft.FontWeight.BOLD
+            ),
+
+            ft.Text(
+                cuadrilla["actividades"]
+            )
+
+        ])
 
     # !! =======================================================
     # !! SECCIÓN SUBTÍTULOS

@@ -191,9 +191,13 @@ def abrir_dialogo_agregar_trabajador(
             )
         )
 
-        recalcular_cuadrilla(
-            cuadrilla
-        )
+        # !! Solo las cuadrillas de destajo
+        # !! calculan porcentajes de participación.
+        if cuadrilla["tipo"] == "destajo":
+
+            recalcular_cuadrilla(
+                cuadrilla
+            )
 
         dialog.open = False
 
@@ -326,5 +330,60 @@ def abrir_dialogo_agregar_concepto(
     dialog.open = True
     page.update()
 
+def abrir_dialogo_agregar_actividades(
+    page,
+    cuadrilla,
+    actualizar_cuadrillas
+):
+
+    actividades_input = ft.TextField(
+        label="Actividades realizadas",
+        multiline=True,
+        value=cuadrilla.get("actividades", "")
+    )
+
+    def guardar(ev):
+
+        cuadrilla["actividades"] = actividades_input.value.strip()
+
+        dialog.open = False
+
+        actualizar_cuadrillas()
+
+    def cancelar(ev):
+
+        dialog.open = False
+
+        page.update()
+
+    dialog = ft.AlertDialog(
+
+        title=ft.Text(
+            "Agregar Actividades"
+        ),
+
+        content=actividades_input,
+
+        actions=[
+
+            ft.TextButton(
+                "Cancelar",
+                on_click=cancelar
+            ),
+
+            ft.TextButton(
+                "Guardar",
+                on_click=guardar
+            )
+
+        ]
+
+    )
+
+    page.overlay.append(dialog)
+
+    dialog.open = True
+
+    page.update()
 
 # CODIGO
