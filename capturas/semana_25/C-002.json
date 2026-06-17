@@ -1,0 +1,159 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "C-002",
+    "nombre_obra": "AMPLIACION II SANEFRO ZAMORA",
+    "cuadrillas": [
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 1201,
+                    "nombre": "FLORES OROPEZA ENRIQUE",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "3",
+                    "descripcion_horas_extras": "LABORADAS ETC",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 1990,
+                    "nombre": "GUARDADO SÁNCHEZ MARTÍN",
+                    "puesto": "PEON",
+                    "salario_diario": 307.25,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "3",
+                    "descripcion_horas_extras": "LABORADAS ETC",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": ""
+        },
+        {
+            "numero": 3,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 1201,
+                    "nombre": "FLORES OROPEZA ENRIQUE",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 3,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 50.0
+                },
+                {
+                    "clave": 1951,
+                    "nombre": "AVALOS GIL IGNACIO",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 3,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 50.0
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "RECAMARA 02",
+                    "conceptos": [
+                        {
+                            "clave": "MBO07",
+                            "descripcion": "Muro de tezon de block",
+                            "unidad": "M2",
+                            "largo": "2",
+                            "ancho": "",
+                            "alto": "2",
+                            "piezas": "2",
+                            "notas": ""
+                        },
+                        {
+                            "clave": "SAR04",
+                            "descripcion": "Sarpeo de muro con cemento",
+                            "unidad": "M2",
+                            "largo": "2",
+                            "ancho": "",
+                            "alto": "2",
+                            "piezas": "2",
+                            "notas": ""
+                        }
+                    ]
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        },
+        {
+            "numero": 4,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 2835,
+                    "nombre": "ENRIQUEZ XILONZOCHILT JUAN",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 4,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 100.0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": ""
+        },
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 2446,
+                    "nombre": "ENRIQUEZ XILONZOCHITL MIGUEL ANGEL",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 5,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": ""
+        },
+        {
+            "numero": 6,
+            "tipo": "destajo",
+            "trabajadores": [],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

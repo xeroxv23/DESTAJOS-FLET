@@ -73,30 +73,33 @@ def crear_cuadrilla(numero, tipo):
 # !! porcentaje
 # !!
 # !! ----------------------------------------------------------
-def crear_trabajador(trabajador_bd, dias):
+
+def crear_trabajador(
+    trabajador_bd,
+    dias,
+    numero_cuadrilla=None,
+    horas_extras="",
+    descripcion_horas_extras=""
+):
 
     return {
 
         "clave": trabajador_bd[0],
-
         "nombre": trabajador_bd[1],
-
         "puesto": trabajador_bd[2],
-
-        "salario_diario": float(
-            trabajador_bd[3]
-        ),
-
+        "salario_diario": float(trabajador_bd[3]),
         "dias": dias,
 
+        "numero_cuadrilla": numero_cuadrilla,
+
+        "horas_extras": horas_extras,
+        "descripcion_horas_extras": descripcion_horas_extras,
+
         "ponderacion": 0,
-
         "puntos": 0,
-
         "porcentaje": 0
 
     }
-
 
 # !! ----------------------------------------------------------
 # !! crear_subtitulo()
@@ -184,3 +187,51 @@ def crear_concepto(
         "notas": notas
 
     }
+
+# !! ----------------------------------------------------------
+# !! obtener_siguiente_numero_cuadrilla()
+# !!
+# !! Calcula el siguiente número disponible para exportación.
+# !!
+# !! Revisa:
+# !! - Cuadrillas de destajo
+# !! - Trabajadores por día
+# !!
+# !! Esto es necesario porque:
+# !!
+# !! Destajo:
+# !!   Cuadrilla 1 → todos comparten número 1
+# !!
+# !! Por día:
+# !!   Cada trabajador tiene su propio número
+# !!
+# !! ----------------------------------------------------------
+def obtener_siguiente_numero_cuadrilla(cuadrillas):
+
+    numeros_usados = []
+
+    for cuadrilla in cuadrillas:
+
+        if cuadrilla["tipo"] == "destajo":
+
+            if cuadrilla.get("numero") is not None:
+
+                numeros_usados.append(
+                    cuadrilla["numero"]
+                )
+
+        if cuadrilla["tipo"] == "dia":
+
+            for trabajador in cuadrilla["trabajadores"]:
+
+                if trabajador.get("numero_cuadrilla") is not None:
+
+                    numeros_usados.append(
+                        trabajador["numero_cuadrilla"]
+                    )
+
+    if len(numeros_usados) == 0:
+
+        return 1
+
+    return max(numeros_usados) + 1

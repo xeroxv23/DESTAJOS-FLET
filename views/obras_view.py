@@ -6,6 +6,12 @@ from database_manager import (
 
 from views.obra_view import obra_view
 
+from services.persistencia_json import (
+    obtener_claves_capturadas_semana,
+    eliminar_captura_json
+)
+
+from views.preview_view import preview_view
 
 # !! ==========================================================
 # !! OBRAS_VIEW.PY
@@ -45,6 +51,10 @@ def obras_view(page, semana_actual):
         spacing=10
     )
 
+    lista_capturadas = ft.Column(
+        spacing=5
+    )
+
     # !! ----------------------------------------------------------
     # !! cargar_obras()
     # !!
@@ -62,7 +72,125 @@ def obras_view(page, semana_actual):
     # !! CASA HABITACION
     # !! [ Abrir ]
     # !! ----------------------------------------------------------
+
+    def actualizar_obras_capturadas():
+
+        lista_capturadas.controls.clear()
+
+        claves_capturadas = obtener_claves_capturadas_semana(
+            semana_actual
+        )
+
+        if len(claves_capturadas) == 0:
+
+            lista_capturadas.controls.append(
+                ft.Text(
+                    "Sin obras capturadas"
+                )
+            )
+
+        else:
+
+            for clave_capturada in claves_capturadas:
+
+                def abrir_capturada(
+                    e,
+                    clave=clave_capturada
+                ):
+
+                    # ! Buscamos la obra por clave para obtener también su nombre
+                    resultado = buscar_obras(clave)
+
+                    if len(resultado) == 0:
+                        return
+
+                    clave_obra, nombre_obra = resultado[0]
+
+                    page.views.append(
+                        obra_view(
+                            page,
+                            clave_obra,
+                            nombre_obra,
+                            semana_actual
+                        )
+                    )
+
+                    page.update()
+
+                def vista_previa(
+                    e,
+                    clave=clave_capturada
+                ):
+
+                    page.views.append(
+                        preview_view(
+                            page,
+                            semana_actual,
+                            clave
+                        )
+                    )
+
+                    page.update()
+
+                def eliminar_captura(
+                    e,
+                    clave=clave_capturada
+                ):
+
+                    eliminar_captura_json(
+                        semana_actual,
+                        clave
+                    )
+
+                    actualizar_obras_capturadas()
+
+                    lista_view.controls.clear()
+
+                    lista_view.controls.append(
+                        ft.Text(
+                            "Escriba una clave de obra."
+                        )
+                    )
+
+                    page.update()
+
+                lista_capturadas.controls.append(
+
+                    ft.Row(
+                        controls=[
+
+                            ft.Container(
+                                width=90,
+                                content=ft.Text(
+                                    clave_capturada,
+                                    weight=ft.FontWeight.BOLD
+                                )
+                            ),
+
+                            ft.TextButton(
+                                "Abrir",
+                                on_click=abrir_capturada
+                            ),
+
+                            ft.TextButton(
+                                "Vista",
+                                on_click=vista_previa
+                            ),
+
+                            ft.TextButton(
+                                "Eliminar",
+                                on_click=eliminar_captura
+                            )
+                        ]
+                    )
+
+                )
+
     def cargar_obras(obras):
+
+        claves_capturadas = obtener_claves_capturadas_semana(
+            semana_actual
+        )
 
         lista_view.controls.clear()
 
@@ -111,13 +239,19 @@ def obras_view(page, semana_actual):
                                 # ! Clave de obra
                                 ft.Text(
                                     clave,
-                                    size=18,
+                                    size=15,
                                     weight=ft.FontWeight.BOLD
                                 ),
 
                                 # ! Nombre de obra
                                 ft.Text(
                                     nombre
+                                ),
+
+                                ft.Text(
+                                    "CAPTURADA"
+                                    if clave in claves_capturadas
+                                    else "SIN CAPTURA"
                                 ),
 
                                 # ! Abrir captura
@@ -193,7 +327,7 @@ def obras_view(page, semana_actual):
 
     buscador = ft.TextField(
         label="Buscar obra por clave",
-        width=400,
+        width=350,
         on_change=filtrar_obras
     )
 
@@ -220,6 +354,9 @@ def obras_view(page, semana_actual):
     # !! Resultado 3
     # !!
     # !! ==========================================================
+
+    actualizar_obras_capturadas()
+
     return ft.View(
         route="/obras",
 
@@ -227,7 +364,7 @@ def obras_view(page, semana_actual):
 
             ft.Text(
                 "LISTADO DE OBRAS",
-                size=28,
+                size=25,
                 weight=ft.FontWeight.BOLD
             ),
 
@@ -245,7 +382,35 @@ def obras_view(page, semana_actual):
 
             ft.Divider(),
 
-            lista_view
+            ft.Row(
+                expand=True,
+                controls=[
+
+                    ft.Container(
+                        content=lista_view,
+                        width=850
+                    ),
+
+                    ft.Container(
+                        width=420,
+                        padding=10,
+                        content=ft.Column(
+                            controls=[
+
+                                ft.Text(
+                                    "OBRAS CAPTURADAS",
+                                    size=15,
+                                    weight=ft.FontWeight.BOLD
+                                ),
+
+                                lista_capturadas
+
+                            ]
+                        )
+                    )
+
+                ]
+            )
 
         ]
     )

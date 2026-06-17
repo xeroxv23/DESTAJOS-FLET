@@ -8,6 +8,8 @@ from services.semanas_service import (
     listar_semanas
 )
 
+from services.persistencia_json import listar_capturas_semana
+
 
 def semanas_view(page):
 
@@ -29,6 +31,10 @@ def semanas_view(page):
 
             for semana in listar_semanas():
 
+                capturas = listar_capturas_semana(
+                    semana
+                )
+
                 def abrir_semana(e, semana=semana):
 
                     page.views.append(
@@ -42,16 +48,22 @@ def semanas_view(page):
 
                 def borrar_semana(e, semana=semana):
 
-                    eliminar_semana(semana)
+                    eliminar_semana(
+                        semana
+                    )
 
                     actualizar_semanas()
 
                 lista_semanas.controls.append(
 
                     ft.Card(
+
                         content=ft.Container(
+
                             padding=15,
+
                             content=ft.Column(
+
                                 controls=[
 
                                     ft.Text(
@@ -68,7 +80,12 @@ def semanas_view(page):
                                         f"Cierre: {semana['fecha_fin']}"
                                     ),
 
+                                    ft.Text(
+                                        f"Obras capturadas: {len(capturas)}"
+                                    ),
+
                                     ft.Row(
+
                                         controls=[
 
                                             ft.ElevatedButton(
@@ -84,11 +101,15 @@ def semanas_view(page):
                                             )
 
                                         ]
+
                                     )
 
                                 ]
+
                             )
+
                         )
+
                     )
 
                 )
@@ -129,20 +150,31 @@ def semanas_view(page):
             page.update()
 
         dialog = ft.AlertDialog(
-            title=ft.Text("Nueva Semana"),
+
+            title=ft.Text(
+                "Nueva Semana"
+            ),
 
             content=ft.Column(
+
                 controls=[
+
                     numero_input,
+
                     inicio_input,
+
                     ft.Text(
                         "La fecha de cierre se calculará automáticamente +6 días."
                     )
+
                 ],
+
                 tight=True
+
             ),
 
             actions=[
+
                 ft.TextButton(
                     "Cancelar",
                     on_click=cancelar
@@ -152,7 +184,9 @@ def semanas_view(page):
                     "Guardar",
                     on_click=guardar
                 )
+
             ]
+
         )
 
         page.overlay.append(dialog)
@@ -164,6 +198,7 @@ def semanas_view(page):
     actualizar_semanas()
 
     return ft.View(
+
         route="/semanas",
 
         controls=[
@@ -175,7 +210,9 @@ def semanas_view(page):
             ),
 
             ft.ElevatedButton(
-                content=ft.Text("Nueva Semana"),
+                content=ft.Text(
+                    "Nueva Semana"
+                ),
                 on_click=nueva_semana
             ),
 
@@ -184,4 +221,5 @@ def semanas_view(page):
             lista_semanas
 
         ]
+
     )

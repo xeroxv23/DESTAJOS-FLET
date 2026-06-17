@@ -25,6 +25,7 @@ def abrir_dialogo_nueva_cuadrilla(
     page,
     cuadrillas,
     crear_cuadrilla,
+    obtener_siguiente_numero_cuadrilla,
     actualizar_cuadrillas
 ):
 
@@ -55,7 +56,15 @@ def abrir_dialogo_nueva_cuadrilla(
         if not tipo.value:
             return
 
-        numero = len(cuadrillas) + 1
+        if tipo.value == "destajo":
+
+            numero = obtener_siguiente_numero_cuadrilla(
+                cuadrillas
+            )
+
+        else:
+
+            numero = None
 
         cuadrillas.append(
             crear_cuadrilla(
@@ -150,11 +159,13 @@ def abrir_dialogo_agregar_subtitulo(
 
 def abrir_dialogo_agregar_trabajador(
     page,
+    cuadrillas,
     cuadrilla,
     buscar_trabajador,
     calcular_valor,
     crear_trabajador,
     recalcular_cuadrilla,
+    obtener_siguiente_numero_cuadrilla,
     actualizar_cuadrillas
 ):
 
@@ -164,6 +175,15 @@ def abrir_dialogo_agregar_trabajador(
 
     dias_input = ft.TextField(
         label="Días trabajados"
+    )
+
+    horas_extras_input = ft.TextField(
+        label="Horas extras"
+    )
+
+    descripcion_horas_extras_input = ft.TextField(
+        label="Descripción horas extras",
+        multiline=True
     )
 
     def guardar(ev):
@@ -184,10 +204,23 @@ def abrir_dialogo_agregar_trabajador(
             print("Fórmula inválida")
             return
 
+        if cuadrilla["tipo"] == "dia":
+
+            numero_cuadrilla = obtener_siguiente_numero_cuadrilla(
+                cuadrillas
+            )
+
+        else:
+
+            numero_cuadrilla = cuadrilla["numero"]
+
         cuadrilla["trabajadores"].append(
             crear_trabajador(
                 trabajador,
-                dias
+                dias,
+                numero_cuadrilla,
+                horas_extras_input.value.strip(),
+                descripcion_horas_extras_input.value.strip()
             )
         )
 
@@ -216,9 +249,11 @@ def abrir_dialogo_agregar_trabajador(
 
         content=ft.Column(
             controls=[
-                clave_input,
-                dias_input
-            ],
+            clave_input,
+            dias_input,
+            horas_extras_input,
+            descripcion_horas_extras_input
+        ],
             tight=True
         ),
 

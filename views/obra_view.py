@@ -14,7 +14,8 @@ from services.captura_service import (
     crear_cuadrilla,
     crear_trabajador,
     crear_subtitulo,
-    crear_concepto
+    crear_concepto,
+    obtener_siguiente_numero_cuadrilla
 )
 
 from components.cuadrilla_card import crear_cuadrilla_card
@@ -60,7 +61,11 @@ def obra_view(
     # ! Lista temporal en memoria.
     # ! Aquí se guardan las cuadrillas capturadas mientras el usuario trabaja.
     # ! Más adelante esta información será la base para exportar a Excel.
-    from services.estado_captura import obtener_captura_obra
+
+    from services.estado_captura import (
+        obtener_captura_obra,
+        guardar_captura_obra
+    )
 
     captura = obtener_captura_obra(
         semana_actual,
@@ -116,6 +121,8 @@ def obra_view(
                     )
                 )
 
+        guardar_captura_obra(captura)
+        
         page.update()
 
     # !! ----------------------------------------------------------
@@ -129,12 +136,14 @@ def obra_view(
     # !! La estructura base se crea en:
     # !! services/captura_service.py
     # !! ----------------------------------------------------------
+
     def nueva_cuadrilla(e):
 
         abrir_dialogo_nueva_cuadrilla(
             page,
             cuadrillas,
             crear_cuadrilla,
+            obtener_siguiente_numero_cuadrilla,
             actualizar_cuadrillas
         )
 
@@ -151,14 +160,16 @@ def obra_view(
     def agregar_trabajador(cuadrilla):
 
         abrir_dialogo_agregar_trabajador(
-            page,
-            cuadrilla,
-            buscar_trabajador,
-            calcular_valor,
-            crear_trabajador,
-            recalcular_cuadrilla,
-            actualizar_cuadrillas
-        )
+        page,
+        cuadrillas,
+        cuadrilla,
+        buscar_trabajador,
+        calcular_valor,
+        crear_trabajador,
+        recalcular_cuadrilla,
+        obtener_siguiente_numero_cuadrilla,
+        actualizar_cuadrillas
+    )
 
     # !! ----------------------------------------------------------
     # !! agregar_subtitulo(cuadrilla)
