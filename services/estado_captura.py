@@ -24,7 +24,8 @@ capturas_por_semana = {}
 def obtener_captura_obra(
     semana,
     clave_obra,
-    nombre_obra
+    nombre_obra,
+    direccion_obra
 ):
 
     numero_semana = semana["numero"]
@@ -50,6 +51,7 @@ def obtener_captura_obra(
                 "semana": semana,
                 "clave_obra": clave_obra,
                 "nombre_obra": nombre_obra,
+                "direccion_obra": direccion_obra,
                 "cuadrillas": []
 
             }

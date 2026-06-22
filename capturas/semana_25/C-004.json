@@ -1,0 +1,178 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "C-004",
+    "nombre_obra": "AMPLIACION SANEFRO IRAPUATO",
+    "direccion_obra": "IRAPUATO",
+    "cuadrillas": [
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 2835,
+                    "nombre": "ENRIQUEZ XILONZOCHILT JUAN",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": "Limpieza general de obra, siempre limpio el juan"
+        },
+        {
+            "numero": 2,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 2446,
+                    "nombre": "ENRIQUEZ XILONZOCHITL MIGUEL ANGEL",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 50.0
+                },
+                {
+                    "clave": 3932,
+                    "nombre": "ENRÍQUEZ XILONZÓCHITL CARLOS DAVID",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 50.0
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "CISTERNA",
+                    "conceptos": [
+                        {
+                            "clave": "EXC02",
+                            "descripcion": "Excavacion para zapata o registro",
+                            "unidad": "M3",
+                            "largo": "3.20",
+                            "ancho": "3.20",
+                            "alto": "1.75",
+                            "piezas": "1",
+                            "notas": ""
+                        },
+                        {
+                            "clave": "RELL04",
+                            "descripcion": "Relleno con suelo cemento batido a mano y compactado",
+                            "unidad": "M3",
+                            "largo": "3.20",
+                            "ancho": "3.20",
+                            "alto": "1.75",
+                            "piezas": "1",
+                            "notas": ""
+                        },
+                        {
+                            "clave": "FIR03",
+                            "descripcion": "Firme de ladrillo",
+                            "unidad": "M2",
+                            "largo": "3.2",
+                            "ancho": "3.2",
+                            "alto": "",
+                            "piezas": "1",
+                            "notas": "Firme de Block"
+                        }
+                    ]
+                },
+                {
+                    "nombre": "BANQUETA INGRESO",
+                    "conceptos": [
+                        {
+                            "clave": "LOS10",
+                            "descripcion": "Colado de losa esp. 10 cms rev. hecho/obra",
+                            "unidad": "M2",
+                            "largo": "13.1",
+                            "ancho": "1.25",
+                            "alto": "",
+                            "piezas": "1",
+                            "notas": ""
+                        },
+                        {
+                            "clave": "REP02",
+                            "descripcion": "Repellado de hormigon, piso o concreto c/lechada",
+                            "unidad": "M2",
+                            "largo": "13.1",
+                            "ancho": "1.25",
+                            "alto": "",
+                            "piezas": "1",
+                            "notas": ""
+                        }
+                    ]
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        },
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 999,
+                    "nombre": "GARCIA RENTERIA ROBERTO",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 4.666666666666667,
+                    "numero_cuadrilla": 3,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 1201,
+                    "nombre": "FLORES OROPEZA ENRIQUE",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 5.833333333333334,
+                    "numero_cuadrilla": 4,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 1990,
+                    "nombre": "GUARDADO SÁNCHEZ MARTÍN",
+                    "puesto": "PEON",
+                    "salario_diario": 307.25,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 5,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": "Limpieza general de obra, retirar escombro y chatarra"
+        }
+    ]
+}

@@ -2,7 +2,8 @@ import flet as ft
 
 from database_manager import (
     buscar_trabajador,
-    buscar_concepto
+    buscar_concepto,
+    obtener_obra
 )
 
 from services.cuadrilla_service import (
@@ -67,10 +68,20 @@ def obra_view(
         guardar_captura_obra
     )
 
+    obra_bd = obtener_obra(
+        clave_obra
+    )
+
+    direccion_obra = ""
+
+    if obra_bd:
+        direccion_obra = obra_bd[1]
+
     captura = obtener_captura_obra(
         semana_actual,
         clave_obra,
-        nombre_obra
+        nombre_obra,
+        direccion_obra
     )
 
     cuadrillas = captura["cuadrillas"]

@@ -94,7 +94,7 @@ def listar_obras():
 
     return obras
 
-
+#region BUSCAR OBRA
 # !! ----------------------------------------------------------
 # !! buscar_obras()
 # !!
@@ -109,6 +109,8 @@ def listar_obras():
 # !! ID-1211
 # !!
 # !! ----------------------------------------------------------
+#endregion
+
 def buscar_obras(texto):
 
     conn = conectar()
@@ -130,9 +132,8 @@ def buscar_obras(texto):
 
     return obras
 
-
+#region !! TABLA: trabajadores
 # !! ==========================================================
-# !! TABLA: trabajadores
 # !!
 # !! Columnas:
 # !! - clave
@@ -157,6 +158,8 @@ def buscar_obras(texto):
 # !!
 # !! Utilizado para pruebas y validaciones.
 # !! ----------------------------------------------------------
+#endregion
+
 def listar_trabajadores():
 
     conn = conectar()
@@ -174,7 +177,7 @@ def listar_trabajadores():
 
     return datos
 
-
+#region BUSCAR TRABAJADOR
 # !! ----------------------------------------------------------
 # !! buscar_trabajador()
 # !!
@@ -195,6 +198,8 @@ def listar_trabajadores():
 # !! )
 # !!
 # !! ----------------------------------------------------------
+#endregion
+
 def buscar_trabajador(clave):
 
     conn = conectar()
@@ -213,7 +218,7 @@ def buscar_trabajador(clave):
 
     return trabajador
 
-
+#region TABLA CONCEPTOS
 # !! ==========================================================
 # !! TABLA: conceptos
 # !!
@@ -238,6 +243,8 @@ def buscar_trabajador(clave):
 # !!
 # !! Utilizado principalmente para pruebas.
 # !! ----------------------------------------------------------
+#endregion
+
 def listar_conceptos():
 
     conn = conectar()
@@ -255,7 +262,7 @@ def listar_conceptos():
 
     return datos
 
-
+#region BUSCAR CONCEPTO
 # !! ----------------------------------------------------------
 # !! buscar_concepto()
 # !!
@@ -276,6 +283,8 @@ def listar_conceptos():
 # !! )
 # !!
 # !! ----------------------------------------------------------
+#endregion
+
 def buscar_concepto(clave):
 
     conn = conectar()
@@ -294,7 +303,7 @@ def buscar_concepto(clave):
 
     return concepto
 
-
+#region USUARIOS
 # !! ==========================================================
 # !! TABLA: usuarios
 # !!
@@ -322,6 +331,8 @@ def buscar_concepto(clave):
 # !! None si no existe.
 # !!
 # !! ----------------------------------------------------------
+#endregion
+
 def validar_usuario(usuario, password):
 
     conn = conectar()
@@ -341,7 +352,7 @@ def validar_usuario(usuario, password):
 
     return resultado
 
-
+#region OBTENER USUARIO
 # !! ----------------------------------------------------------
 # !! obtener_usuario()
 # !!
@@ -353,6 +364,8 @@ def validar_usuario(usuario, password):
 # !! - Bitácora de modificaciones.
 # !!
 # !! ----------------------------------------------------------
+#endregion
+
 def obtener_usuario(usuario):
 
     conn = conectar()
@@ -370,3 +383,21 @@ def obtener_usuario(usuario):
     conn.close()
 
     return resultado
+
+def obtener_obra(clave_inter):
+
+    conn = conectar()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT clave_inter, direccion_obra, nombre_obra
+        FROM obras
+        WHERE clave_inter = ?
+    """, (clave_inter,))
+
+    obra = cursor.fetchone()
+
+    conn.close()
+
+    return obra
