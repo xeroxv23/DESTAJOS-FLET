@@ -86,9 +86,70 @@ def escribir_trabajador(
         # !! FUTURO:
         # !! Si tiene horas extras, P deberá moverse
         # !! a la última fila donde se capturen esas horas extras.
-        hoja.range(f"P{fila}").value = (
-            trabajador["numero_cuadrilla"]
+
+        # !! Si NO tiene horas extras, P cierra aquí.
+        # !! Si SÍ tiene horas extras, P se escribirá
+        # !! en la fila del concepto LOTE.
+        if not trabajador.get("horas_extras", ""):
+
+            hoja.range(f"P{fila}").value = (
+                trabajador["numero_cuadrilla"]
+            )
+
+        else:
+
+            hoja.range(f"P{fila}").value = None
+
+def escribir_horas_extras(
+    hoja,
+    fila,
+    trabajador
+):
+
+    horas_extras = trabajador.get(
+        "horas_extras",
+        ""
+    )
+
+    if horas_extras == "":
+        return False
+
+    descripcion = trabajador.get(
+        "descripcion_horas_extras",
+        ""
+    )
+
+    salario_diario = float(
+        trabajador.get(
+            "salario_diario",
+            0
         )
+    )
+
+    hoja.range(f"A{fila}").value = "LOTE"
+
+    hoja.range(f"B{fila}").value = (
+        trabajador["numero_cuadrilla"]
+    )
+
+    hoja.range(f"D{fila}").value = descripcion
+
+    hoja.range(f"I{fila}").value = (
+        salario_diario / 4 / 100
+    )
+
+    hoja.range(f"L{fila}").value = float(
+        horas_extras
+    )
+
+    # !! En trabajadores por día con horas extras,
+    # !! la columna P cierra en la fila de horas extras,
+    # !! no en la fila del trabajador.
+    hoja.range(f"P{fila}").value = (
+        trabajador["numero_cuadrilla"]
+    )
+
+    return True
 
 def exportar_captura(
     hoja,
@@ -112,6 +173,16 @@ def exportar_captura(
                 )
 
                 fila += 1
+
+                tiene_horas_extras = escribir_horas_extras(
+                    hoja,
+                    fila,
+                    trabajador
+                )
+
+                if tiene_horas_extras:
+
+                    fila += 1
 
             # !! Actividades del personal por día.
             actividades = cuadrilla.get(

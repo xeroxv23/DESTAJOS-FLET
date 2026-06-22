@@ -13,14 +13,27 @@
             "tipo": "dia",
             "trabajadores": [
                 {
-                    "clave": 2835,
-                    "nombre": "ENRIQUEZ XILONZOCHILT JUAN",
+                    "clave": 1201,
+                    "nombre": "FLORES OROPEZA ENRIQUE",
                     "puesto": "OF",
                     "salario_diario": 553.07,
                     "dias": 7.0,
                     "numero_cuadrilla": 1,
-                    "horas_extras": "",
-                    "descripcion_horas_extras": "",
+                    "horas_extras": "4",
+                    "descripcion_horas_extras": "SEMANA DEL 25 AL 26",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 1990,
+                    "nombre": "GUARDADO SÁNCHEZ MARTÍN",
+                    "puesto": "PEON",
+                    "salario_diario": 307.25,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "4",
+                    "descripcion_horas_extras": "SEMANA DEL 25 AL 26",
                     "ponderacion": 0,
                     "puntos": 0,
                     "porcentaje": 0
@@ -28,19 +41,19 @@
             ],
             "subtitulos": [],
             "conceptos": [],
-            "actividades": "Limpieza general de obra, siempre limpio el juan"
+            "actividades": "Limpieza general"
         },
         {
-            "numero": 2,
+            "numero": 3,
             "tipo": "destajo",
             "trabajadores": [
                 {
-                    "clave": 2446,
-                    "nombre": "ENRIQUEZ XILONZOCHITL MIGUEL ANGEL",
+                    "clave": 998,
+                    "nombre": "GARCIA RENTERIA RAUL",
                     "puesto": "OF",
                     "salario_diario": 553.07,
                     "dias": 7.0,
-                    "numero_cuadrilla": 2,
+                    "numero_cuadrilla": 3,
                     "horas_extras": "",
                     "descripcion_horas_extras": "",
                     "ponderacion": 60,
@@ -48,12 +61,12 @@
                     "porcentaje": 50.0
                 },
                 {
-                    "clave": 3932,
-                    "nombre": "ENRÍQUEZ XILONZÓCHITL CARLOS DAVID",
+                    "clave": 999,
+                    "nombre": "GARCIA RENTERIA ROBERTO",
                     "puesto": "OF",
-                    "salario_diario": 638.8,
+                    "salario_diario": 553.07,
                     "dias": 7.0,
-                    "numero_cuadrilla": 2,
+                    "numero_cuadrilla": 3,
                     "horas_extras": "",
                     "descripcion_horas_extras": "",
                     "ponderacion": 60,
@@ -63,49 +76,14 @@
             ],
             "subtitulos": [
                 {
-                    "nombre": "CISTERNA",
+                    "nombre": "BANQUETA EXTERIOR NORTE",
                     "conceptos": [
                         {
-                            "clave": "EXC02",
-                            "descripcion": "Excavacion para zapata o registro",
-                            "unidad": "M3",
-                            "largo": "3.20",
-                            "ancho": "3.20",
-                            "alto": "1.75",
-                            "piezas": "1",
-                            "notas": ""
-                        },
-                        {
-                            "clave": "RELL04",
-                            "descripcion": "Relleno con suelo cemento batido a mano y compactado",
-                            "unidad": "M3",
-                            "largo": "3.20",
-                            "ancho": "3.20",
-                            "alto": "1.75",
-                            "piezas": "1",
-                            "notas": ""
-                        },
-                        {
-                            "clave": "FIR03",
-                            "descripcion": "Firme de ladrillo",
+                            "clave": "LOS11",
+                            "descripcion": "Colado de losa esp. 10 cms rev. premezclada",
                             "unidad": "M2",
-                            "largo": "3.2",
-                            "ancho": "3.2",
-                            "alto": "",
-                            "piezas": "1",
-                            "notas": "Firme de Block"
-                        }
-                    ]
-                },
-                {
-                    "nombre": "BANQUETA INGRESO",
-                    "conceptos": [
-                        {
-                            "clave": "LOS10",
-                            "descripcion": "Colado de losa esp. 10 cms rev. hecho/obra",
-                            "unidad": "M2",
-                            "largo": "13.1",
-                            "ancho": "1.25",
+                            "largo": "22.2",
+                            "ancho": "1.9",
                             "alto": "",
                             "piezas": "1",
                             "notas": ""
@@ -114,8 +92,18 @@
                             "clave": "REP02",
                             "descripcion": "Repellado de hormigon, piso o concreto c/lechada",
                             "unidad": "M2",
-                            "largo": "13.1",
-                            "ancho": "1.25",
+                            "largo": "22.2",
+                            "ancho": "1.9",
+                            "alto": "",
+                            "piezas": "1",
+                            "notas": ""
+                        },
+                        {
+                            "clave": "MALLA",
+                            "descripcion": "Corte y colocacion de malla lack en piso",
+                            "unidad": "M2",
+                            "largo": "22.2",
+                            "ancho": "1.9",
                             "alto": "",
                             "piezas": "1",
                             "notas": ""
@@ -131,38 +119,12 @@
             "tipo": "dia",
             "trabajadores": [
                 {
-                    "clave": 999,
-                    "nombre": "GARCIA RENTERIA ROBERTO",
-                    "puesto": "OF",
-                    "salario_diario": 553.07,
-                    "dias": 4.666666666666667,
-                    "numero_cuadrilla": 3,
-                    "horas_extras": "",
-                    "descripcion_horas_extras": "",
-                    "ponderacion": 0,
-                    "puntos": 0,
-                    "porcentaje": 0
-                },
-                {
-                    "clave": 1201,
-                    "nombre": "FLORES OROPEZA ENRIQUE",
-                    "puesto": "OF",
-                    "salario_diario": 553.07,
-                    "dias": 5.833333333333334,
-                    "numero_cuadrilla": 4,
-                    "horas_extras": "",
-                    "descripcion_horas_extras": "",
-                    "ponderacion": 0,
-                    "puntos": 0,
-                    "porcentaje": 0
-                },
-                {
-                    "clave": 1990,
-                    "nombre": "GUARDADO SÁNCHEZ MARTÍN",
+                    "clave": 4802,
+                    "nombre": "VILLA JAVIER",
                     "puesto": "PEON",
                     "salario_diario": 307.25,
-                    "dias": 7.0,
-                    "numero_cuadrilla": 5,
+                    "dias": 4.666666666666667,
+                    "numero_cuadrilla": 4,
                     "horas_extras": "",
                     "descripcion_horas_extras": "",
                     "ponderacion": 0,
@@ -172,7 +134,7 @@
             ],
             "subtitulos": [],
             "conceptos": [],
-            "actividades": "Limpieza general de obra, retirar escombro y chatarra"
+            "actividades": "Aseo general de obra, retirar escombro"
         }
     ]
 }

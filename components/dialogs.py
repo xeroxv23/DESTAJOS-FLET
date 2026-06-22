@@ -186,6 +186,38 @@ def abrir_dialogo_agregar_trabajador(
         multiline=True
     )
 
+    # !! ----------------------------------------------------------
+    # !! Construir controles según el tipo de cuadrilla.
+    # !!
+    # !! Destajo:
+    # !! - Nómina
+    # !! - Días
+    # !!
+    # !! Por día:
+    # !! - Nómina
+    # !! - Días
+    # !! - Horas extras
+    # !! - Descripción horas extras
+    # !! ----------------------------------------------------------
+
+    controles_dialogo = [
+
+        clave_input,
+
+        dias_input
+
+    ]
+
+    if cuadrilla["tipo"] == "dia":
+
+        controles_dialogo.extend([
+
+            horas_extras_input,
+
+            descripcion_horas_extras_input
+
+        ])
+
     def guardar(ev):
 
         trabajador = buscar_trabajador(
@@ -248,12 +280,9 @@ def abrir_dialogo_agregar_trabajador(
         ),
 
         content=ft.Column(
-            controls=[
-            clave_input,
-            dias_input,
-            horas_extras_input,
-            descripcion_horas_extras_input
-        ],
+
+            controls=controles_dialogo,
+        
             tight=True
         ),
 
