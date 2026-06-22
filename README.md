@@ -1,3 +1,4 @@
+# DESTAJOS-FLET
 # CAPTURADOR DESTAJOS
 
 ## Descripción General
@@ -382,14 +383,14 @@ Repositorio Git.
 Comando para respaldo:
 
 ```bash
-git add .
-git commit -m "Descripcion del avance"
+#git add .
+#git commit -m "Descripcion del avance"
 ```
 
 Ejemplo:
 
 ```bash
-git commit -m "Cuadrillas, trabajadores y conceptos funcionando"
+#git commit -m "Cuadrillas, trabajadores y conceptos funcionando"
 ```
 
 ---
@@ -428,3 +429,4 @@ Desarrollado en:
 Estado actual:
 
 En desarrollo activo.
+
