@@ -29,6 +29,8 @@ from components.dialogs import (
     abrir_dialogo_agregar_actividades
 )
 
+from export.excel_exporter import exportar_destajo
+
 
 # !! ==========================================================
 # !! OBRA_VIEW.PY
@@ -263,6 +265,352 @@ def obra_view(
 
         page.update()
 
+    def cerrar_destajo(e):
+
+        try:
+
+            guardar_captura_obra(
+                captura
+            )
+
+            # !! Lista temporal de residentes.
+            # !! Más adelante se llenará desde un diálogo.
+
+            residentes = []
+
+            def exportar_con_residentes():
+
+                porcentaje_input = ft.TextField(
+                    label="Porcentaje de maestreada"
+                )
+
+                def exportar_final(ev):
+
+                    porcentaje_maestreada = calcular_valor(
+                        porcentaje_input.value
+                    )
+
+                    if porcentaje_maestreada is None:
+                        print("Porcentaje de maestreada inválido")
+                        return
+
+                    dialog_maestreada.open = False
+                    page.update()
+
+                    ruta = exportar_destajo(
+                        captura,
+                        residentes,
+                        porcentaje_maestreada
+                    )
+
+                    dialog_resultado = ft.AlertDialog(
+
+                        title=ft.Text(
+                            "Destajo exportado"
+                        ),
+
+                        content=ft.Text(
+                            f"Se generó el archivo:\n{ruta}"
+                        ),
+
+                        actions=[
+
+                            ft.TextButton(
+                                "Aceptar",
+                                on_click=lambda ev: cerrar_resultado(ev)
+                            )
+
+                        ]
+
+                    )
+
+                    def cerrar_resultado(ev):
+
+                        dialog_resultado.open = False
+
+                        page.update()
+
+                    page.overlay.append(dialog_resultado)
+
+                    dialog_resultado.open = True
+
+                    page.update()
+
+                def cancelar(ev):
+
+                    dialog_maestreada.open = False
+
+                    page.update()
+
+                dialog_maestreada = ft.AlertDialog(
+
+                    title=ft.Text(
+                        "Maestreada"
+                    ),
+
+                    content=ft.Column(
+                        controls=[
+
+                            ft.Text(
+                                "Ingresa el porcentaje de maestreada de esta obra."
+                            ),
+
+                            porcentaje_input
+
+                        ],
+                        tight=True
+                    ),
+
+                    actions=[
+
+                        ft.TextButton(
+                            "Cancelar",
+                            on_click=cancelar
+                        ),
+
+                        ft.TextButton(
+                            "Exportar",
+                            on_click=exportar_final
+                        )
+
+                    ]
+
+                )
+
+                page.overlay.append(dialog_maestreada)
+
+                dialog_maestreada.open = True
+
+                page.update()
+
+            def no_capturar_residente(ev):
+
+                dialog_residente.open = False
+
+                page.update()
+
+                exportar_con_residentes()
+
+            def capturar_residente(ev):
+
+                dialog_residente.open = False
+                page.update()
+
+                clave_input = ft.TextField(
+                    label="Número de nómina"
+                )
+
+                dias_input = ft.TextField(
+                    label="Días trabajados"
+                )
+
+                horas_extras_input = ft.TextField(
+                    label="Horas extras"
+                )
+
+                descripcion_horas_extras_input = ft.TextField(
+                    label="Descripción horas extras",
+                    multiline=True
+                )
+
+                def guardar_residente(ev_guardar):
+
+                    trabajador_bd = buscar_trabajador(
+                        clave_input.value.strip()
+                    )
+
+                    if not trabajador_bd:
+                        print("Residente no encontrado")
+                        return
+
+                    dias = calcular_valor(
+                        dias_input.value
+                    )
+
+                    if dias is None:
+                        print("Días inválidos")
+                        return
+
+                    residentes.append({
+
+                        "clave": trabajador_bd[0],
+                        "nombre": trabajador_bd[1],
+                        "puesto": trabajador_bd[2],
+                        "salario_diario": float(
+                            trabajador_bd[3]
+                        ),
+                        "dias": dias,
+                        "horas_extras": horas_extras_input.value.strip(),
+                        "descripcion_horas_extras": descripcion_horas_extras_input.value.strip(),
+                        "ponderacion": 0,
+                        "puntos": 0,
+                        "porcentaje": 100
+
+                    })
+
+                    dialog_captura.open = False
+                    page.update()
+
+                    preguntar_otro_residente()
+
+                def cancelar_residente(ev_cancelar):
+
+                    dialog_captura.open = False
+                    page.update()
+
+                    preguntar_otro_residente()
+
+                dialog_captura = ft.AlertDialog(
+
+                    title=ft.Text(
+                        "Capturar Residente"
+                    ),
+
+                    content=ft.Column(
+                        controls=[
+                            clave_input,
+                            dias_input,
+                            horas_extras_input,
+                            descripcion_horas_extras_input
+                        ],
+                        tight=True
+                    ),
+
+                    actions=[
+
+                        ft.TextButton(
+                            "Cancelar",
+                            on_click=cancelar_residente
+                        ),
+
+                        ft.TextButton(
+                            "Guardar",
+                            on_click=guardar_residente
+                        )
+
+                    ]
+
+                )
+
+                page.overlay.append(dialog_captura)
+                dialog_captura.open = True
+                page.update()
+
+            def preguntar_otro_residente():
+
+                def si_otro(ev):
+
+                    dialog_otro.open = False
+                    page.update()
+
+                    capturar_residente(ev)
+
+                def no_otro(ev):
+
+                    dialog_otro.open = False
+                    page.update()
+
+                    exportar_con_residentes()
+
+                dialog_otro = ft.AlertDialog(
+
+                    title=ft.Text(
+                        "Captura de Residente"
+                    ),
+
+                    content=ft.Text(
+                        "¿Desea capturar otro residente?"
+                    ),
+
+                    actions=[
+
+                        ft.TextButton(
+                            "No",
+                            on_click=no_otro
+                        ),
+
+                        ft.TextButton(
+                            "Sí",
+                            on_click=si_otro
+                        )
+
+                    ]
+
+                )
+
+                page.overlay.append(dialog_otro)
+                dialog_otro.open = True
+                page.update()
+
+            dialog_residente = ft.AlertDialog(
+
+                title=ft.Text(
+                    "Captura de Residente"
+                ),
+
+                content=ft.Text(
+                    "¿Desea capturar residente?"
+                ),
+
+                actions=[
+
+                    ft.TextButton(
+                        "No",
+                        on_click=no_capturar_residente
+                    ),
+
+                    ft.TextButton(
+                        "Sí",
+                        on_click=lambda ev: capturar_residente(ev)
+                    )
+
+                ]
+
+            )
+
+            page.overlay.append(dialog_residente)
+
+            dialog_residente.open = True
+
+            page.update()
+
+            return
+
+        except Exception as error:
+
+            dialog = ft.AlertDialog(
+
+                title=ft.Text(
+                    "Error al exportar"
+                ),
+
+                content=ft.Text(
+                    str(error)
+                ),
+
+                actions=[
+
+                    ft.TextButton(
+                        "Aceptar",
+                        on_click=lambda ev: cerrar_error(ev)
+                    )
+
+                ]
+
+            )
+
+            def cerrar_error(ev):
+
+                dialog.open = False
+
+                page.update()
+
+            page.overlay.append(dialog)
+
+            dialog.open = True
+
+            page.update()
+
     def agregar_actividades(cuadrilla):
 
         abrir_dialogo_agregar_actividades(
@@ -347,9 +695,8 @@ def obra_view(
                             ),
 
                             ft.ElevatedButton(
-                                content=ft.Text(
-                                    "Cerrar Destajo"
-                                )
+                                content=ft.Text("Cerrar Destajo"),
+                                on_click=cerrar_destajo
                             )
 
                         ]

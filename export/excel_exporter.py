@@ -151,6 +151,67 @@ def escribir_horas_extras(
 
     return True
 
+def dividir_texto_por_palabras(
+    texto,
+    limite=40
+):
+
+    texto = texto.strip()
+
+    if texto == "":
+        return []
+
+    palabras = texto.split()
+
+    lineas = []
+    linea_actual = ""
+
+    for palabra in palabras:
+
+        if linea_actual == "":
+
+            linea_actual = palabra
+
+        elif len(linea_actual) + 1 + len(palabra) <= limite:
+
+            linea_actual += " " + palabra
+
+        else:
+
+            lineas.append(
+                linea_actual
+            )
+
+            linea_actual = palabra
+
+    if linea_actual:
+
+        lineas.append(
+            linea_actual
+        )
+
+    return lineas
+
+def escribir_actividades(
+    hoja,
+    fila,
+    actividades,
+    limite=40
+):
+
+    lineas = dividir_texto_por_palabras(
+        actividades,
+        limite
+    )
+
+    for linea in lineas:
+
+        hoja.range(f"D{fila}").value = linea
+
+        fila += 1
+
+    return fila
+
 def exportar_captura(
     hoja,
     captura,
@@ -192,9 +253,12 @@ def exportar_captura(
 
             if actividades:
 
-                hoja.range(f"D{fila}").value = actividades
-
-                fila += 1
+                fila = escribir_actividades(
+                    hoja,
+                    fila,
+                    actividades,
+                    limite=40
+                )
 
             # !! Espacio entre bloques.
             fila += 1
@@ -250,16 +314,29 @@ def exportar_captura(
 
     return fila
 
-def exportar_prueba_encabezado(captura):
+def exportar_destajo(
+    captura,
+    residentes=None,
+    porcentaje_maestreada=None
+):
+
+    # !! Si no se enviaron residentes,
+    # !! trabajamos con una lista vacía.
+
+    if residentes is None:
+
+        residentes = []
 
     semana = captura["semana"]
 
     clave_obra = captura["clave_obra"]
+
     nombre_obra = captura["nombre_obra"]
+
     direccion_obra = captura.get(
-    "direccion_obra",
-    ""
-)
+        "direccion_obra",
+        ""
+    )
 
     nombre_archivo = limpiar_nombre_archivo(
         f"{clave_obra} {nombre_obra}.xlsm"
@@ -310,6 +387,26 @@ def exportar_prueba_encabezado(captura):
             fila_inicial=15
         )
 
+        # !! ----------------------------------------------------------
+        # !! Sección fija de destajista
+        # !! ----------------------------------------------------------
+        
+        escribir_destajista_base(
+            hoja
+        )
+
+        ultima_fila_residente = escribir_residentes(
+            hoja,
+            residentes,
+            fila_inicial=355,
+            numero_inicial=61
+        )
+
+        escribir_maestreada(
+            hoja,
+            porcentaje_maestreada
+        )
+
         libro.save()
 
         libro.close()
@@ -326,7 +423,14 @@ def escribir_subtitulo(
     subtitulo
 ):
 
-    hoja.range(f"D{fila}").value = subtitulo["nombre"]
+    celda = hoja.range(
+        f"D{fila}"
+    )
+
+    celda.value = subtitulo["nombre"]
+
+    # !! Aplicar negrita
+    celda.api.Font.Bold = True
 
 def escribir_concepto(
     hoja,
@@ -349,3 +453,102 @@ def escribir_concepto(
     hoja.range(f"J{fila}").value = concepto.get("ancho", "")
     hoja.range(f"K{fila}").value = concepto.get("alto", "")
     hoja.range(f"L{fila}").value = concepto.get("piezas", "")
+
+def escribir_destajista_base(hoja):
+
+    # !! Fila fija del destajista
+    hoja.range("A353").value = 34
+    hoja.range("B353").value = 60
+    hoja.range("S353").value = 1
+
+    # !! Fila fija del concepto destajista
+    hoja.range("A354").value = "destaj"
+    hoja.range("B354").value = 60
+    hoja.range("H354").value = 0.04
+    hoja.range("L354").value = 1
+    hoja.range("P354").value = 60
+
+def escribir_residentes(
+    hoja,
+    residentes,
+    fila_inicial=355,
+    numero_inicial=61
+):
+
+    fila = fila_inicial
+    numero_cuadrilla = numero_inicial
+
+    for residente in residentes:
+
+        residente["numero_cuadrilla"] = numero_cuadrilla
+
+        # !! Fila del residente
+        escribir_trabajador(
+            hoja,
+            fila,
+            residente,
+            "dia"
+        )
+
+        fila_residente = fila
+
+        fila += 1
+
+        # !! Fila debajo del residente:
+        # !! Columna D = puesto
+        hoja.range(f"D{fila}").value = residente.get(
+            "puesto",
+            ""
+        )
+
+        fila_puesto = fila
+
+        fila += 1
+
+        # !! Horas extras, si existen.
+        # !! Se capturan después del puesto.
+        tiene_horas_extras = escribir_horas_extras(
+            hoja,
+            fila,
+            residente
+        )
+
+        if tiene_horas_extras:
+
+            # !! Si existen horas extras,
+            # !! la columna P debe cerrar en la fila de HE.
+            hoja.range(f"P{fila_residente}").value = None
+            hoja.range(f"P{fila_puesto}").value = None
+
+            fila += 1
+
+        else:
+
+            # !! Si NO existen horas extras,
+            # !! la columna P queda en la fila del residente.
+            hoja.range(f"P{fila_residente}").value = numero_cuadrilla
+
+        # !! Espacio entre residentes
+        fila += 1
+
+        numero_cuadrilla += 1
+
+    return fila
+
+def escribir_maestreada(
+    hoja,
+    porcentaje_maestreada
+):
+
+    if porcentaje_maestreada is None:
+        return
+
+    hoja.range("A393").value = "lote"
+    hoja.range("B393").value = 75
+    hoja.range("D393").value = "MANDOS INTERMEDIOS"
+    hoja.range("H393").value = porcentaje_maestreada / 100
+    hoja.range("L393").value = 1
+    hoja.range("P393").value = 75
+
+
+#END

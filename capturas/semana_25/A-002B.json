@@ -1,0 +1,150 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "A-002B",
+    "nombre_obra": "MANTENIMIENTO DE APOYO VICKY AV ESPAÑA #1840",
+    "direccion_obra": "AV. ESPAÑA #1840 COL. MODERNA",
+    "cuadrillas": [
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 2022,
+                    "nombre": "PEREZ CONTRERAS JESUS",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "5",
+                    "descripcion_horas_extras": "Semana del 22 al 29",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 3725,
+                    "nombre": "ARROYO SANCHEZ JOSE CARLOS",
+                    "puesto": "PEON",
+                    "salario_diario": 307.25,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "5",
+                    "descripcion_horas_extras": "Semana del 22 al 29",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 4220,
+                    "nombre": "CORTES CAMPOS ROBERTO",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 3,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 1201,
+                    "nombre": "FLORES OROPEZA ENRIQUE",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 4.666666666666667,
+                    "numero_cuadrilla": 4,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 1990,
+                    "nombre": "GUARDADO SÁNCHEZ MARTÍN",
+                    "puesto": "PEON",
+                    "salario_diario": 307.25,
+                    "dias": 3.5,
+                    "numero_cuadrilla": 5,
+                    "horas_extras": "2",
+                    "descripcion_horas_extras": "Domingo de 2 a 4",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": "SWEWJFJIDHEJIFEJIFGEJ DEJIOFEJGIEJGEIJFIEJFIE DEMIFEJGIEJGIEJIFJEIJN ENJEINHDFEDU IJEWIEQWJEYCNVTYE JEQLEQ8ETDBCO EIYEQBEJQDIADYEGTEBDIADYAEQWE"
+        },
+        {
+            "numero": 6,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 4537,
+                    "nombre": "VILLA LÓPEZ RUBÉN ERASMO",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 5.0,
+                    "numero_cuadrilla": 6,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 300.0,
+                    "porcentaje": 33.33333333333333
+                },
+                {
+                    "clave": 4587,
+                    "nombre": "VILLA LÓPEZ DAVID RIGOBERTO",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 5.0,
+                    "numero_cuadrilla": 6,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 300.0,
+                    "porcentaje": 33.33333333333333
+                },
+                {
+                    "clave": 4531,
+                    "nombre": "VILLA LOPEZ JOSE MARIA",
+                    "puesto": "OF",
+                    "salario_diario": 553.07,
+                    "dias": 5.0,
+                    "numero_cuadrilla": 6,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 300.0,
+                    "porcentaje": 33.33333333333333
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "EJE 2 A-E",
+                    "conceptos": [
+                        {
+                            "clave": "EXC05",
+                            "descripcion": "Excavacion terreno B 0.00-1.50 prof.",
+                            "unidad": "M3",
+                            "largo": "31.9",
+                            "ancho": "0.8",
+                            "alto": "1.2",
+                            "piezas": "1",
+                            "notas": ""
+                        }
+                    ]
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

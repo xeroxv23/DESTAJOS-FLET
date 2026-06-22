@@ -287,7 +287,7 @@ def obras_view(page, semana_actual):
     # !! ----------------------------------------------------------
     def filtrar_obras(e):
 
-        texto = e.control.value.strip()
+        texto = e.control.value.strip().upper()
 
         # ! Si no hay texto
         # ! mostrar mensaje inicial
@@ -327,7 +327,9 @@ def obras_view(page, semana_actual):
 
     buscador = ft.TextField(
         label="Buscar obra por clave",
-        width=350,
+        width=400,
+        text_size=18,
+        autofocus=True,
         on_change=filtrar_obras
     )
 

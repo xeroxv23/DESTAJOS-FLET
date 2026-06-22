@@ -294,8 +294,8 @@ def buscar_concepto(clave):
     cursor.execute("""
         SELECT *
         FROM conceptos
-        WHERE clave = ?
-    """, (clave,))
+        WHERE UPPER(clave) = ?
+    """, (clave.upper(),))
 
     concepto = cursor.fetchone()
 
