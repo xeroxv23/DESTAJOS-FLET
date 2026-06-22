@@ -2,46 +2,48 @@ import flet as ft
 
 from views.login_view import login_view
 
+#region  MAIN.PY
+    # !! ==========================================================
+    # !! MAIN.PY
+    # !!
+    # !! Archivo principal de arranque de la aplicación.
+    # !!
+    # !! Responsabilidades:
+    # !! - Inicializar Flet.
+    # !! - Configurar la ventana principal.
+    # !! - Cargar la primera vista del sistema.
+    # !! - Definir carpeta de assets.
+    # !!
+    # !! Este archivo NO debe contener lógica de negocio.
+    # !! No debe consultar SQLite.
+    # !! No debe capturar destajos.
+    # !!
+    # !! Solo debe encargarse del arranque general.
+    # !! ==========================================================
+#endregion
 
-# !! ==========================================================
-# !! MAIN.PY
-# !!
-# !! Archivo principal de arranque de la aplicación.
-# !!
-# !! Responsabilidades:
-# !! - Inicializar Flet.
-# !! - Configurar la ventana principal.
-# !! - Cargar la primera vista del sistema.
-# !! - Definir carpeta de assets.
-# !!
-# !! Este archivo NO debe contener lógica de negocio.
-# !! No debe consultar SQLite.
-# !! No debe capturar destajos.
-# !!
-# !! Solo debe encargarse del arranque general.
-# !! ==========================================================
-
-
-# !! ==========================================================
-# !! FLUJO GENERAL DE LA APLICACION
-# !!
-# !! Login
-# !!   ↓
-# !! Listado de Obras
-# !!   ↓
-# !! Obra Seleccionada
-# !!   ↓
-# !! Captura de Destajos
-# !!   ↓
-# !! Exportar Obra
-# !!
-# !! ==========================================================
-
+#region !! FLUJO GENERAL DE LA APLICACION
+    # !! ==========================================================
+    # !!
+    # !! Login
+    # !!   ↓
+    # !! Listado de Obras
+    # !!   ↓
+    # !! Obra Seleccionada
+    # !!   ↓
+    # !! Captura de Destajos
+    # !!   ↓
+    # !! Exportar Obra
+    # !!
+    # !! ==========================================================
+#endregion
 
 def main(page: ft.Page):
 
     # ! Título de la ventana de la aplicación.
     page.title = "Capturador Destajos"
+
+    page.theme_mode = ft.ThemeMode.DARK
 
     # !! ----------------------------------------------------------
     # !! CONFIGURACION PARA DESARROLLO EN PC

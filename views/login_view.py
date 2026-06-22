@@ -3,30 +3,32 @@ import flet as ft
 from database_manager import validar_usuario
 from views.semanas_view import semanas_view
 
-# !! ==========================================================
-# !! LOGIN_VIEW.PY
-# !!
-# !! Primera pantalla del sistema.
-# !!
-# !! Funciones principales:
-# !! - Solicitar usuario
-# !! - Solicitar contraseña
-# !! - Validar acceso contra SQLite
-# !! - Redirigir al listado de obras
-# !!
-# !! Flujo:
-# !!
-# !! main.py
-# !!     ↓
-# !! login_view.py
-# !!     ↓
-# !! validar_usuario()
-# !!     ↓
-# !! obras_view.py
-# !!
-# !! Esta vista NO consulta directamente SQLite.
-# !! Utiliza database_manager.py para validar credenciales.
-# !! ==========================================================
+#region LOGINVIEW.PY
+    # !! ==========================================================
+    # !! LOGIN_VIEW.PY
+    # !!
+    # !! Primera pantalla del sistema.
+    # !!
+    # !! Funciones principales:
+    # !! - Solicitar usuario
+    # !! - Solicitar contraseña
+    # !! - Validar acceso contra SQLite
+    # !! - Redirigir al listado de obras
+    # !!
+    # !! Flujo:
+    # !!
+    # !! main.py
+    # !!     ↓
+    # !! login_view.py
+    # !!     ↓
+    # !! validar_usuario()
+    # !!     ↓
+    # !! obras_view.py
+    # !!
+    # !! Esta vista NO consulta directamente SQLite.
+    # !! Utiliza database_manager.py para validar credenciales.
+    # !! ==========================================================
+#endregion
 
 
 def login_view(page):
@@ -52,21 +54,23 @@ def login_view(page):
         "",
         color="red"
     )
+#region INICIAR SESION
+        # !! ----------------------------------------------------------
+        # !! iniciar_sesion()
+        # !!
+        # !! Se ejecuta cuando el usuario presiona:
+        # !! [ Entrar ]
+        # !!
+        # !! Pasos:
+        # !! 1. Leer usuario y contraseña
+        # !! 2. Consultar SQLite
+        # !! 3. Si son válidos:
+        # !!       abrir obras_view
+        # !! 4. Si son inválidos:
+        # !!       mostrar mensaje de error
+        # !! ----------------------------------------------------------
+#endregion
 
-    # !! ----------------------------------------------------------
-    # !! iniciar_sesion()
-    # !!
-    # !! Se ejecuta cuando el usuario presiona:
-    # !! [ Entrar ]
-    # !!
-    # !! Pasos:
-    # !! 1. Leer usuario y contraseña
-    # !! 2. Consultar SQLite
-    # !! 3. Si son válidos:
-    # !!       abrir obras_view
-    # !! 4. Si son inválidos:
-    # !!       mostrar mensaje de error
-    # !! ----------------------------------------------------------
     def iniciar_sesion(e):
 
         usuario = txt_usuario.value.strip()
@@ -100,20 +104,25 @@ def login_view(page):
 
             page.update()
 
-    # !! ==========================================================
-    # !! RETURN DE LA VISTA
-    # !!
-    # !! Construcción visual del Login
-    # !!
-    # !! Contiene:
-    # !! - Logo
-    # !! - Usuario
-    # !! - Contraseña
-    # !! - Mensajes de error
-    # !! - Botón Entrar
-    # !! ==========================================================
+#region  RETURN DE LA VISTA 
+
+    #  ==========================================================    
+
+    #  Construcción visual del Login
+    # 
+    #  Contiene:
+    #  - Logo
+    #  - Usuario
+    #  - Contraseña
+    #  - Mensajes de error
+    #  - Botón Entrar
+    #  ==========================================================
+#endregion
+
     return ft.View(
         route="/",
+        # SI QUISIERAMOS CAMBIAR EL COLOR 
+        #bgcolor="#3A4134",
 
         controls=[
 
@@ -121,9 +130,26 @@ def login_view(page):
             ft.Container(height=30),
 
             # ! Logo principal
-            ft.Image(
-                src="logo.jpg",
-                width=220
+            ft.Container(
+                width=260,
+                height=260,
+                border_radius=220,
+
+                border=ft.Border(
+                    left=ft.BorderSide(0.5, "black"),
+                    top=ft.BorderSide(0.5, "black"),
+                    right=ft.BorderSide(0.5, "black"),
+                    bottom=ft.BorderSide(0.5, "black"),
+                ),
+
+                clip_behavior=ft.ClipBehavior.HARD_EDGE,
+
+                content=ft.Image(
+                    src="logo.jpg",
+                    width=220,
+                    height=220,
+                    fit="cover"
+                )
             ),
 
             # ! Nombre de la aplicación
