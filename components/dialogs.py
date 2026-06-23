@@ -1,25 +1,43 @@
 import flet as ft
 
+from styles import (
+    COLOR_PRIMARY,
+    COLOR_BACKGROUND,
+    COLOR_SURFACE,
+    COLOR_TEXT,
+    COLOR_MUTED,
+    COLOR_SUCCESS,
+    COLOR_DANGER,
+    COLOR_BORDER,
+    CARD_RADIUS,
+    BUTTON_HEIGHT,
+    SUBTITLE_SIZE,
+    TEXT_SIZE,
+    SMALL_TEXT_SIZE,
+)
 
-# !! ==========================================================
-# !! DIALOGS.PY
-# !!
-# !! Biblioteca central de formularios emergentes.
-# !!
-# !! Responsabilidades:
-# !! - Nueva Cuadrilla
-# !! - Agregar Trabajador
-# !! - Agregar Subtítulo
-# !! - Agregar Concepto
-# !!
-# !! Beneficio:
-# !!
-# !! obra_view.py ya no contiene cientos
-# !! de líneas de formularios.
-# !!
-# !! Toda la captura de información vive aquí.
-# !!
-# !! ==========================================================
+
+#region DIALOGS.PY
+
+def campo_texto(label, multiline=False, value=""):
+    return ft.TextField(
+        label=label,
+        value=value,
+        multiline=multiline,
+        height=90 if multiline else 56,
+        border_color=COLOR_BORDER,
+        focused_border_color=COLOR_PRIMARY,
+        text_size=TEXT_SIZE,
+    )
+
+
+def texto_error():
+    return ft.Text(
+        "",
+        color=COLOR_DANGER,
+        size=SMALL_TEXT_SIZE,
+    )
+
 
 def abrir_dialogo_nueva_cuadrilla(
     page,
@@ -29,89 +47,87 @@ def abrir_dialogo_nueva_cuadrilla(
     actualizar_cuadrillas
 ):
 
+    mensaje = texto_error()
+
     tipo = ft.RadioGroup(
-
         content=ft.Column(
-
+            spacing=8,
             controls=[
-
-                ft.Radio(
-                    value="dia",
-                    label="Por Día"
-                ),
-
-                ft.Radio(
-                    value="destajo",
-                    label="Destajo"
-                )
-
-            ]
-
+                ft.Radio(value="dia", label="Por día"),
+                ft.Radio(value="destajo", label="Destajo"),
+            ],
         )
-
     )
 
     def guardar(ev):
 
         if not tipo.value:
+            mensaje.value = "Selecciona el tipo de cuadrilla"
+            page.update()
             return
 
         if tipo.value == "destajo":
-
-            numero = obtener_siguiente_numero_cuadrilla(
-                cuadrillas
-            )
-
+            numero = obtener_siguiente_numero_cuadrilla(cuadrillas)
         else:
-
             numero = None
 
         cuadrillas.append(
-            crear_cuadrilla(
-                numero,
-                tipo.value
-            )
+            crear_cuadrilla(numero, tipo.value)
         )
 
         dialog.open = False
-
         actualizar_cuadrillas()
 
     def cancelar(ev):
-
         dialog.open = False
-
         page.update()
 
     dialog = ft.AlertDialog(
+        modal=True,
 
         title=ft.Text(
-            "Nueva Cuadrilla"
+            "Nueva cuadrilla",
+            size=SUBTITLE_SIZE,
+            weight=ft.FontWeight.BOLD,
+            color=COLOR_TEXT,
         ),
 
-        content=tipo,
+        content=ft.Container(
+            width=380,
+            content=ft.Column(
+                spacing=14,
+                tight=True,
+                controls=[
+                    ft.Text(
+                        "Selecciona cómo se capturará el trabajo.",
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                    tipo,
+                    mensaje,
+                ],
+            ),
+        ),
 
         actions=[
-
             ft.TextButton(
                 "Cancelar",
-                on_click=cancelar
+                on_click=cancelar,
             ),
-
-            ft.TextButton(
-                "Guardar",
-                on_click=guardar
-            )
-
-        ]
-
+            ft.ElevatedButton(
+                height=BUTTON_HEIGHT,
+                bgcolor=COLOR_PRIMARY,
+                color="white",
+                content=ft.Text("Guardar"),
+                on_click=guardar,
+            ),
+        ],
     )
 
     page.overlay.append(dialog)
-
     dialog.open = True
-
     page.update()
+
 
 def abrir_dialogo_agregar_subtitulo(
     page,
@@ -120,15 +136,19 @@ def abrir_dialogo_agregar_subtitulo(
     actualizar_cuadrillas
 ):
 
-    nombre_input = ft.TextField(
-        label="Nombre del subtítulo"
+    mensaje = texto_error()
+
+    nombre_input = campo_texto(
+        "Nombre del subtítulo"
     )
 
     def guardar(ev):
 
-        nombre = nombre_input.value.strip()
+        nombre = nombre_input.value.strip().upper()
 
         if nombre == "":
+            mensaje.value = "Captura el nombre del subtítulo"
+            page.update()
             return
 
         cuadrilla["subtitulos"].append(
@@ -136,26 +156,58 @@ def abrir_dialogo_agregar_subtitulo(
         )
 
         dialog.open = False
-
         actualizar_cuadrillas()
 
     def cancelar(ev):
-
         dialog.open = False
         page.update()
 
     dialog = ft.AlertDialog(
-        title=ft.Text("Nuevo Subtítulo"),
-        content=nombre_input,
+        modal=True,
+
+        title=ft.Text(
+            "Nuevo subtítulo",
+            size=SUBTITLE_SIZE,
+            weight=ft.FontWeight.BOLD,
+            color=COLOR_TEXT,
+        ),
+
+        content=ft.Container(
+            width=420,
+            content=ft.Column(
+                spacing=14,
+                tight=True,
+                controls=[
+                    ft.Text(
+                        "Ejemplo: RECÁMARA 1, BAÑO PRINCIPAL, PATIO.",
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                    nombre_input,
+                    mensaje,
+                ],
+            ),
+        ),
+
         actions=[
-            ft.TextButton("Cancelar", on_click=cancelar),
-            ft.TextButton("Guardar", on_click=guardar)
-        ]
+            ft.TextButton(
+                "Cancelar",
+                on_click=cancelar,
+            ),
+            ft.ElevatedButton(
+                height=BUTTON_HEIGHT,
+                bgcolor=COLOR_PRIMARY,
+                color="white",
+                content=ft.Text("Guardar"),
+                on_click=guardar,
+            ),
+        ],
     )
 
     page.overlay.append(dialog)
     dialog.open = True
     page.update()
+
 
 def abrir_dialogo_agregar_trabajador(
     page,
@@ -169,81 +221,55 @@ def abrir_dialogo_agregar_trabajador(
     actualizar_cuadrillas
 ):
 
-    clave_input = ft.TextField(
-        label="Número de nómina"
-    )
+    mensaje = texto_error()
 
-    dias_input = ft.TextField(
-        label="Días trabajados"
+    clave_input = campo_texto("Número de nómina")
+    dias_input = campo_texto("Días trabajados")
+    horas_extras_input = campo_texto("Horas extras")
+    descripcion_horas_extras_input = campo_texto(
+        "Descripción horas extras",
+        multiline=True,
     )
-
-    horas_extras_input = ft.TextField(
-        label="Horas extras"
-    )
-
-    descripcion_horas_extras_input = ft.TextField(
-        label="Descripción horas extras",
-        multiline=True
-    )
-
-    # !! ----------------------------------------------------------
-    # !! Construir controles según el tipo de cuadrilla.
-    # !!
-    # !! Destajo:
-    # !! - Nómina
-    # !! - Días
-    # !!
-    # !! Por día:
-    # !! - Nómina
-    # !! - Días
-    # !! - Horas extras
-    # !! - Descripción horas extras
-    # !! ----------------------------------------------------------
 
     controles_dialogo = [
-
         clave_input,
-
-        dias_input
-
+        dias_input,
     ]
 
     if cuadrilla["tipo"] == "dia":
-
         controles_dialogo.extend([
-
             horas_extras_input,
-
-            descripcion_horas_extras_input
-
+            descripcion_horas_extras_input,
         ])
+
+    controles_dialogo.append(mensaje)
 
     def guardar(ev):
 
-        trabajador = buscar_trabajador(
-            clave_input.value
-        )
+        clave = clave_input.value.strip()
 
-        if not trabajador:
-            print("Trabajador no encontrado")
+        if clave == "":
+            mensaje.value = "Captura el número de nómina"
+            page.update()
             return
 
-        dias = calcular_valor(
-            dias_input.value
-        )
+        trabajador = buscar_trabajador(clave)
+
+        if not trabajador:
+            mensaje.value = "Trabajador no encontrado"
+            page.update()
+            return
+
+        dias = calcular_valor(dias_input.value)
 
         if dias is None:
-            print("Fórmula inválida")
+            mensaje.value = "Días trabajados inválidos"
+            page.update()
             return
 
         if cuadrilla["tipo"] == "dia":
-
-            numero_cuadrilla = obtener_siguiente_numero_cuadrilla(
-                cuadrillas
-            )
-
+            numero_cuadrilla = obtener_siguiente_numero_cuadrilla(cuadrillas)
         else:
-
             numero_cuadrilla = cuadrilla["numero"]
 
         cuadrilla["trabajadores"].append(
@@ -256,52 +282,61 @@ def abrir_dialogo_agregar_trabajador(
             )
         )
 
-        # !! Solo las cuadrillas de destajo
-        # !! calculan porcentajes de participación.
         if cuadrilla["tipo"] == "destajo":
-
-            recalcular_cuadrilla(
-                cuadrilla
-            )
+            recalcular_cuadrilla(cuadrilla)
 
         dialog.open = False
-
         actualizar_cuadrillas()
 
     def cancelar(ev):
-
         dialog.open = False
         page.update()
 
     dialog = ft.AlertDialog(
+        modal=True,
 
         title=ft.Text(
-            "Agregar Trabajador"
+            "Agregar trabajador",
+            size=SUBTITLE_SIZE,
+            weight=ft.FontWeight.BOLD,
+            color=COLOR_TEXT,
         ),
 
-        content=ft.Column(
-
-            controls=controles_dialogo,
-        
-            tight=True
+        content=ft.Container(
+            width=460,
+            content=ft.Column(
+                spacing=14,
+                tight=True,
+                controls=[
+                    ft.Text(
+                        "Captura el número de nómina y los días trabajados.",
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                    *controles_dialogo,
+                ],
+            ),
         ),
 
         actions=[
             ft.TextButton(
                 "Cancelar",
-                on_click=cancelar
+                on_click=cancelar,
             ),
-
-            ft.TextButton(
-                "Guardar",
-                on_click=guardar
-            )
-        ]
+            ft.ElevatedButton(
+                height=BUTTON_HEIGHT,
+                bgcolor=COLOR_PRIMARY,
+                color="white",
+                content=ft.Text("Guardar"),
+                on_click=guardar,
+            ),
+        ],
     )
 
     page.overlay.append(dialog)
     dialog.open = True
     page.update()
+
 
 def abrir_dialogo_agregar_concepto(
     page,
@@ -311,27 +346,40 @@ def abrir_dialogo_agregar_concepto(
     actualizar_cuadrillas
 ):
 
-    clave_input = ft.TextField(label="Clave Concepto")
-    largo_input = ft.TextField(label="Largo")
-    ancho_input = ft.TextField(label="Ancho")
-    alto_input = ft.TextField(label="Alto")
-    piezas_input = ft.TextField(label="Piezas")
-    notas_input = ft.TextField(label="Notas", multiline=True)
+    mensaje = texto_error()
 
-    concepto_info = ft.Text("")
+    clave_input = campo_texto("Clave concepto")
+    largo_input = campo_texto("Largo")
+    ancho_input = campo_texto("Ancho")
+    alto_input = campo_texto("Alto")
+    piezas_input = campo_texto("Piezas")
+    notas_input = campo_texto("Notas", multiline=True)
+
+    concepto_info = ft.Container(
+        padding=12,
+        bgcolor=COLOR_BACKGROUND,
+        border_radius=CARD_RADIUS,
+        content=ft.Text(
+            "Escribe una clave para consultar el concepto.",
+            size=SMALL_TEXT_SIZE,
+            color=COLOR_MUTED,
+        ),
+    )
 
     def consultar_concepto(e):
 
         concepto_bd = buscar_concepto(
-            clave_input.value.strip()
+            clave_input.value.strip().upper()
         )
 
         if concepto_bd:
-            concepto_info.value = (
+            concepto_info.content.value = (
                 f"{concepto_bd[1]} | Unidad: {concepto_bd[2]}"
             )
+            concepto_info.content.color = COLOR_SUCCESS
         else:
-            concepto_info.value = "Concepto no encontrado"
+            concepto_info.content.value = "Concepto no encontrado"
+            concepto_info.content.color = COLOR_DANGER
 
         page.update()
 
@@ -339,12 +387,18 @@ def abrir_dialogo_agregar_concepto(
 
     def guardar(ev):
 
-        concepto_bd = buscar_concepto(
-            clave_input.value.strip()
-        )
+        clave = clave_input.value.strip().upper()
+
+        if clave == "":
+            mensaje.value = "Captura la clave del concepto"
+            page.update()
+            return
+
+        concepto_bd = buscar_concepto(clave)
 
         if not concepto_bd:
-            print("Concepto no encontrado")
+            mensaje.value = "Concepto no encontrado"
+            page.update()
             return
 
         subtitulo["conceptos"].append(
@@ -359,40 +413,74 @@ def abrir_dialogo_agregar_concepto(
         )
 
         dialog.open = False
-
         actualizar_cuadrillas()
 
     def cancelar(ev):
-
         dialog.open = False
         page.update()
 
     dialog = ft.AlertDialog(
+        modal=True,
 
-        title=ft.Text("Nuevo Concepto"),
+        title=ft.Text(
+            "Nuevo concepto",
+            size=SUBTITLE_SIZE,
+            weight=ft.FontWeight.BOLD,
+            color=COLOR_TEXT,
+        ),
 
-        content=ft.Column(
-            controls=[
-                clave_input,
-                concepto_info,
-                largo_input,
-                ancho_input,
-                alto_input,
-                piezas_input,
-                notas_input
-            ],
-            tight=True
+        content=ft.Container(
+            width=520,
+            content=ft.Column(
+                spacing=14,
+                tight=True,
+                controls=[
+                    ft.Text(
+                        "Captura la clave del concepto y sus medidas.",
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                    clave_input,
+                    concepto_info,
+                    ft.Row(
+                        spacing=10,
+                        controls=[
+                            ft.Container(expand=True, content=largo_input),
+                            ft.Container(expand=True, content=ancho_input),
+                        ],
+                    ),
+                    ft.Row(
+                        spacing=10,
+                        controls=[
+                            ft.Container(expand=True, content=alto_input),
+                            ft.Container(expand=True, content=piezas_input),
+                        ],
+                    ),
+                    notas_input,
+                    mensaje,
+                ],
+            ),
         ),
 
         actions=[
-            ft.TextButton("Cancelar", on_click=cancelar),
-            ft.TextButton("Guardar", on_click=guardar)
-        ]
+            ft.TextButton(
+                "Cancelar",
+                on_click=cancelar,
+            ),
+            ft.ElevatedButton(
+                height=BUTTON_HEIGHT,
+                bgcolor=COLOR_PRIMARY,
+                color="white",
+                content=ft.Text("Guardar"),
+                on_click=guardar,
+            ),
+        ],
     )
 
     page.overlay.append(dialog)
     dialog.open = True
     page.update()
+
 
 def abrir_dialogo_agregar_actividades(
     page,
@@ -400,54 +488,76 @@ def abrir_dialogo_agregar_actividades(
     actualizar_cuadrillas
 ):
 
-    actividades_input = ft.TextField(
-        label="Actividades realizadas",
+    mensaje = texto_error()
+
+    actividades_input = campo_texto(
+        "Actividades realizadas",
         multiline=True,
         value=subtitulo.get("actividades", "")
     )
 
     def guardar(ev):
 
-        subtitulo["actividades"] = actividades_input.value.strip()
+        actividades = actividades_input.value.strip()
+
+        if actividades == "":
+            mensaje.value = "Captura las actividades realizadas"
+            page.update()
+            return
+
+        subtitulo["actividades"] = actividades
 
         dialog.open = False
-
         actualizar_cuadrillas()
 
     def cancelar(ev):
-
         dialog.open = False
-
         page.update()
 
     dialog = ft.AlertDialog(
+        modal=True,
 
         title=ft.Text(
-            "Agregar Actividades"
+            "Agregar actividades",
+            size=SUBTITLE_SIZE,
+            weight=ft.FontWeight.BOLD,
+            color=COLOR_TEXT,
         ),
 
-        content=actividades_input,
+        content=ft.Container(
+            width=520,
+            content=ft.Column(
+                spacing=14,
+                tight=True,
+                controls=[
+                    ft.Text(
+                        "Describe las actividades realizadas en este subtítulo.",
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                    actividades_input,
+                    mensaje,
+                ],
+            ),
+        ),
 
         actions=[
-
             ft.TextButton(
                 "Cancelar",
-                on_click=cancelar
+                on_click=cancelar,
             ),
-
-            ft.TextButton(
-                "Guardar",
-                on_click=guardar
-            )
-
-        ]
-
+            ft.ElevatedButton(
+                height=BUTTON_HEIGHT,
+                bgcolor=COLOR_PRIMARY,
+                color="white",
+                content=ft.Text("Guardar"),
+                on_click=guardar,
+            ),
+        ],
     )
 
     page.overlay.append(dialog)
-
     dialog.open = True
-
     page.update()
 
-# CODIGO
+#endregion
