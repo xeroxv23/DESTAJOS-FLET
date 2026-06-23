@@ -1,115 +1,123 @@
 import flet as ft
 
+# ==========================================================
+# IMPORTACIÓN DE ESTILOS GLOBALES
+#
+# Se importan los colores, tamaños y configuraciones
+# visuales definidos en styles.py para mantener una
+# identidad visual consistente en toda la aplicación.
+# ==========================================================
+
+from styles import (
+    COLOR_BACKGROUND,
+    COLOR_PRIMARY,
+    PAGE_PADDING,
+    APP_TITLE,
+)
+
+# ==========================================================
+# IMPORTACIÓN DE VISTAS
+#
+# login_view es la primera pantalla del sistema.
+# Desde aquí se validan usuarios y posteriormente
+# se navega al resto de módulos.
+# ==========================================================
+
 from views.login_view import login_view
 
-#region  MAIN.PY
-    # !! ==========================================================
-    # !! MAIN.PY
-    # !!
-    # !! Archivo principal de arranque de la aplicación.
-    # !!
-    # !! Responsabilidades:
-    # !! - Inicializar Flet.
-    # !! - Configurar la ventana principal.
-    # !! - Cargar la primera vista del sistema.
-    # !! - Definir carpeta de assets.
-    # !!
-    # !! Este archivo NO debe contener lógica de negocio.
-    # !! No debe consultar SQLite.
-    # !! No debe capturar destajos.
-    # !!
-    # !! Solo debe encargarse del arranque general.
-    # !! ==========================================================
-#endregion
 
-#region !! FLUJO GENERAL DE LA APLICACION
-    # !! ==========================================================
-    # !!
-    # !! Login
-    # !!   ↓
-    # !! Listado de Obras
-    # !!   ↓
-    # !! Obra Seleccionada
-    # !!   ↓
-    # !! Captura de Destajos
-    # !!   ↓
-    # !! Exportar Obra
-    # !!
-    # !! ==========================================================
-#endregion
+#region MAIN.PY
+
+# ==========================================================
+# FUNCIÓN PRINCIPAL
+#
+# Punto de entrada de la aplicación.
+#
+# Responsabilidades:
+# - Configurar apariencia general
+# - Configurar tamaño inicial de ventana
+# - Aplicar tema corporativo
+# - Cargar la primera vista
+#
+# Flujo:
+#
+# ft.run(main)
+#        ↓
+#     main(page)
+#        ↓
+# Configura interfaz
+#        ↓
+# Carga Login
+#        ↓
+# Usuario inicia sesión
+# ==========================================================
 
 def main(page: ft.Page):
 
-    # ! Título de la ventana de la aplicación.
-    page.title = "Capturador Destajos"
+    # ======================================================
+    # CONFIGURACIÓN GENERAL DE LA APLICACIÓN
+    # ======================================================
 
-    page.theme_mode = ft.ThemeMode.DARK
+    # Título mostrado en la ventana
+    page.title = APP_TITLE
 
-    # !! ----------------------------------------------------------
-    # !! CONFIGURACION PARA DESARROLLO EN PC
-    # !!
-    # !! Este tamaño permite trabajar cómodamente
-    # !! durante el desarrollo en Windows.
-    # !!
-    # !! Más adelante, para tablet, se puede cambiar
-    # !! a pantalla completa o maximizada.
-    # !! ----------------------------------------------------------
-    page.window.width = 1200
-    page.window.height = 800
+    # ======================================================
+    # CONFIGURACIÓN INICIAL PARA TABLET
+    #
+    # Estos valores sirven principalmente durante el
+    # desarrollo en PC simulando una tablet horizontal.
+    #
+    # En Android o iPad se adaptará automáticamente al
+    # tamaño real del dispositivo.
+    # ======================================================
 
-    # ! Margen general interno de toda la aplicación.
-    page.padding = 20
+    page.window_width = 1200
+    page.window_height = 800
 
-    # !! ----------------------------------------------------------
-    # !! CONFIGURACION FUTURA PARA TABLET
-    # !!
-    # !! Cuando la aplicación sea desplegada
-    # !! en tablets Android, revisar estas opciones:
-    # !!
-    # !! page.window.maximized = True
-    # !!
-    # !! o
-    # !!
-    # !! page.window.full_screen = True
-    # !!
-    # !! Nota:
-    # !! La compatibilidad puede depender del método
-    # !! final de empaquetado de Flet.
-    # !! ----------------------------------------------------------
+    # ======================================================
+    # ESTILO VISUAL GLOBAL
+    #
+    # Se aplica el color de fondo definido en styles.py
+    # para toda la aplicación.
+    # ======================================================
 
-    # !! ----------------------------------------------------------
-    # !! VISTA INICIAL
-    # !!
-    # !! La aplicación siempre inicia en Login.
-    # !!
-    # !! login_view.py se encargará de:
-    # !! - Mostrar campos usuario/contraseña.
-    # !! - Validar credenciales.
-    # !! - Redirigir a obras_view.py.
-    # !! ----------------------------------------------------------
-    page.views.append(
-        login_view(page)
+    page.bgcolor = COLOR_BACKGROUND
+
+    # Espaciado general alrededor de todas las vistas
+    page.padding = PAGE_PADDING
+
+    # ======================================================
+    # TEMA GLOBAL
+    #
+    # Utiliza el color corporativo principal como base
+    # para botones, controles y elementos visuales.
+    # ======================================================
+
+    page.theme = ft.Theme(
+        color_scheme_seed=COLOR_PRIMARY,
     )
 
-    # ! Refresca la ventana después de agregar la vista inicial.
+    # ======================================================
+    # CARGA DE LA PRIMERA PANTALLA
+    #
+    # Se limpia cualquier vista existente y se agrega
+    # la pantalla de Login como punto inicial.
+    # ======================================================
+
+    page.views.clear()
+    page.views.append(login_view(page))
+
+    # Refresca la interfaz para mostrar los cambios
     page.update()
 
 
-# !! ==========================================================
-# !! ARRANQUE DE FLET
-# !!
-# !! ft.run() ejecuta la aplicación.
-# !!
-# !! assets_dir="assets" indica que los archivos gráficos
-# !! se buscarán dentro de la carpeta assets.
-# !!
-# !! Ejemplo:
-# !! assets/logo.jpg
-# !!
-# !! En las vistas se usa:
-# !! ft.Image(src="logo.jpg")
-# !! ==========================================================
-ft.run(
-    main,
-    assets_dir="assets"
-)
+# ==========================================================
+# INICIO DE LA APLICACIÓN
+#
+# Ejecuta la función principal y crea la ventana
+# de la aplicación.
+# ==========================================================
+
+ft.run(main)
+
+#endregion
