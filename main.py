@@ -1,4 +1,5 @@
 import flet as ft
+from services.file_manager import crear_estructura_base
 
 # ==========================================================
 # IMPORTACIÓN DE ESTILOS GLOBALES
@@ -24,6 +25,7 @@ from styles import (
 # ==========================================================
 
 from views.login_view import login_view
+
 
 
 #region MAIN.PY
