@@ -34,49 +34,37 @@ from components.dialogs import (
 
 from export.excel_exporter import exportar_destajo
 
-#region OBRA_VIEW
-# !! ==========================================================
-# !! OBRA_VIEW.PY
-# !! Pantalla principal de captura de destajos por obra.
-# !!
-# !! Flujo general:
-# !! Login -> Listado de Obras -> Obra Seleccionada
-# !!
-# !! Esta vista administra:
-# !! - Cuadrillas
-# !! - Trabajadores
-# !! - Subtítulos
-# !! - Conceptos
-# !!
-# !! Aquí NO se conecta directamente a SQLite.
-# !! Las consultas se mandan a database_manager.py.
-# !! La creación de estructuras se manda a captura_service.py.
-# !! Los cálculos de cuadrilla se mandan a cuadrilla_service.py.
-# !! La parte visual de cada cuadrilla se manda a cuadrilla_card.py.
-# !! Los formularios emergentes se mandan a dialogs.py.
-# !! ==========================================================
-#endregion
+from styles import (
+    COLOR_PRIMARY,
+    COLOR_PRIMARY_DARK,
+    COLOR_BACKGROUND,
+    COLOR_SURFACE,
+    COLOR_TEXT,
+    COLOR_MUTED,
+    COLOR_SUCCESS,
+    COLOR_DANGER,
+    COLOR_BORDER,
+    CARD_RADIUS,
+    CARD_PADDING,
+    BUTTON_HEIGHT,
+    TITLE_SIZE,
+    SUBTITLE_SIZE,
+    TEXT_SIZE,
+    SMALL_TEXT_SIZE,
+    PAGE_PADDING,
+)
 
 
-def obra_view(
-        page, 
-        clave_obra, 
-        nombre_obra, 
-        semana_actual
-    ):
+#region OBRA_VIEW.PY
 
-    # ! Lista temporal en memoria.
-    # ! Aquí se guardan las cuadrillas capturadas mientras el usuario trabaja.
-    # ! Más adelante esta información será la base para exportar a Excel.
+def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
     from services.estado_captura import (
         obtener_captura_obra,
         guardar_captura_obra
     )
 
-    obra_bd = obtener_obra(
-        clave_obra
-    )
+    obra_bd = obtener_obra(clave_obra)
 
     direccion_obra = ""
 
@@ -92,25 +80,43 @@ def obra_view(
 
     cuadrillas = captura["cuadrillas"]
 
-    # ! ListView permite scroll cuando hay muchas cuadrillas.
     lista_cuadrillas = ft.ListView(
         expand=True,
-        spacing=10,
-        auto_scroll=False
+        spacing=12,
+        auto_scroll=False,
+        padding=0,
     )
 
-    # !! ----------------------------------------------------------
-    # !! actualizar_cuadrillas()
-    # !! Redibuja en pantalla todas las cuadrillas capturadas.
-    # !!
-    # !! Se ejecuta cada vez que:
-    # !! - Se crea una nueva cuadrilla.
-    # !! - Se agrega un trabajador.
-    # !! - Se agrega un subtítulo.
-    # !! - Se agrega un concepto.
-    # !! ----------------------------------------------------------
+    def mensaje_sin_cuadrillas():
 
-    
+        return ft.Container(
+            padding=24,
+            bgcolor=COLOR_BACKGROUND,
+            border_radius=CARD_RADIUS,
+            border=ft.Border(
+                left=ft.BorderSide(1, COLOR_BORDER),
+                top=ft.BorderSide(1, COLOR_BORDER),
+                right=ft.BorderSide(1, COLOR_BORDER),
+                bottom=ft.BorderSide(1, COLOR_BORDER),
+            ),
+            content=ft.Column(
+                spacing=8,
+                controls=[
+                    ft.Text(
+                        "No hay cuadrillas capturadas",
+                        size=SUBTITLE_SIZE,
+                        weight=ft.FontWeight.BOLD,
+                        color=COLOR_TEXT,
+                    ),
+                    ft.Text(
+                        "Agrega una nueva cuadrilla para comenzar la captura de destajos.",
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                ],
+            ),
+        )
+
     def actualizar_cuadrillas():
 
         lista_cuadrillas.controls.clear()
@@ -118,15 +124,13 @@ def obra_view(
         if len(cuadrillas) == 0:
 
             lista_cuadrillas.controls.append(
-                ft.Text("No hay cuadrillas capturadas")
+                mensaje_sin_cuadrillas()
             )
 
         else:
 
             for cuadrilla in cuadrillas:
 
-                # ! La tarjeta visual de cada cuadrilla se construye en:
-                # ! components/cuadrilla_card.py
                 lista_cuadrillas.controls.append(
                     crear_cuadrilla_card(
                         cuadrilla,
@@ -141,20 +145,7 @@ def obra_view(
                 )
 
         guardar_captura_obra(captura)
-        
         page.update()
-
-    # !! ----------------------------------------------------------
-    # !! nueva_cuadrilla()
-    # !! Abre el diálogo para crear una cuadrilla nueva.
-    # !!
-    # !! El diálogo pregunta:
-    # !! - Por Día
-    # !! - Destajo
-    # !!
-    # !! La estructura base se crea en:
-    # !! services/captura_service.py
-    # !! ----------------------------------------------------------
 
     def nueva_cuadrilla(e):
 
@@ -166,39 +157,20 @@ def obra_view(
             actualizar_cuadrillas
         )
 
-    # !! ----------------------------------------------------------
-    # !! agregar_trabajador(cuadrilla)
-    # !! Abre el diálogo para agregar un trabajador a una cuadrilla.
-    # !!
-    # !! Usa:
-    # !! - buscar_trabajador() desde database_manager.py
-    # !! - calcular_valor() para permitir fórmulas como =7/6*5
-    # !! - crear_trabajador() para crear la estructura del trabajador
-    # !! - recalcular_cuadrilla() para calcular porcentajes
-    # !! ----------------------------------------------------------
     def agregar_trabajador(cuadrilla):
 
         abrir_dialogo_agregar_trabajador(
-        page,
-        cuadrillas,
-        cuadrilla,
-        buscar_trabajador,
-        calcular_valor,
-        crear_trabajador,
-        recalcular_cuadrilla,
-        obtener_siguiente_numero_cuadrilla,
-        actualizar_cuadrillas
-    )
+            page,
+            cuadrillas,
+            cuadrilla,
+            buscar_trabajador,
+            calcular_valor,
+            crear_trabajador,
+            recalcular_cuadrilla,
+            obtener_siguiente_numero_cuadrilla,
+            actualizar_cuadrillas
+        )
 
-    # !! ----------------------------------------------------------
-    # !! agregar_subtitulo(cuadrilla)
-    # !! Abre el diálogo para agregar un subtítulo dentro de una cuadrilla.
-    # !!
-    # !! Ejemplos:
-    # !! - RECAMARA 01
-    # !! - BAÑO PRINCIPAL
-    # !! - COCINA
-    # !! ----------------------------------------------------------
     def agregar_subtitulo(cuadrilla):
 
         abrir_dialogo_agregar_subtitulo(
@@ -208,22 +180,6 @@ def obra_view(
             actualizar_cuadrillas
         )
 
-    # !! ----------------------------------------------------------
-    # !! agregar_concepto(subtitulo)
-    # !! Abre el diálogo para agregar un concepto dentro de un subtítulo.
-    # !!
-    # !! Usa:
-    # !! - buscar_concepto() para consultar la clave en SQLite
-    # !! - crear_concepto() para guardar clave, medidas y notas
-    # !!
-    # !! Campos capturados:
-    # !! - Clave
-    # !! - Largo
-    # !! - Ancho
-    # !! - Alto
-    # !! - Piezas
-    # !! - Notas
-    # !! ----------------------------------------------------------
     def agregar_concepto(subtitulo):
 
         abrir_dialogo_agregar_concepto(
@@ -237,64 +193,39 @@ def obra_view(
     def eliminar_trabajador(cuadrilla, trabajador):
 
         cuadrilla["trabajadores"].remove(trabajador)
-
         recalcular_cuadrilla(cuadrilla)
-
         actualizar_cuadrillas()
-
 
     def eliminar_subtitulo(cuadrilla, subtitulo):
 
         cuadrilla["subtitulos"].remove(subtitulo)
-
         actualizar_cuadrillas()
-
 
     def eliminar_concepto(subtitulo, concepto):
 
         subtitulo["conceptos"].remove(concepto)
-
         actualizar_cuadrillas()
 
-    #region Regresar obras
-    # !! ----------------------------------------------------------
-    # !! regresar_obras()
-    # !!
-    # !! Regresa al listado de obras.
-    # !!
-    # !! No elimina información capturada.
-    # !! Solamente vuelve a la vista anterior.
-    # !!
-    # !! ----------------------------------------------------------
-    #endregion
-    
     def regresar_obras(e):
 
         page.views.pop()
-
         page.update()
 
     def cerrar_destajo(e):
 
         try:
 
-            guardar_captura_obra(
-                captura
-            )
-
-            # !! Lista temporal de residentes.
-            # !! Más adelante se llenará desde un diálogo.
+            guardar_captura_obra(captura)
 
             residentes = []
 
             def exportar_con_residentes():
-                
+
                 def hay_trabajadores_capturados():
 
                     for cuadrilla in captura["cuadrillas"]:
 
                         if len(cuadrilla["trabajadores"]) > 0:
-
                             return True
 
                     return False
@@ -309,9 +240,7 @@ def obra_view(
                         porcentaje_maestreada
                     )
 
-                    nombre_archivo = os.path.basename(
-                        ruta
-                    )
+                    nombre_archivo = os.path.basename(ruta)
 
                     dialog_resultado = ft.AlertDialog(
                         title=ft.Text("Destajo exportado"),
@@ -338,7 +267,7 @@ def obra_view(
                 porcentaje_input = ft.TextField(
                     label="Porcentaje de maestreada"
                 )
-            
+
                 def exportar_final(ev):
 
                     porcentaje_maestreada = calcular_valor(
@@ -464,9 +393,7 @@ def obra_view(
             def no_capturar_residente(ev):
 
                 dialog_residente.open = False
-
                 page.update()
-
                 exportar_con_residentes()
 
             def capturar_residente(ev):
@@ -474,17 +401,9 @@ def obra_view(
                 dialog_residente.open = False
                 page.update()
 
-                clave_input = ft.TextField(
-                    label="Número de nómina"
-                )
-
-                dias_input = ft.TextField(
-                    label="Días trabajados"
-                )
-
-                horas_extras_input = ft.TextField(
-                    label="Horas extras"
-                )
+                clave_input = ft.TextField(label="Número de nómina")
+                dias_input = ft.TextField(label="Días trabajados")
+                horas_extras_input = ft.TextField(label="Horas extras")
 
                 actividades_input = ft.TextField(
                     label="Actividades del residente",
@@ -515,13 +434,10 @@ def obra_view(
                         return
 
                     residentes.append({
-
                         "clave": trabajador_bd[0],
                         "nombre": trabajador_bd[1],
                         "puesto": trabajador_bd[2],
-                        "salario_diario": float(
-                            trabajador_bd[3]
-                        ),
+                        "salario_diario": float(trabajador_bd[3]),
                         "dias": dias,
                         "horas_extras": horas_extras_input.value.strip(),
                         "descripcion_horas_extras": descripcion_horas_extras_input.value.strip(),
@@ -529,7 +445,6 @@ def obra_view(
                         "ponderacion": 0,
                         "puntos": 0,
                         "porcentaje": 100
-
                     })
 
                     dialog_captura.open = False
@@ -545,11 +460,7 @@ def obra_view(
                     preguntar_otro_residente()
 
                 dialog_captura = ft.AlertDialog(
-
-                    title=ft.Text(
-                        "Capturar Residente"
-                    ),
-
+                    title=ft.Text("Capturar Residente"),
                     content=ft.Column(
                         controls=[
                             clave_input,
@@ -560,21 +471,16 @@ def obra_view(
                         ],
                         tight=True
                     ),
-
                     actions=[
-
                         ft.TextButton(
                             "Cancelar",
                             on_click=cancelar_residente
                         ),
-
                         ft.TextButton(
                             "Guardar",
                             on_click=guardar_residente
                         )
-
                     ]
-
                 )
 
                 page.overlay.append(dialog_captura)
@@ -598,29 +504,18 @@ def obra_view(
                     exportar_con_residentes()
 
                 dialog_otro = ft.AlertDialog(
-
-                    title=ft.Text(
-                        "Captura de Residente"
-                    ),
-
-                    content=ft.Text(
-                        "¿Desea capturar otro residente?"
-                    ),
-
+                    title=ft.Text("Captura de Residente"),
+                    content=ft.Text("¿Desea capturar otro residente?"),
                     actions=[
-
                         ft.TextButton(
                             "No",
                             on_click=no_otro
                         ),
-
                         ft.TextButton(
                             "Sí",
                             on_click=si_otro
                         )
-
                     ]
-
                 )
 
                 page.overlay.append(dialog_otro)
@@ -628,35 +523,22 @@ def obra_view(
                 page.update()
 
             dialog_residente = ft.AlertDialog(
-
-                title=ft.Text(
-                    "Captura de Residente"
-                ),
-
-                content=ft.Text(
-                    "¿Desea capturar residente?"
-                ),
-
+                title=ft.Text("Captura de Residente"),
+                content=ft.Text("¿Desea capturar residente?"),
                 actions=[
-
                     ft.TextButton(
                         "No",
                         on_click=no_capturar_residente
                     ),
-
                     ft.TextButton(
                         "Sí",
                         on_click=lambda ev: capturar_residente(ev)
                     )
-
                 ]
-
             )
 
             page.overlay.append(dialog_residente)
-
             dialog_residente.open = True
-
             page.update()
 
             return
@@ -664,36 +546,23 @@ def obra_view(
         except Exception as error:
 
             dialog = ft.AlertDialog(
-
-                title=ft.Text(
-                    "Error al exportar"
-                ),
-
-                content=ft.Text(
-                    str(error)
-                ),
-
+                title=ft.Text("Error al exportar"),
+                content=ft.Text(str(error)),
                 actions=[
-
                     ft.TextButton(
                         "Aceptar",
                         on_click=lambda ev: cerrar_error(ev)
                     )
-
                 ]
-
             )
 
             def cerrar_error(ev):
 
                 dialog.open = False
-
                 page.update()
 
             page.overlay.append(dialog)
-
             dialog.open = True
-
             page.update()
 
     def agregar_actividades(subtitulo):
@@ -704,91 +573,192 @@ def obra_view(
             actualizar_cuadrillas
         )
 
-    # ! Primera carga visual de la lista.
     actualizar_cuadrillas()
 
-    # !! ==========================================================
-    # !! RETURN DE LA VISTA
-    # !! Aquí se construye visualmente la pantalla Obra Seleccionada.
-    # !! ==========================================================
     return ft.View(
         route="/obra",
+        bgcolor=COLOR_BACKGROUND,
+        padding=PAGE_PADDING,
+
         controls=[
+
             ft.Column(
                 expand=True,
+                spacing=16,
+
                 controls=[
 
-                    # ! Encabezado principal
-                    ft.Text(
-                        "OBRA SELECCIONADA",
-                        size=28,
-                        weight=ft.FontWeight.BOLD
-                    ),
-
-                    ft.Divider(),
-
-                    # ! Información recibida desde obras_view.py
-                    ft.Text(
-                        f"Clave: {clave_obra}",
-                        size=18
-                    ),
-
-                    ft.Text(
-                        f"Obra: {nombre_obra}",
-                        size=18
-                    ),
-
-                    ft.Text(
-                        f"Semana: {semana_actual['numero']} "
-                        f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})",
-                        size=16
-                    ),
-
-                    ft.Divider(),
-
-                    # ! Sección principal de cuadrillas
-                    ft.Text(
-                        "CUADRILLAS",
-                        size=22,
-                        weight=ft.FontWeight.BOLD
-                    ),
-
-                    # ! Contenedor con scroll para muchas cuadrillas
                     ft.Container(
-                        content=lista_cuadrillas,
-                        expand=True
+                        padding=20,
+                        bgcolor=COLOR_PRIMARY_DARK,
+                        border_radius=CARD_RADIUS,
+
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+
+                            controls=[
+
+                                ft.Column(
+                                    spacing=5,
+                                    expand=True,
+                                    controls=[
+
+                                        ft.Text(
+                                            clave_obra,
+                                            size=TITLE_SIZE,
+                                            weight=ft.FontWeight.BOLD,
+                                            color="white",
+                                        ),
+
+                                        ft.Text(
+                                            nombre_obra,
+                                            size=TEXT_SIZE,
+                                            color="white",
+                                        ),
+
+                                        ft.Text(
+                                            f"Semana {semana_actual['numero']} "
+                                            f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})",
+                                            size=SMALL_TEXT_SIZE,
+                                            color="#E5E7EB",
+                                        ),
+
+                                        ft.Text(
+                                            direccion_obra,
+                                            size=SMALL_TEXT_SIZE,
+                                            color="#E5E7EB",
+                                        ),
+                                    ],
+                                ),
+
+                                ft.ElevatedButton(
+                                    height=BUTTON_HEIGHT,
+                                    bgcolor=COLOR_SURFACE,
+                                    color=COLOR_PRIMARY_DARK,
+                                    content=ft.Text(
+                                        "Regresar a obras",
+                                        size=TEXT_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                    ),
+                                    on_click=regresar_obras,
+                                ),
+                            ],
+                        ),
                     ),
 
-                    ft.Divider(),
+                    ft.Container(
+                        padding=16,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
 
-                    # ! Botones principales de la pantalla
-                    ft.Row(
-                        controls=[
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
 
-                            ft.ElevatedButton(
-                                content=ft.Text(
-                                    "Nueva Cuadrilla"
+                            controls=[
+
+                                ft.Column(
+                                    spacing=4,
+                                    controls=[
+                                        ft.Text(
+                                            "Gestión de captura",
+                                            size=SUBTITLE_SIZE,
+                                            weight=ft.FontWeight.BOLD,
+                                            color=COLOR_TEXT,
+                                        ),
+
+                                        ft.Text(
+                                            "Agrega cuadrillas, trabajadores, subtítulos y conceptos.",
+                                            size=SMALL_TEXT_SIZE,
+                                            color=COLOR_MUTED,
+                                        ),
+                                    ],
                                 ),
-                                on_click=nueva_cuadrilla
-                            ),
 
-                            ft.ElevatedButton(
-                                content=ft.Text(
-                                    "Regresar a Obras"
+                                ft.Row(
+                                    spacing=10,
+                                    controls=[
+
+                                        ft.ElevatedButton(
+                                            height=BUTTON_HEIGHT,
+                                            bgcolor=COLOR_PRIMARY,
+                                            color="white",
+                                            content=ft.Text(
+                                                "Nueva cuadrilla",
+                                                size=TEXT_SIZE,
+                                                weight=ft.FontWeight.BOLD,
+                                            ),
+                                            on_click=nueva_cuadrilla,
+                                        ),
+
+                                        ft.ElevatedButton(
+                                            height=BUTTON_HEIGHT,
+                                            bgcolor=COLOR_SUCCESS,
+                                            color="white",
+                                            content=ft.Text(
+                                                "Cerrar destajo",
+                                                size=TEXT_SIZE,
+                                                weight=ft.FontWeight.BOLD,
+                                            ),
+                                            on_click=cerrar_destajo,
+                                        ),
+                                    ],
                                 ),
-                                on_click=regresar_obras
-                            ),
+                            ],
+                        ),
+                    ),
 
-                            ft.ElevatedButton(
-                                content=ft.Text("Cerrar Destajo"),
-                                on_click=cerrar_destajo
-                            )
+                    ft.Container(
+                        expand=True,
+                        padding=CARD_PADDING,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
 
-                        ]
-                    )
+                        content=ft.Column(
+                            expand=True,
+                            spacing=12,
 
-                ]
+                            controls=[
+
+                                ft.Row(
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                    controls=[
+
+                                        ft.Text(
+                                            "Cuadrillas capturadas",
+                                            size=SUBTITLE_SIZE,
+                                            weight=ft.FontWeight.BOLD,
+                                            color=COLOR_TEXT,
+                                        ),
+
+                                        ft.Text(
+                                            f"Total: {len(cuadrillas)}",
+                                            size=SMALL_TEXT_SIZE,
+                                            color=COLOR_MUTED,
+                                        ),
+                                    ],
+                                ),
+
+                                lista_cuadrillas,
+                            ],
+                        ),
+                    ),
+                ],
             )
-        ]
+        ],
     )
 
+#endregion

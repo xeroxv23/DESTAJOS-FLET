@@ -1,77 +1,86 @@
 import flet as ft
 
-from database_manager import (
-    buscar_obras
-)
+from database_manager import buscar_obras
 
 from views.obra_view import obra_view
+from views.preview_view import preview_view
 
 from services.persistencia_json import (
     obtener_claves_capturadas_semana,
     eliminar_captura_json
 )
 
-from views.preview_view import preview_view
+from styles import (
+    COLOR_PRIMARY,
+    COLOR_PRIMARY_DARK,
+    COLOR_BACKGROUND,
+    COLOR_SURFACE,
+    COLOR_TEXT,
+    COLOR_MUTED,
+    COLOR_SUCCESS,
+    COLOR_DANGER,
+    COLOR_BORDER,
+    CARD_RADIUS,
+    CARD_PADDING,
+    BUTTON_HEIGHT,
+    TITLE_SIZE,
+    SUBTITLE_SIZE,
+    TEXT_SIZE,
+    SMALL_TEXT_SIZE,
+    PAGE_PADDING,
+)
+
+
+#region OBRAS_VIEW.PY
 
 # !! ==========================================================
 # !! OBRAS_VIEW.PY
 # !!
-# !! Segunda pantalla del sistema.
-# !!
-# !! Flujo:
-# !!
-# !! login_view.py
-# !!       ↓
-# !! obras_view.py
-# !!       ↓
-# !! obra_view.py
+# !! Pantalla de selección de obras por semana.
 # !!
 # !! Funciones principales:
 # !! - Buscar obras por clave
 # !! - Mostrar resultados encontrados
-# !! - Permitir abrir una obra
+# !! - Abrir captura de obra
+# !! - Mostrar obras ya capturadas
+# !! - Abrir vista previa de captura
+# !! - Eliminar captura existente
 # !!
-# !! Esta pantalla NO captura destajos.
-# !! Solamente permite seleccionar una obra.
+# !! Flujo:
 # !!
-# !! Las consultas se realizan mediante:
-# !! database_manager.py
-# !!
-# !! La captura de cuadrillas se realiza en:
-# !! obra_view.py
+# !! semanas_view.py
+# !!      ↓
+# !! obras_view(page, semana_actual)
+# !!      ↓
+# !! obra_view.py / preview_view.py
 # !! ==========================================================
 
 
 def obras_view(page, semana_actual):
 
-    # ! Lista visual donde se mostrarán
-    # ! las obras encontradas.
+    # ======================================================
+    # LISTA DE RESULTADOS DE BÚSQUEDA
+    # ======================================================
+
     lista_view = ft.ListView(
         expand=True,
-        spacing=10
+        spacing=12,
+        padding=0,
     )
+
+    # ======================================================
+    # LISTA LATERAL DE OBRAS CAPTURADAS
+    # ======================================================
 
     lista_capturadas = ft.Column(
-        spacing=5
+        spacing=10,
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
     )
 
-    # !! ----------------------------------------------------------
-    # !! cargar_obras()
-    # !!
-    # !! Recibe una lista de obras desde SQLite
-    # !! y construye visualmente las tarjetas.
-    # !!
-    # !! Cada tarjeta contiene:
-    # !! - Clave de obra
-    # !! - Nombre de obra
-    # !! - Botón Abrir
-    # !!
-    # !! Ejemplo:
-    # !!
-    # !! A-001
-    # !! CASA HABITACION
-    # !! [ Abrir ]
-    # !! ----------------------------------------------------------
+    # ======================================================
+    # ACTUALIZAR OBRAS CAPTURADAS
+    # ======================================================
 
     def actualizar_obras_capturadas():
 
@@ -84,8 +93,15 @@ def obras_view(page, semana_actual):
         if len(claves_capturadas) == 0:
 
             lista_capturadas.controls.append(
-                ft.Text(
-                    "Sin obras capturadas"
+                ft.Container(
+                    padding=16,
+                    bgcolor=COLOR_BACKGROUND,
+                    border_radius=CARD_RADIUS,
+                    content=ft.Text(
+                        "Sin obras capturadas",
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
                 )
             )
 
@@ -93,12 +109,8 @@ def obras_view(page, semana_actual):
 
             for clave_capturada in claves_capturadas:
 
-                def abrir_capturada(
-                    e,
-                    clave=clave_capturada
-                ):
+                def abrir_capturada(e, clave=clave_capturada):
 
-                    # ! Buscamos la obra por clave para obtener también su nombre
                     resultado = buscar_obras(clave)
 
                     if len(resultado) == 0:
@@ -117,10 +129,7 @@ def obras_view(page, semana_actual):
 
                     page.update()
 
-                def vista_previa(
-                    e,
-                    clave=clave_capturada
-                ):
+                def vista_previa(e, clave=clave_capturada):
 
                     page.views.append(
                         preview_view(
@@ -132,10 +141,7 @@ def obras_view(page, semana_actual):
 
                     page.update()
 
-                def eliminar_captura(
-                    e,
-                    clave=clave_capturada
-                ):
+                def eliminar_captura(e, clave=clave_capturada):
 
                     eliminar_captura_json(
                         semana_actual,
@@ -147,44 +153,109 @@ def obras_view(page, semana_actual):
                     lista_view.controls.clear()
 
                     lista_view.controls.append(
-                        ft.Text(
-                            "Escriba una clave de obra."
-                        )
+                        mensaje_inicial()
                     )
 
                     page.update()
 
                 lista_capturadas.controls.append(
+                    ft.Container(
+                        padding=14,
+                        bgcolor=COLOR_BACKGROUND,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
 
-                    ft.Row(
-                        controls=[
+                        content=ft.Column(
+                            spacing=8,
+                            controls=[
 
-                            ft.Container(
-                                width=90,
-                                content=ft.Text(
+                                ft.Text(
                                     clave_capturada,
-                                    weight=ft.FontWeight.BOLD
-                                )
-                            ),
+                                    size=TEXT_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
+                                ),
 
-                            ft.TextButton(
-                                "Abrir",
-                                on_click=abrir_capturada
-                            ),
+                                ft.Row(
+                                    spacing=4,
+                                    wrap=True,
+                                    controls=[
 
-                            ft.TextButton(
-                                "Vista",
-                                on_click=vista_previa
-                            ),
+                                        ft.TextButton(
+                                            content=ft.Text(
+                                                "Abrir",
+                                                size=SMALL_TEXT_SIZE,
+                                                color=COLOR_PRIMARY,
+                                            ),
+                                            on_click=abrir_capturada,
+                                        ),
 
-                            ft.TextButton(
-                                "Eliminar",
-                                on_click=eliminar_captura
-                            )
-                        ]
+                                        ft.TextButton(
+                                            content=ft.Text(
+                                                "Vista",
+                                                size=SMALL_TEXT_SIZE,
+                                                color=COLOR_PRIMARY,
+                                            ),
+                                            on_click=vista_previa,
+                                        ),
+
+                                        ft.TextButton(
+                                            content=ft.Text(
+                                                "Eliminar",
+                                                size=SMALL_TEXT_SIZE,
+                                                color=COLOR_DANGER,
+                                            ),
+                                            on_click=eliminar_captura,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
                     )
-
                 )
+
+    # ======================================================
+    # MENSAJE INICIAL
+    # ======================================================
+
+    def mensaje_inicial():
+
+        return ft.Container(
+            padding=24,
+            bgcolor=COLOR_SURFACE,
+            border_radius=CARD_RADIUS,
+            border=ft.Border(
+                left=ft.BorderSide(1, COLOR_BORDER),
+                top=ft.BorderSide(1, COLOR_BORDER),
+                right=ft.BorderSide(1, COLOR_BORDER),
+                bottom=ft.BorderSide(1, COLOR_BORDER),
+            ),
+            content=ft.Column(
+                spacing=8,
+                controls=[
+                    ft.Text(
+                        "Busca una obra para comenzar",
+                        size=SUBTITLE_SIZE,
+                        weight=ft.FontWeight.BOLD,
+                        color=COLOR_TEXT,
+                    ),
+                    ft.Text(
+                        "Escribe una clave de obra, por ejemplo: A-001.",
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                ],
+            ),
+        )
+
+    # ======================================================
+    # CARGAR OBRAS ENCONTRADAS
+    # ======================================================
 
     def cargar_obras(obras):
 
@@ -194,225 +265,324 @@ def obras_view(page, semana_actual):
 
         lista_view.controls.clear()
 
+        if len(obras) == 0:
+
+            lista_view.controls.append(
+                ft.Container(
+                    padding=24,
+                    bgcolor=COLOR_SURFACE,
+                    border_radius=CARD_RADIUS,
+                    border=ft.Border(
+                        left=ft.BorderSide(1, COLOR_BORDER),
+                        top=ft.BorderSide(1, COLOR_BORDER),
+                        right=ft.BorderSide(1, COLOR_BORDER),
+                        bottom=ft.BorderSide(1, COLOR_BORDER),
+                    ),
+                    content=ft.Text(
+                        "No se encontraron obras con esa clave.",
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                )
+            )
+
+            page.update()
+            return
+
         for clave, nombre in obras:
 
-            # !! --------------------------------------------------
-            # !! abrir_obra()
-            # !!
-            # !! Abre la pantalla de captura de la obra.
-            # !!
-            # !! Envía:
-            # !! - clave
-            # !! - nombre
-            # !!
-            # !! a obra_view.py
-            # !! --------------------------------------------------
-            def abrir_obra(
-                e,
-                clave=clave,
-                nombre=nombre
-            ):
+            capturada = clave in claves_capturadas
+
+            def abrir_obra(e, clave=clave, nombre=nombre):
 
                 page.views.append(
-
                     obra_view(
                         page,
                         clave,
                         nombre,
                         semana_actual
                     )
-
                 )
 
                 page.update()
 
-            # ! Tarjeta visual de cada obra
             lista_view.controls.append(
+                ft.Container(
+                    padding=CARD_PADDING,
+                    bgcolor=COLOR_SURFACE,
+                    border_radius=CARD_RADIUS,
+                    border=ft.Border(
+                        left=ft.BorderSide(1, COLOR_BORDER),
+                        top=ft.BorderSide(1, COLOR_BORDER),
+                        right=ft.BorderSide(1, COLOR_BORDER),
+                        bottom=ft.BorderSide(1, COLOR_BORDER),
+                    ),
 
-                ft.Card(
-                    content=ft.Container(
-                        padding=15,
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
 
-                        content=ft.Column(
-                            controls=[
+                        controls=[
 
-                                # ! Clave de obra
-                                ft.Text(
-                                    clave,
-                                    size=15,
-                                    weight=ft.FontWeight.BOLD
-                                ),
+                            ft.Column(
+                                spacing=6,
+                                expand=True,
+                                controls=[
 
-                                # ! Nombre de obra
-                                ft.Text(
-                                    nombre
-                                ),
-
-                                ft.Text(
-                                    "CAPTURADA"
-                                    if clave in claves_capturadas
-                                    else "SIN CAPTURA"
-                                ),
-
-                                # ! Abrir captura
-                                ft.ElevatedButton(
-                                    content=ft.Text(
-                                        "Abrir"
+                                    ft.Text(
+                                        clave,
+                                        size=SUBTITLE_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=COLOR_TEXT,
                                     ),
-                                    on_click=abrir_obra
-                                )
 
-                            ]
-                        )
-                    )
+                                    ft.Text(
+                                        nombre,
+                                        size=TEXT_SIZE,
+                                        color=COLOR_MUTED,
+                                    ),
+
+                                    ft.Text(
+                                        "CAPTURADA" if capturada else "SIN CAPTURA",
+                                        size=SMALL_TEXT_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=COLOR_SUCCESS if capturada else COLOR_MUTED,
+                                    ),
+                                ],
+                            ),
+
+                            ft.ElevatedButton(
+                                height=BUTTON_HEIGHT,
+                                bgcolor=COLOR_PRIMARY,
+                                color="white",
+                                content=ft.Text(
+                                    "Abrir obra",
+                                    size=TEXT_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                ),
+                                on_click=abrir_obra,
+                            ),
+                        ],
+                    ),
                 )
-
             )
 
         page.update()
 
-    # !! ----------------------------------------------------------
-    # !! filtrar_obras()
-    # !!
-    # !! Se ejecuta cada vez que el usuario escribe.
-    # !!
-    # !! Busca coincidencias por:
-    # !! clave_inter
-    # !!
-    # !! Ejemplos:
-    # !!
-    # !! A
-    # !! A-001
-    # !! ID-1211
-    # !! ----------------------------------------------------------
+    # ======================================================
+    # FILTRAR OBRAS
+    # ======================================================
+
     def filtrar_obras(e):
 
         texto = e.control.value.strip().upper()
 
-        # ! Si no hay texto
-        # ! mostrar mensaje inicial
         if texto == "":
 
             lista_view.controls.clear()
-
             lista_view.controls.append(
-
-                ft.Text(
-                    "Escriba una clave de obra."
-                )
-
+                mensaje_inicial()
             )
 
             page.update()
-
             return
 
-        # ! Consulta a SQLite
         resultados = buscar_obras(texto)
 
-        # ! Mostrar resultados
         cargar_obras(resultados)
+
+    # ======================================================
+    # REGRESAR A SEMANAS
+    # ======================================================
 
     def regresar_semanas(e):
 
         page.views.pop()
         page.update()
 
-    # !! ----------------------------------------------------------
-    # !! Buscador principal
-    # !!
-    # !! Filtra en tiempo real conforme
-    # !! el usuario escribe.
-    # !! ----------------------------------------------------------
+    # ======================================================
+    # BUSCADOR PRINCIPAL
+    # ======================================================
 
     buscador = ft.TextField(
         label="Buscar obra por clave",
-        width=400,
-        text_size=18,
+        hint_text="Ejemplo: A-001",
+        expand=True,
+        height=56,
+        text_size=TEXT_SIZE,
+        border_color=COLOR_BORDER,
+        focused_border_color=COLOR_PRIMARY,
         autofocus=True,
-        on_change=filtrar_obras
+        on_change=filtrar_obras,
     )
 
-    # ! Mensaje inicial antes de buscar
+    # Mensaje inicial
     lista_view.controls.append(
-
-        ft.Text(
-            "Escriba una clave de obra."
-        )
-
+        mensaje_inicial()
     )
-
-    # !! ==========================================================
-    # !! RETURN DE LA VISTA
-    # !!
-    # !! Pantalla:
-    # !!
-    # !! LISTADO DE OBRAS
-    # !!
-    # !! [ Buscar obra ]
-    # !!
-    # !! Resultado 1
-    # !! Resultado 2
-    # !! Resultado 3
-    # !!
-    # !! ==========================================================
 
     actualizar_obras_capturadas()
 
+    # ======================================================
+    # RETURN DE LA VISTA
+    # ======================================================
+
     return ft.View(
         route="/obras",
+        bgcolor=COLOR_BACKGROUND,
+        padding=PAGE_PADDING,
 
         controls=[
 
-            ft.Text(
-                "LISTADO DE OBRAS",
-                size=25,
-                weight=ft.FontWeight.BOLD
-            ),
+            # Header superior
+            ft.Container(
+                padding=20,
+                bgcolor=COLOR_PRIMARY_DARK,
+                border_radius=CARD_RADIUS,
 
-            ft.Text(
-                f"Semana {semana_actual['numero']} "
-                f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
-            ),
+                content=ft.Row(
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
 
-            ft.ElevatedButton(
-                content=ft.Text("Regresar a Semanas"),
-                on_click=regresar_semanas
-            ),
+                    controls=[
 
-            buscador,
-
-            ft.Divider(),
-
-            ft.Row(
-                expand=True,
-                controls=[
-
-                    ft.Container(
-                        content=lista_view,
-                        width=850
-                    ),
-
-                    ft.Container(
-                        width=420,
-                        padding=10,
-                        content=ft.Column(
+                        ft.Column(
+                            spacing=4,
                             controls=[
 
                                 ft.Text(
-                                    "OBRAS CAPTURADAS",
-                                    size=15,
-                                    weight=ft.FontWeight.BOLD
+                                    f"Semana {semana_actual['numero']}",
+                                    size=TITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color="white",
                                 ),
 
-                                lista_capturadas
+                                ft.Text(
+                                    f"{semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']}",
+                                    size=SMALL_TEXT_SIZE,
+                                    color="#E5E7EB",
+                                ),
+                            ],
+                        ),
 
-                            ]
-                        )
-                    )
+                        ft.ElevatedButton(
+                            height=BUTTON_HEIGHT,
+                            bgcolor=COLOR_SURFACE,
+                            color=COLOR_PRIMARY_DARK,
+                            content=ft.Text(
+                                "Regresar a semanas",
+                                size=TEXT_SIZE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                            on_click=regresar_semanas,
+                        ),
+                    ],
+                ),
+            ),
 
-                ]
-            )
+            ft.Container(height=18),
 
-        ]
+            ft.Text(
+                "Listado de obras",
+                size=TITLE_SIZE,
+                weight=ft.FontWeight.BOLD,
+                color=COLOR_TEXT,
+            ),
+
+            ft.Text(
+                "Busca una obra por clave para abrir o continuar su captura.",
+                size=TEXT_SIZE,
+                color=COLOR_MUTED,
+            ),
+
+            ft.Container(height=10),
+
+            # Buscador en tarjeta
+            ft.Container(
+                padding=16,
+                bgcolor=COLOR_SURFACE,
+                border_radius=CARD_RADIUS,
+                border=ft.Border(
+                    left=ft.BorderSide(1, COLOR_BORDER),
+                    top=ft.BorderSide(1, COLOR_BORDER),
+                    right=ft.BorderSide(1, COLOR_BORDER),
+                    bottom=ft.BorderSide(1, COLOR_BORDER),
+                ),
+                content=buscador,
+            ),
+
+            ft.Container(height=14),
+
+            # Panel principal
+            ft.Row(
+                expand=True,
+                spacing=16,
+                vertical_alignment=ft.CrossAxisAlignment.START,
+
+                controls=[
+
+                    # Panel izquierdo: resultados de búsqueda
+                    ft.Container(
+                        expand=True,
+                        padding=16,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
+
+                        content=ft.Column(
+                            expand=True,
+                            spacing=12,
+                            controls=[
+
+                                ft.Text(
+                                    "Resultados de búsqueda",
+                                    size=SUBTITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
+                                ),
+
+                                lista_view,
+                            ],
+                        ),
+                    ),
+
+                    # Panel derecho: obras capturadas
+                    ft.Container(
+                        width=360,
+                        padding=16,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
+
+                        content=ft.Column(
+                            expand=True,
+                            spacing=12,
+                            controls=[
+
+                                ft.Text(
+                                    "Obras capturadas",
+                                    size=SUBTITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
+                                ),
+
+                                lista_capturadas,
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        ],
     )
+
+#endregion
