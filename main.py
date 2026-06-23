@@ -99,6 +99,9 @@ def main(page: ft.Page):
         color_scheme_seed=COLOR_PRIMARY,
     )
 
+    # Crear carpetas base del sistema
+    crear_estructura_base()
+
     # ======================================================
     # CARGA DE LA PRIMERA PANTALLA
     #
