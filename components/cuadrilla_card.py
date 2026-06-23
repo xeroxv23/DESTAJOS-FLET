@@ -82,14 +82,10 @@ def crear_cuadrilla_card(
         # ! Agregar subtítulo
         ft.ElevatedButton(
             content=ft.Text(
-                "Agregar Actividades"
-                if cuadrilla["tipo"] == "dia"
-                else "Agregar Subtítulo"
+                "Agregar Subtítulo"
             ),
             on_click=lambda e:
-            agregar_actividades(cuadrilla)
-            if cuadrilla["tipo"] == "dia"
-            else agregar_subtitulo(cuadrilla)
+            agregar_subtitulo(cuadrilla)
         ),
 
     ]
@@ -135,11 +131,11 @@ def crear_cuadrilla_card(
     # !! ACTIVIDADES DE CUADRILLA POR DIA
     # !! =======================================================
 
-    if (
-        cuadrilla["tipo"] == "dia"
-        and
-        cuadrilla.get("actividades", "")
-    ):
+    #? if (
+    #?    cuadrilla["tipo"] == "dia"
+    #?    and
+    #?    cuadrilla.get("actividades", "")
+    #?):
 
         controles.extend([
 
@@ -193,14 +189,34 @@ def crear_cuadrilla_card(
             # ! Agregar concepto al subtítulo
             ft.ElevatedButton(
                 content=ft.Text(
-                    "Agregar Concepto"
+                    "Agregar Actividades"
+                    if cuadrilla["tipo"] == "dia"
+                    else "Agregar Concepto"
                 ),
                 on_click=lambda e,
                 s=subtitulo:
-                agregar_concepto(s)
+                agregar_actividades(s)
+                if cuadrilla["tipo"] == "dia"
+                else agregar_concepto(s)
             )
 
         ])
+
+        # !! Mostrar actividades cuando la cuadrilla es por día
+        if cuadrilla["tipo"] == "dia":
+
+            actividades = subtitulo.get(
+                "actividades",
+                ""
+            ).strip()
+
+            if actividades:
+
+                controles.append(
+                    ft.Text(
+                        actividades
+                    )
+                )
 
         # !! ===================================================
         # !! SECCIÓN CONCEPTOS

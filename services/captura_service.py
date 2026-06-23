@@ -118,13 +118,16 @@ def crear_trabajador(
 # !! múltiples conceptos.
 # !!
 # !! ----------------------------------------------------------
+
 def crear_subtitulo(nombre):
 
     return {
 
         "nombre": nombre,
 
-        "conceptos": []
+        "conceptos": [],
+
+        "actividades": ""
 
     }
 

@@ -256,6 +256,7 @@ def obra_view(
 
         actualizar_cuadrillas()
 
+    #region Regresar obras
     # !! ----------------------------------------------------------
     # !! regresar_obras()
     # !!
@@ -265,6 +266,8 @@ def obra_view(
     # !! Solamente vuelve a la vista anterior.
     # !!
     # !! ----------------------------------------------------------
+    #endregion
+    
     def regresar_obras(e):
 
         page.views.pop()
@@ -285,11 +288,57 @@ def obra_view(
             residentes = []
 
             def exportar_con_residentes():
+                
+                def hay_trabajadores_capturados():
+
+                    for cuadrilla in captura["cuadrillas"]:
+
+                        if len(cuadrilla["trabajadores"]) > 0:
+
+                            return True
+
+                    return False
+
+                if not hay_trabajadores_capturados():
+
+                    porcentaje_maestreada = None
+
+                    ruta = exportar_destajo(
+                        captura,
+                        residentes,
+                        porcentaje_maestreada
+                    )
+
+                    nombre_archivo = os.path.basename(
+                        ruta
+                    )
+
+                    dialog_resultado = ft.AlertDialog(
+                        title=ft.Text("Destajo exportado"),
+                        content=ft.Text(nombre_archivo),
+                        actions=[
+                            ft.TextButton(
+                                "Aceptar",
+                                on_click=lambda ev: cerrar_resultado(ev)
+                            )
+                        ]
+                    )
+
+                    def cerrar_resultado(ev):
+
+                        dialog_resultado.open = False
+                        page.update()
+
+                    page.overlay.append(dialog_resultado)
+                    dialog_resultado.open = True
+                    page.update()
+
+                    return
 
                 porcentaje_input = ft.TextField(
                     label="Porcentaje de maestreada"
                 )
-
+            
                 def exportar_final(ev):
 
                     porcentaje_maestreada = calcular_valor(
@@ -437,6 +486,11 @@ def obra_view(
                     label="Horas extras"
                 )
 
+                actividades_input = ft.TextField(
+                    label="Actividades del residente",
+                    multiline=True
+                )
+
                 descripcion_horas_extras_input = ft.TextField(
                     label="Descripción horas extras",
                     multiline=True
@@ -471,6 +525,7 @@ def obra_view(
                         "dias": dias,
                         "horas_extras": horas_extras_input.value.strip(),
                         "descripcion_horas_extras": descripcion_horas_extras_input.value.strip(),
+                        "actividades": actividades_input.value.strip(),
                         "ponderacion": 0,
                         "puntos": 0,
                         "porcentaje": 100
@@ -500,7 +555,8 @@ def obra_view(
                             clave_input,
                             dias_input,
                             horas_extras_input,
-                            descripcion_horas_extras_input
+                            descripcion_horas_extras_input,
+                            actividades_input
                         ],
                         tight=True
                     ),
@@ -640,11 +696,11 @@ def obra_view(
 
             page.update()
 
-    def agregar_actividades(cuadrilla):
+    def agregar_actividades(subtitulo):
 
         abrir_dialogo_agregar_actividades(
             page,
-            cuadrilla,
+            subtitulo,
             actualizar_cuadrillas
         )
 

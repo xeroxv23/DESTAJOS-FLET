@@ -396,19 +396,19 @@ def abrir_dialogo_agregar_concepto(
 
 def abrir_dialogo_agregar_actividades(
     page,
-    cuadrilla,
+    subtitulo,
     actualizar_cuadrillas
 ):
 
     actividades_input = ft.TextField(
         label="Actividades realizadas",
         multiline=True,
-        value=cuadrilla.get("actividades", "")
+        value=subtitulo.get("actividades", "")
     )
 
     def guardar(ev):
 
-        cuadrilla["actividades"] = actividades_input.value.strip()
+        subtitulo["actividades"] = actividades_input.value.strip()
 
         dialog.open = False
 

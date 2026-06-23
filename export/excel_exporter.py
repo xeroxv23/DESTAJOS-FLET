@@ -212,6 +212,37 @@ def escribir_actividades(
 
     return fila
 
+def escribir_nota_concepto(
+    hoja,
+    fila,
+    nota,
+    limite=40
+):
+
+    lineas = dividir_texto_por_palabras(
+        nota,
+        limite
+    )
+
+    if len(lineas) == 0:
+
+        return fila
+
+    # !! Primera línea en la misma fila del concepto.
+    hoja.range(f"D{fila}").value = lineas[0]
+
+    fila_actual = fila + 1
+
+    # !! Líneas restantes debajo del concepto.
+    for linea in lineas[1:]:
+
+        hoja.range(f"D{fila_actual}").value = linea
+
+        fila_actual += 1
+
+    # !! Devuelve la siguiente fila libre.
+    return fila_actual
+
 def exportar_captura(
     hoja,
     captura,
@@ -245,23 +276,32 @@ def exportar_captura(
 
                     fila += 1
 
-            # !! Actividades del personal por día.
-            actividades = cuadrilla.get(
-                "actividades",
-                ""
-            ).strip()
+                for subtitulo in cuadrilla["subtitulos"]:
 
-            if actividades:
+                    escribir_subtitulo(
+                        hoja,
+                        fila,
+                        subtitulo
+                    )
 
-                fila = escribir_actividades(
-                    hoja,
-                    fila,
-                    actividades,
-                    limite=40
-                )
+                    fila += 1
 
-            # !! Espacio entre bloques.
-            fila += 1
+                    actividades = subtitulo.get(
+                        "actividades",
+                        ""
+                    ).strip()
+
+                    if actividades:
+
+                        fila = escribir_actividades(
+                            hoja,
+                            fila,
+                            actividades,
+                            limite=40
+                        )
+
+                # !! Espacio entre trabajadores por día
+                fila += 1
 
         if cuadrilla["tipo"] == "destajo":
 
@@ -290,16 +330,22 @@ def exportar_captura(
 
                 for concepto in subtitulo["conceptos"]:
 
-                    escribir_concepto(
+                    fila_concepto = fila
+
+                    fila = escribir_concepto(
                         hoja,
                         fila,
                         concepto,
                         cuadrilla["numero"]
                     )
 
-                    ultima_fila_concepto = fila
-
-                    fila += 1
+                    # !! Guardamos la fila donde realmente se escribió
+                    # !! la clave del concepto.
+                    # !!
+                    # !! Aunque la nota ocupe varias filas,
+                    # !! la columna P debe cerrarse en la fila del concepto,
+                    # !! no en la última fila de la nota.
+                    ultima_fila_concepto = fila_concepto
 
             # !! En destajo, la columna P se llena
             # !! únicamente en el último concepto capturado.
@@ -391,25 +437,40 @@ def exportar_destajo(
         # !! Sección fija de destajista
         # !! ----------------------------------------------------------
         
-        escribir_destajista_base(
-            hoja
+        hay_trabajadores = tiene_trabajadores_capturados(
+            captura
         )
 
-        ultima_fila_residente = escribir_residentes(
-            hoja,
-            residentes,
-            fila_inicial=356,
-            numero_inicial=61
-        )
+        if hay_trabajadores:
 
-        if ultima_fila_residente < 354:
+            escribir_destajista_base(
+                hoja
+            )
 
-            ultima_fila_residente = 354
+            ultima_fila_residente = escribir_residentes(
+                hoja,
+                residentes,
+                fila_inicial=356,
+                numero_inicial=61
+            )
 
-        escribir_maestreada(
-            hoja,
-            porcentaje_maestreada
-        )
+            escribir_maestreada(
+                hoja,
+                porcentaje_maestreada
+            )
+
+        else:
+
+            # !! Si no existen trabajadores capturados,
+            # !! NO se escribe destajista 34.
+            # !! NO se escribe mandos intermedios.
+            # !! Los residentes inician desde la fila 353.
+            ultima_fila_residente = escribir_residentes(
+                hoja,
+                residentes,
+                fila_inicial=353,
+                numero_inicial=61
+            )
 
         recortar_filas_sobrantes(
             hoja,
@@ -455,14 +516,30 @@ def escribir_concepto(
     ).strip()
 
     hoja.range(f"A{fila}").value = concepto["clave"]
-    hoja.range(f"B{fila}").value = numero_cuadrilla
 
-    hoja.range(f"D{fila}").value = nota
+    hoja.range(f"B{fila}").value = numero_cuadrilla
 
     hoja.range(f"I{fila}").value = concepto.get("largo", "")
     hoja.range(f"J{fila}").value = concepto.get("ancho", "")
     hoja.range(f"K{fila}").value = concepto.get("alto", "")
     hoja.range(f"L{fila}").value = concepto.get("piezas", "")
+
+    if nota:
+
+        siguiente_fila = escribir_nota_concepto(
+            hoja,
+            fila,
+            nota,
+            limite=40
+        )
+
+        return siguiente_fila
+
+    else:
+
+        hoja.range(f"D{fila}").value = ""
+
+        return fila + 1
 
 def escribir_destajista_base(hoja):
 
@@ -485,9 +562,9 @@ def escribir_residentes(
     numero_inicial=61
 ):
 
-    
     fila = fila_inicial
     numero_cuadrilla = numero_inicial
+    ultima_fila_usada = fila_inicial - 1
 
     for residente in residentes:
 
@@ -502,6 +579,7 @@ def escribir_residentes(
         )
 
         fila_residente = fila
+        ultima_fila_usada = fila
 
         fila += 1
 
@@ -512,12 +590,31 @@ def escribir_residentes(
             ""
         )
 
+        fila_puesto = fila
         ultima_fila_usada = fila
 
         fila += 1
 
+        # !! Actividades del residente.
+        # !! Se escriben una fila debajo del puesto.
+        actividades = residente.get(
+            "actividades",
+            ""
+        ).strip()
+
+        if actividades:
+
+            fila = escribir_actividades(
+                hoja,
+                fila,
+                actividades,
+                limite=40
+            )
+
+            ultima_fila_usada = fila - 1
+
         # !! Horas extras, si existen.
-        # !! Se capturan después del puesto.
+        # !! Se capturan después de actividades.
         tiene_horas_extras = escribir_horas_extras(
             hoja,
             fila,
@@ -528,6 +625,9 @@ def escribir_residentes(
 
             # !! Si existen horas extras,
             # !! la columna P debe cerrar en la fila de HE.
+            hoja.range(f"P{fila_residente}").value = None
+            hoja.range(f"P{fila_puesto}").value = None
+
             ultima_fila_usada = fila
 
             fila += 1
@@ -595,4 +695,15 @@ def recortar_filas_sobrantes(
         ultima_fila_captura,
         341
     )
+
+def tiene_trabajadores_capturados(captura):
+
+    for cuadrilla in captura["cuadrillas"]:
+
+        if len(cuadrilla["trabajadores"]) > 0:
+
+            return True
+
+    return False
+
 #END
