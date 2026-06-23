@@ -3,179 +3,259 @@ import flet as ft
 from database_manager import validar_usuario
 from views.semanas_view import semanas_view
 
-#region LOGINVIEW.PY
-    # !! ==========================================================
-    # !! LOGIN_VIEW.PY
-    # !!
-    # !! Primera pantalla del sistema.
-    # !!
-    # !! Funciones principales:
-    # !! - Solicitar usuario
-    # !! - Solicitar contraseña
-    # !! - Validar acceso contra SQLite
-    # !! - Redirigir al listado de obras
-    # !!
-    # !! Flujo:
-    # !!
-    # !! main.py
-    # !!     ↓
-    # !! login_view.py
-    # !!     ↓
-    # !! validar_usuario()
-    # !!     ↓
-    # !! obras_view.py
-    # !!
-    # !! Esta vista NO consulta directamente SQLite.
-    # !! Utiliza database_manager.py para validar credenciales.
-    # !! ==========================================================
-#endregion
+from styles import (
+    COLOR_PRIMARY,
+    COLOR_PRIMARY_DARK,
+    COLOR_BACKGROUND,
+    COLOR_SURFACE,
+    COLOR_TEXT,
+    COLOR_MUTED,
+    COLOR_DANGER,
+    COLOR_BORDER,
+    CARD_RADIUS,
+    BUTTON_HEIGHT,
+    TITLE_SIZE,
+    TEXT_SIZE,
+    SMALL_TEXT_SIZE,
+)
+
+
+#region LOGIN_VIEW.PY
+
+# !! ==========================================================
+# !! LOGIN_VIEW.PY
+# !!
+# !! Primera pantalla del sistema.
+# !!
+# !! Funciones principales:
+# !! - Solicitar usuario
+# !! - Solicitar contraseña
+# !! - Validar credenciales contra SQLite
+# !! - Mostrar mensajes de error
+# !! - Redirigir al listado de semanas si el acceso es válido
+# !!
+# !! Flujo:
+# !!
+# !! main.py
+# !!     ↓
+# !! login_view(page)
+# !!     ↓
+# !! Usuario captura credenciales
+# !!     ↓
+# !! validar_usuario()
+# !!     ↓
+# !! semanas_view(page)
+# !! ==========================================================
 
 
 def login_view(page):
 
-    # ! Campo para capturar usuario
-    txt_usuario = ft.TextField(
-        label="Usuario",
-        width=300
-    )
+    # ======================================================
+    # MENSAJE DE ERROR / VALIDACIÓN
+    #
+    # Se muestra cuando:
+    # - El usuario deja campos vacíos
+    # - El usuario o contraseña son incorrectos
+    # ======================================================
 
-    # ! Campo para capturar contraseña
-    # ! password=True oculta los caracteres
-    txt_password = ft.TextField(
-        label="Contraseña",
-        password=True,
-        width=300
-    )
-
-    # ! Etiqueta para mostrar errores
-    # ! Ejemplo:
-    # ! Usuario o contraseña incorrectos
     mensaje = ft.Text(
         "",
-        color="red"
+        color=COLOR_DANGER,
+        size=SMALL_TEXT_SIZE,
     )
-#region INICIAR SESION
-        # !! ----------------------------------------------------------
-        # !! iniciar_sesion()
-        # !!
-        # !! Se ejecuta cuando el usuario presiona:
-        # !! [ Entrar ]
-        # !!
-        # !! Pasos:
-        # !! 1. Leer usuario y contraseña
-        # !! 2. Consultar SQLite
-        # !! 3. Si son válidos:
-        # !!       abrir obras_view
-        # !! 4. Si son inválidos:
-        # !!       mostrar mensaje de error
-        # !! ----------------------------------------------------------
-#endregion
+
+    # ======================================================
+    # FUNCIÓN INICIAR SESIÓN
+    #
+    # Se ejecuta cuando:
+    # - El usuario presiona el botón "Iniciar sesión"
+    # - El usuario presiona Enter en usuario o contraseña
+    # ======================================================
 
     def iniciar_sesion(e):
 
+        # Leer valores capturados
         usuario = txt_usuario.value.strip()
         password = txt_password.value.strip()
 
-        # ! Consulta a SQLite mediante database_manager.py
+        # Validar campos vacíos antes de consultar SQLite
+        if not usuario or not password:
+            mensaje.value = "Captura usuario y contraseña"
+            page.update()
+            return
+
+        # Consultar usuario y contraseña en SQLite
         resultado = validar_usuario(
             usuario,
             password
         )
 
-        # ! Credenciales correctas
+        # Si las credenciales son correctas
         if resultado:
 
-            # !! Limpiar vistas actuales
+            # Limpiar vistas actuales
             page.views.clear()
 
-            # !! Abrir listado de obras
+            # Abrir pantalla de semanas
             page.views.append(
                 semanas_view(page)
             )
 
             page.update()
 
-        # ! Credenciales incorrectas
+        # Si las credenciales son incorrectas
         else:
-
-            mensaje.value = (
-                "Usuario o contraseña incorrectos"
-            )
-
+            mensaje.value = "Usuario o contraseña incorrectos"
             page.update()
 
-#region  RETURN DE LA VISTA 
+    # ======================================================
+    # CAMPO USUARIO
+    #
+    # Permite capturar el usuario registrado en la base
+    # de datos LOGIN BD / SQLite.
+    # ======================================================
 
-    #  ==========================================================    
+    txt_usuario = ft.TextField(
+        label="Usuario",
+        width=320,
+        height=56,
+        border_color=COLOR_BORDER,
+        focused_border_color=COLOR_PRIMARY,
+        text_size=TEXT_SIZE,
+        on_submit=iniciar_sesion,
+    )
 
-    #  Construcción visual del Login
-    # 
-    #  Contiene:
-    #  - Logo
-    #  - Usuario
-    #  - Contraseña
-    #  - Mensajes de error
-    #  - Botón Entrar
-    #  ==========================================================
-#endregion
+    # ======================================================
+    # CAMPO CONTRASEÑA
+    #
+    # password=True oculta la contraseña.
+    # can_reveal_password=True permite mostrar/ocultar
+    # la contraseña desde el campo.
+    # ======================================================
+
+    txt_password = ft.TextField(
+        label="Contraseña",
+        password=True,
+        can_reveal_password=True,
+        width=320,
+        height=56,
+        border_color=COLOR_BORDER,
+        focused_border_color=COLOR_PRIMARY,
+        text_size=TEXT_SIZE,
+        on_submit=iniciar_sesion,
+    )
+
+    # ======================================================
+    # CONSTRUCCIÓN VISUAL DEL LOGIN
+    #
+    # Diseño:
+    # - Fondo corporativo claro
+    # - Tarjeta blanca centrada
+    # - Logo circular
+    # - Título de la aplicación
+    # - Campos táctiles
+    # - Botón principal grande
+    # ======================================================
 
     return ft.View(
         route="/",
-        # SI QUISIERAMOS CAMBIAR EL COLOR 
-        #bgcolor="#3A4134",
+        bgcolor=COLOR_BACKGROUND,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        vertical_alignment=ft.MainAxisAlignment.CENTER,
 
         controls=[
 
-            # ! Separación superior
-            ft.Container(height=30),
-
-            # ! Logo principal
+            # Tarjeta principal del login
             ft.Container(
-                width=260,
-                height=260,
-                border_radius=220,
+                width=440,
+                padding=32,
+                bgcolor=COLOR_SURFACE,
+                border_radius=CARD_RADIUS,
 
+                # Borde suave para separar la tarjeta del fondo
                 border=ft.Border(
-                    left=ft.BorderSide(0.5, "black"),
-                    top=ft.BorderSide(0.5, "black"),
-                    right=ft.BorderSide(0.5, "black"),
-                    bottom=ft.BorderSide(0.5, "black"),
+                    left=ft.BorderSide(1, COLOR_BORDER),
+                    top=ft.BorderSide(1, COLOR_BORDER),
+                    right=ft.BorderSide(1, COLOR_BORDER),
+                    bottom=ft.BorderSide(1, COLOR_BORDER),
                 ),
 
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,
+                content=ft.Column(
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=18,
 
-                content=ft.Image(
-                    src="logo.jpg",
-                    width=220,
-                    height=220,
-                    fit="cover"
-                )
-            ),
+                    controls=[
 
-            # ! Nombre de la aplicación
-            ft.Text(
-                "CAPTURADOR DESTAJOS",
-                size=28,
-                weight=ft.FontWeight.BOLD
-            ),
+                        # Logo circular
+                        ft.Container(
+                            width=150,
+                            height=150,
+                            border_radius=100,
 
-            # ! Usuario
-            txt_usuario,
+                            border=ft.Border(
+                                left=ft.BorderSide(1, COLOR_PRIMARY_DARK),
+                                top=ft.BorderSide(1, COLOR_PRIMARY_DARK),
+                                right=ft.BorderSide(1, COLOR_PRIMARY_DARK),
+                                bottom=ft.BorderSide(1, COLOR_PRIMARY_DARK),
+                            ),
 
-            # ! Contraseña
-            txt_password,
+                            clip_behavior=ft.ClipBehavior.HARD_EDGE,
 
-            # ! Mensajes de error
-            mensaje,
+                            content=ft.Image(
+                                src="logo.jpg",
+                                width=150,
+                                height=150,
+                                fit="cover",
+                            ),
+                        ),
 
-            # ! Botón de acceso
-            ft.ElevatedButton(
-                content=ft.Text("Entrar"),
-                on_click=iniciar_sesion
+                        # Nombre del sistema
+                        ft.Text(
+                            "Capturador Destajos",
+                            size=TITLE_SIZE,
+                            weight=ft.FontWeight.BOLD,
+                            color=COLOR_TEXT,
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+
+                        # Subtítulo explicativo
+                        ft.Text(
+                            "Acceso al sistema de nómina de obra",
+                            size=SMALL_TEXT_SIZE,
+                            color=COLOR_MUTED,
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+
+                        ft.Container(height=6),
+
+                        # Campo usuario
+                        txt_usuario,
+
+                        # Campo contraseña
+                        txt_password,
+
+                        # Mensajes de error
+                        mensaje,
+
+                        # Botón principal
+                        ft.ElevatedButton(
+                            height=BUTTON_HEIGHT,
+                            width=320,
+                            bgcolor=COLOR_PRIMARY,
+                            color="white",
+
+                            content=ft.Text(
+                                "Iniciar sesión",
+                                size=TEXT_SIZE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+
+                            on_click=iniciar_sesion,
+                        ),
+                    ],
+                ),
             )
-
         ],
-
-        # ! Centrar controles horizontalmente
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER
     )
+
+#endregion
