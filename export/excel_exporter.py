@@ -126,7 +126,7 @@ def escribir_horas_extras(
         )
     )
 
-    hoja.range(f"A{fila}").value = "LOTE"
+    hoja.range(f"A{fila}").value = "lote"
 
     hoja.range(f"B{fila}").value = (
         trabajador["numero_cuadrilla"]
@@ -312,7 +312,7 @@ def exportar_captura(
             # !! Espacio entre cuadrillas.
             fila += 1
 
-    return fila
+    return fila - 1
 
 def exportar_destajo(
     captura,
@@ -381,7 +381,7 @@ def exportar_destajo(
         hoja.range("E10").value = semana["fecha_inicio"]
         hoja.range("F10").value = semana["fecha_fin"]
 
-        exportar_captura(
+        ultima_fila_captura = exportar_captura(
             hoja,
             captura,
             fila_inicial=15
@@ -398,13 +398,23 @@ def exportar_destajo(
         ultima_fila_residente = escribir_residentes(
             hoja,
             residentes,
-            fila_inicial=355,
+            fila_inicial=356,
             numero_inicial=61
         )
+
+        if ultima_fila_residente < 354:
+
+            ultima_fila_residente = 354
 
         escribir_maestreada(
             hoja,
             porcentaje_maestreada
+        )
+
+        recortar_filas_sobrantes(
+            hoja,
+            ultima_fila_captura,
+            ultima_fila_residente
         )
 
         libro.save()
@@ -475,6 +485,7 @@ def escribir_residentes(
     numero_inicial=61
 ):
 
+    
     fila = fila_inicial
     numero_cuadrilla = numero_inicial
 
@@ -501,7 +512,7 @@ def escribir_residentes(
             ""
         )
 
-        fila_puesto = fila
+        ultima_fila_usada = fila
 
         fila += 1
 
@@ -517,8 +528,7 @@ def escribir_residentes(
 
             # !! Si existen horas extras,
             # !! la columna P debe cerrar en la fila de HE.
-            hoja.range(f"P{fila_residente}").value = None
-            hoja.range(f"P{fila_puesto}").value = None
+            ultima_fila_usada = fila
 
             fila += 1
 
@@ -533,7 +543,7 @@ def escribir_residentes(
 
         numero_cuadrilla += 1
 
-    return fila
+    return ultima_fila_usada
 
 def escribir_maestreada(
     hoja,
@@ -550,5 +560,39 @@ def escribir_maestreada(
     hoja.range("L393").value = 1
     hoja.range("P393").value = 75
 
+def eliminar_filas(
+    hoja,
+    fila_inicio,
+    fila_fin
+):
 
+    if fila_inicio > fila_fin:
+        return
+
+    hoja.api.Rows(
+        f"{fila_inicio}:{fila_fin}"
+    ).Delete()
+
+def recortar_filas_sobrantes(
+    hoja,
+    ultima_fila_captura,
+    ultima_fila_residente
+):
+
+    # !! Primero eliminamos el bloque inferior.
+    # !! Esto limpia filas entre residentes/destajista y maestreada.
+    eliminar_filas(
+        hoja,
+        ultima_fila_residente + 1,
+        382
+    )
+
+    # !! Después eliminamos el bloque superior.
+    # !! Esto elimina filas vacías entre la captura normal
+    # !! y la sección de destajista/residentes.
+    eliminar_filas(
+        hoja,
+        ultima_fila_captura,
+        341
+    )
 #END

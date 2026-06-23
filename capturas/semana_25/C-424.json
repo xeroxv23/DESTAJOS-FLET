@@ -1,0 +1,76 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "C-424",
+    "nombre_obra": "URBANIZACIÓN MASTER",
+    "direccion_obra": "TLAJOMULCO",
+    "cuadrillas": [
+        {
+            "numero": 1,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 4537,
+                    "nombre": "VILLA LÓPEZ RUBÉN ERASMO",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 5.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 300.0,
+                    "porcentaje": 37.5
+                },
+                {
+                    "clave": 4587,
+                    "nombre": "VILLA LÓPEZ DAVID RIGOBERTO",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 5.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 300.0,
+                    "porcentaje": 37.5
+                },
+                {
+                    "clave": 4586,
+                    "nombre": "RAMÍREZ VILLA JOSÉ EDUARDO",
+                    "puesto": "PEON",
+                    "salario_diario": 354.88,
+                    "dias": 5.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 40,
+                    "puntos": 200.0,
+                    "porcentaje": 25.0
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "MURO DE PIEDRA - AREA DE LAVADO",
+                    "conceptos": [
+                        {
+                            "clave": "mam01",
+                            "descripcion": "Mamposteo 1 rostro de 0.00-1.50",
+                            "unidad": "M3",
+                            "largo": "12.2",
+                            "ancho": "0.8",
+                            "alto": "1.3",
+                            "piezas": "1",
+                            "notas": ""
+                        }
+                    ]
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

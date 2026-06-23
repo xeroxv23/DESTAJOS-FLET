@@ -170,7 +170,7 @@ def crear_concepto(
 
     return {
 
-        "clave": concepto_bd[0],
+        "clave": str(concepto_bd[0]).lower(),
 
         "descripcion": concepto_bd[1],
 

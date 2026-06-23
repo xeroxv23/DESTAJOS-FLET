@@ -1,4 +1,7 @@
 import flet as ft
+import os
+import threading
+import pythoncom
 
 from database_manager import (
     buscar_trabajador,
@@ -31,7 +34,7 @@ from components.dialogs import (
 
 from export.excel_exporter import exportar_destajo
 
-
+#region OBRA_VIEW
 # !! ==========================================================
 # !! OBRA_VIEW.PY
 # !! Pantalla principal de captura de destajos por obra.
@@ -52,6 +55,7 @@ from export.excel_exporter import exportar_destajo
 # !! La parte visual de cada cuadrilla se manda a cuadrilla_card.py.
 # !! Los formularios emergentes se mandan a dialogs.py.
 # !! ==========================================================
+#endregion
 
 
 def obra_view(
@@ -105,6 +109,8 @@ def obra_view(
     # !! - Se agrega un subtítulo.
     # !! - Se agrega un concepto.
     # !! ----------------------------------------------------------
+
+    
     def actualizar_cuadrillas():
 
         lista_cuadrillas.controls.clear()
@@ -297,90 +303,113 @@ def obra_view(
                     dialog_maestreada.open = False
                     page.update()
 
-                    ruta = exportar_destajo(
-                        captura,
-                        residentes,
-                        porcentaje_maestreada
+                    dialog_cargando = ft.AlertDialog(
+                        modal=True,
+                        title=ft.Text("Generando archivo"),
+                        content=ft.Column(
+                            controls=[
+                                ft.ProgressRing(),
+                                ft.Text("Creando archivo Excel, por favor espere...")
+                            ],
+                            tight=True
+                        )
                     )
 
-                    dialog_resultado = ft.AlertDialog(
+                    page.overlay.append(dialog_cargando)
+                    dialog_cargando.open = True
+                    page.update()
 
-                        title=ft.Text(
-                            "Destajo exportado"
-                        ),
+                    def proceso_exportacion():
 
-                        content=ft.Text(
-                            f"Se generó el archivo:\n{ruta}"
-                        ),
+                        pythoncom.CoInitialize()
 
-                        actions=[
+                        try:
 
-                            ft.TextButton(
-                                "Aceptar",
-                                on_click=lambda ev: cerrar_resultado(ev)
+                            ruta = exportar_destajo(
+                                captura,
+                                residentes,
+                                porcentaje_maestreada
                             )
 
-                        ]
+                            nombre_archivo = os.path.basename(ruta)
 
-                    )
+                            dialog_cargando.open = False
 
-                    def cerrar_resultado(ev):
+                            dialog_resultado = ft.AlertDialog(
+                                title=ft.Text("Destajo exportado"),
+                                content=ft.Text(nombre_archivo),
+                                actions=[
+                                    ft.TextButton(
+                                        "Aceptar",
+                                        on_click=lambda ev: cerrar_resultado(ev)
+                                    )
+                                ]
+                            )
 
-                        dialog_resultado.open = False
+                            def cerrar_resultado(ev):
 
-                        page.update()
+                                dialog_resultado.open = False
+                                page.update()
 
-                    page.overlay.append(dialog_resultado)
+                            page.overlay.append(dialog_resultado)
+                            dialog_resultado.open = True
+                            page.update()
 
-                    dialog_resultado.open = True
+                        except Exception as error:
 
-                    page.update()
+                            dialog_cargando.open = False
+
+                            dialog_error = ft.AlertDialog(
+                                title=ft.Text("Error al exportar"),
+                                content=ft.Text(str(error)),
+                                actions=[
+                                    ft.TextButton(
+                                        "Aceptar",
+                                        on_click=lambda ev: cerrar_error(ev)
+                                    )
+                                ]
+                            )
+
+                            def cerrar_error(ev):
+
+                                dialog_error.open = False
+                                page.update()
+
+                            page.overlay.append(dialog_error)
+                            dialog_error.open = True
+                            page.update()
+
+                        finally:
+
+                            pythoncom.CoUninitialize()
+
+                    threading.Thread(
+                        target=proceso_exportacion,
+                        daemon=True
+                    ).start()
 
                 def cancelar(ev):
 
                     dialog_maestreada.open = False
-
                     page.update()
 
                 dialog_maestreada = ft.AlertDialog(
-
-                    title=ft.Text(
-                        "Maestreada"
-                    ),
-
+                    title=ft.Text("Maestreada"),
                     content=ft.Column(
                         controls=[
-
-                            ft.Text(
-                                "Ingresa el porcentaje de maestreada de esta obra."
-                            ),
-
+                            ft.Text("Ingresa el porcentaje de maestreada de esta obra."),
                             porcentaje_input
-
                         ],
                         tight=True
                     ),
-
                     actions=[
-
-                        ft.TextButton(
-                            "Cancelar",
-                            on_click=cancelar
-                        ),
-
-                        ft.TextButton(
-                            "Exportar",
-                            on_click=exportar_final
-                        )
-
+                        ft.TextButton("Cancelar", on_click=cancelar),
+                        ft.TextButton("Exportar", on_click=exportar_final)
                     ]
-
                 )
 
                 page.overlay.append(dialog_maestreada)
-
                 dialog_maestreada.open = True
-
                 page.update()
 
             def no_capturar_residente(ev):
