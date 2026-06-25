@@ -34,6 +34,8 @@ from components.dialogs import (
 
 from export.excel_exporter import exportar_destajo
 
+from views.evidencias_view import evidencias_view
+
 from styles import (
     COLOR_PRIMARY,
     COLOR_PRIMARY_DARK,
@@ -209,6 +211,19 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
     def regresar_obras(e):
 
         page.views.pop()
+        page.update()
+    
+    def abrir_evidencias(e):
+
+        page.views.append(
+            evidencias_view(
+                page,
+                semana_actual,
+                clave_obra,
+                nombre_obra
+            )
+        )
+
         page.update()
 
     def cerrar_destajo(e):
@@ -573,6 +588,7 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
             actualizar_cuadrillas
         )
 
+
     actualizar_cuadrillas()
 
     return ft.View(
@@ -696,6 +712,18 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                                                 weight=ft.FontWeight.BOLD,
                                             ),
                                             on_click=nueva_cuadrilla,
+                                        ),
+
+                                        ft.ElevatedButton(
+                                            height=BUTTON_HEIGHT,
+                                            bgcolor=COLOR_PRIMARY,
+                                            color="white",
+                                            content=ft.Text(
+                                                "Tomar fotografía",
+                                                size=TEXT_SIZE,
+                                                weight=ft.FontWeight.BOLD,
+                                            ),
+                                            on_click=abrir_evidencias,
                                         ),
 
                                         ft.ElevatedButton(

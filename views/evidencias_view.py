@@ -1,0 +1,336 @@
+import flet as ft
+
+from services.evidencias_service import (
+    guardar_evidencia_desde_archivo,
+    listar_evidencias,
+    eliminar_evidencia
+)
+
+from styles import (
+    COLOR_PRIMARY,
+    COLOR_PRIMARY_DARK,
+    COLOR_BACKGROUND,
+    COLOR_SURFACE,
+    COLOR_TEXT,
+    COLOR_MUTED,
+    COLOR_DANGER,
+    COLOR_BORDER,
+    CARD_RADIUS,
+    BUTTON_HEIGHT,
+    TITLE_SIZE,
+    SUBTITLE_SIZE,
+    TEXT_SIZE,
+    SMALL_TEXT_SIZE,
+    PAGE_PADDING,
+)
+
+
+#region EVIDENCIAS_VIEW.PY
+
+def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
+
+    lista_evidencias = ft.Column(
+        spacing=10,
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
+    )
+
+    nombre_evidencia_input = ft.TextField(
+        label="Nombre de la evidencia",
+        hint_text="Ejemplo: fachada, recámara principal, baño planta alta",
+        height=56,
+        border_color=COLOR_BORDER,
+        focused_border_color=COLOR_PRIMARY,
+        text_size=TEXT_SIZE,
+    )
+
+    ruta_evidencia_input = ft.TextField(
+        label="Ruta de la imagen",
+        hint_text=r"Ejemplo: C:\Users\Carlos\Pictures\foto.jpg",
+        height=56,
+        border_color=COLOR_BORDER,
+        focused_border_color=COLOR_PRIMARY,
+        text_size=TEXT_SIZE,
+    )
+
+    mensaje = ft.Text(
+        "",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_DANGER,
+    )
+
+    def actualizar_evidencias():
+
+        lista_evidencias.controls.clear()
+
+        evidencias = listar_evidencias(
+            semana_actual,
+            clave_obra
+        )
+
+        if len(evidencias) == 0:
+
+            lista_evidencias.controls.append(
+                ft.Container(
+                    padding=20,
+                    bgcolor=COLOR_SURFACE,
+                    border_radius=CARD_RADIUS,
+                    border=ft.Border(
+                        left=ft.BorderSide(1, COLOR_BORDER),
+                        top=ft.BorderSide(1, COLOR_BORDER),
+                        right=ft.BorderSide(1, COLOR_BORDER),
+                        bottom=ft.BorderSide(1, COLOR_BORDER),
+                    ),
+                    content=ft.Text(
+                        "Sin evidencias fotográficas",
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                )
+            )
+
+        else:
+
+            for evidencia in evidencias:
+
+                def borrar_evidencia(e, ruta=evidencia["ruta"]):
+
+                    eliminar_evidencia(ruta)
+                    actualizar_evidencias()
+
+                lista_evidencias.controls.append(
+                    ft.Container(
+                        padding=16,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
+
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+
+                            controls=[
+
+                                ft.Column(
+                                    spacing=4,
+                                    expand=True,
+                                    controls=[
+                                        ft.Text(
+                                            evidencia["nombre"],
+                                            size=TEXT_SIZE,
+                                            weight=ft.FontWeight.BOLD,
+                                            color=COLOR_TEXT,
+                                        ),
+                                        ft.Text(
+                                            evidencia["ruta"],
+                                            size=SMALL_TEXT_SIZE,
+                                            color=COLOR_MUTED,
+                                        ),
+                                    ],
+                                ),
+
+                                ft.TextButton(
+                                    content=ft.Text(
+                                        "Eliminar",
+                                        size=TEXT_SIZE,
+                                        color=COLOR_DANGER,
+                                    ),
+                                    on_click=borrar_evidencia,
+                                ),
+                            ],
+                        ),
+                    )
+                )
+
+        page.update()
+
+    def agregar_evidencia(e):
+
+        nombre = nombre_evidencia_input.value.strip()
+        ruta = ruta_evidencia_input.value.strip()
+
+        if nombre == "":
+            mensaje.value = "Captura un nombre para la evidencia"
+            page.update()
+            return
+
+        if ruta == "":
+            mensaje.value = "Captura la ruta de la imagen"
+            page.update()
+            return
+
+        try:
+            guardar_evidencia_desde_archivo(
+                semana_actual,
+                clave_obra,
+                ruta,
+                nombre
+            )
+        except Exception as error:
+            mensaje.value = str(error)
+            page.update()
+            return
+
+        nombre_evidencia_input.value = ""
+        ruta_evidencia_input.value = ""
+        mensaje.value = ""
+
+        actualizar_evidencias()
+
+    def regresar_obra(e):
+
+        page.views.pop()
+        page.update()
+
+    actualizar_evidencias()
+
+    return ft.View(
+        route="/evidencias",
+        bgcolor=COLOR_BACKGROUND,
+        padding=PAGE_PADDING,
+
+        controls=[
+            ft.Column(
+                expand=True,
+                spacing=16,
+
+                controls=[
+
+                    ft.Container(
+                        padding=20,
+                        bgcolor=COLOR_PRIMARY_DARK,
+                        border_radius=CARD_RADIUS,
+
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+
+                            controls=[
+
+                                ft.Column(
+                                    spacing=5,
+                                    expand=True,
+                                    controls=[
+                                        ft.Text(
+                                            "Evidencias fotográficas",
+                                            size=TITLE_SIZE,
+                                            weight=ft.FontWeight.BOLD,
+                                            color="white",
+                                        ),
+
+                                        ft.Text(
+                                            f"{clave_obra} - {nombre_obra}",
+                                            size=TEXT_SIZE,
+                                            color="white",
+                                        ),
+
+                                        ft.Text(
+                                            f"Semana {semana_actual['numero']}",
+                                            size=SMALL_TEXT_SIZE,
+                                            color="#E5E7EB",
+                                        ),
+                                    ],
+                                ),
+
+                                ft.ElevatedButton(
+                                    height=BUTTON_HEIGHT,
+                                    bgcolor=COLOR_SURFACE,
+                                    color=COLOR_PRIMARY_DARK,
+                                    content=ft.Text(
+                                        "Regresar",
+                                        size=TEXT_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                    ),
+                                    on_click=regresar_obra,
+                                ),
+                            ],
+                        ),
+                    ),
+
+                    ft.Container(
+                        padding=16,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
+
+                        content=ft.Column(
+                            spacing=12,
+                            controls=[
+                                ft.Text(
+                                    "Agregar evidencia",
+                                    size=SUBTITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
+                                ),
+
+                                ft.Text(
+                                    "Temporalmente usaremos una ruta de imagen en Windows. En Android se cambiará por cámara o galería.",
+                                    size=SMALL_TEXT_SIZE,
+                                    color=COLOR_MUTED,
+                                ),
+
+                                nombre_evidencia_input,
+
+                                ruta_evidencia_input,
+
+                                mensaje,
+
+                                ft.ElevatedButton(
+                                    height=BUTTON_HEIGHT,
+                                    bgcolor=COLOR_PRIMARY,
+                                    color="white",
+                                    content=ft.Text(
+                                        "Agregar evidencia",
+                                        size=TEXT_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                    ),
+                                    on_click=agregar_evidencia,
+                                ),
+                            ],
+                        ),
+                    ),
+
+                    ft.Container(
+                        expand=True,
+                        padding=16,
+                        bgcolor=COLOR_SURFACE,
+                        border_radius=CARD_RADIUS,
+                        border=ft.Border(
+                            left=ft.BorderSide(1, COLOR_BORDER),
+                            top=ft.BorderSide(1, COLOR_BORDER),
+                            right=ft.BorderSide(1, COLOR_BORDER),
+                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                        ),
+
+                        content=ft.Column(
+                            expand=True,
+                            spacing=12,
+                            controls=[
+
+                                ft.Text(
+                                    "Evidencias guardadas",
+                                    size=SUBTITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
+                                ),
+
+                                lista_evidencias,
+                            ],
+                        ),
+                    ),
+                ],
+            )
+        ],
+    )
+
+#endregion
