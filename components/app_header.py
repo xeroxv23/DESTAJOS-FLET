@@ -30,6 +30,7 @@ def crear_app_header(
     titulo,
     subtitulo="",
     descripcion="",
+    detalle="",
     texto_boton="Regresar",
     on_regresar=None
 ):
@@ -58,6 +59,17 @@ def crear_app_header(
                 descripcion,
                 size=SMALL_TEXT_SIZE,
                 color="#E5E7EB",
+            )
+        )
+    
+    if detalle:
+        controles_texto.append(
+            ft.Text(
+                detalle,
+                size=SMALL_TEXT_SIZE,
+                color="#D1D5DB",
+                max_lines=2,
+                overflow=ft.TextOverflow.ELLIPSIS,
             )
         )
 

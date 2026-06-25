@@ -24,7 +24,12 @@ from styles import (
     PAGE_PADDING,
 )
 
+#COMPONENTES
 from components.app_header import crear_app_header
+from components.app_card import (
+    crear_app_card,
+    crear_app_empty_card
+)
 
 
 #region EVIDENCIAS_VIEW.PY
@@ -73,21 +78,14 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
         if len(evidencias) == 0:
 
             lista_evidencias.controls.append(
-                ft.Container(
-                    padding=20,
-                    bgcolor=COLOR_SURFACE,
-                    border_radius=CARD_RADIUS,
-                    border=ft.Border(
-                        left=ft.BorderSide(1, COLOR_BORDER),
-                        top=ft.BorderSide(1, COLOR_BORDER),
-                        right=ft.BorderSide(1, COLOR_BORDER),
-                        bottom=ft.BorderSide(1, COLOR_BORDER),
-                    ),
-                    content=ft.Text(
-                        "Sin evidencias fotográficas",
-                        size=TEXT_SIZE,
-                        color=COLOR_MUTED,
-                    ),
+                crear_app_empty_card(
+
+                    titulo="Sin evidencias fotográficas",
+
+                    descripcion=(
+                        "Todavía no se han agregado imágenes "
+                        "para esta obra."
+                    )
                 )
             )
 
@@ -101,21 +99,10 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                     actualizar_evidencias()
 
                 lista_evidencias.controls.append(
-                    ft.Container(
-                        padding=16,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Row(
+                    crear_app_card(
+                        contenido=ft.Row(
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
-
                             controls=[
 
                                 ft.Column(
@@ -128,6 +115,7 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                                             weight=ft.FontWeight.BOLD,
                                             color=COLOR_TEXT,
                                         ),
+
                                         ft.Text(
                                             evidencia["ruta"],
                                             size=SMALL_TEXT_SIZE,
@@ -145,7 +133,7 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                                     on_click=borrar_evidencia,
                                 ),
                             ],
-                        ),
+                        )
                     )
                 )
 
@@ -211,34 +199,15 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                         on_regresar=regresar_obra,
                     ),
                     
-
-                    ft.Container(
-                        padding=16,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
+                    crear_app_card(
+                        titulo="Agregar evidencia",
+                        subtitulo=(
+                            "Temporalmente usaremos una ruta de imagen en Windows. "
+                            "En Android se cambiará por cámara o galería."
                         ),
-
-                        content=ft.Column(
+                        contenido=ft.Column(
                             spacing=12,
                             controls=[
-                                ft.Text(
-                                    "Agregar evidencia",
-                                    size=SUBTITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=COLOR_TEXT,
-                                ),
-
-                                ft.Text(
-                                    "Temporalmente usaremos una ruta de imagen en Windows. En Android se cambiará por cámara o galería.",
-                                    size=SMALL_TEXT_SIZE,
-                                    color=COLOR_MUTED,
-                                ),
-
                                 nombre_evidencia_input,
 
                                 ruta_evidencia_input,
@@ -260,33 +229,10 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                         ),
                     ),
 
-                    ft.Container(
+                    crear_app_card(
+                        titulo="Evidencias guardadas",
+                        contenido=lista_evidencias,
                         expand=True,
-                        padding=16,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Column(
-                            expand=True,
-                            spacing=12,
-                            controls=[
-
-                                ft.Text(
-                                    "Evidencias guardadas",
-                                    size=SUBTITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=COLOR_TEXT,
-                                ),
-
-                                lista_evidencias,
-                            ],
-                        ),
                     ),
                 ],
             )

@@ -35,6 +35,7 @@ from components.dialogs import (
 )
 
 from components.app_actions import crear_app_actions
+from components.app_header import crear_app_header
 
 from export.excel_exporter import exportar_destajo
 
@@ -608,63 +609,16 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
                 controls=[
 
-                    ft.Container(
-                        padding=20,
-                        bgcolor=COLOR_PRIMARY_DARK,
-                        border_radius=CARD_RADIUS,
-
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-
-                            controls=[
-
-                                ft.Column(
-                                    spacing=5,
-                                    expand=True,
-                                    controls=[
-
-                                        ft.Text(
-                                            clave_obra,
-                                            size=TITLE_SIZE,
-                                            weight=ft.FontWeight.BOLD,
-                                            color="white",
-                                        ),
-
-                                        ft.Text(
-                                            nombre_obra,
-                                            size=TEXT_SIZE,
-                                            color="white",
-                                        ),
-
-                                        ft.Text(
-                                            f"Semana {semana_actual['numero']} "
-                                            f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})",
-                                            size=SMALL_TEXT_SIZE,
-                                            color="#E5E7EB",
-                                        ),
-
-                                        ft.Text(
-                                            direccion_obra,
-                                            size=SMALL_TEXT_SIZE,
-                                            color="#E5E7EB",
-                                        ),
-                                    ],
-                                ),
-
-                                ft.ElevatedButton(
-                                    height=BUTTON_HEIGHT,
-                                    bgcolor=COLOR_SURFACE,
-                                    color=COLOR_PRIMARY_DARK,
-                                    content=ft.Text(
-                                        "Regresar a obras",
-                                        size=TEXT_SIZE,
-                                        weight=ft.FontWeight.BOLD,
-                                    ),
-                                    on_click=regresar_obras,
-                                ),
-                            ],
+                    crear_app_header(
+                        titulo=clave_obra,
+                        subtitulo=nombre_obra,
+                        descripcion=(
+                            f"Semana {semana_actual['numero']} "
+                            f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
                         ),
+                        detalle=direccion_obra,
+                        texto_boton="Regresar a obras",
+                        on_regresar=regresar_obras,
                     ),
 
                     crear_app_actions(
