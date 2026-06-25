@@ -9,6 +9,7 @@ from database_manager import (
     obtener_obra
 )
 
+#IMPORTE DE SERVICES
 from services.cuadrilla_service import (
     calcular_valor,
     recalcular_cuadrilla
@@ -22,6 +23,7 @@ from services.captura_service import (
     obtener_siguiente_numero_cuadrilla
 )
 
+# IMPORTES DE COMPONENTES
 from components.cuadrilla_card import crear_cuadrilla_card
 
 from components.dialogs import (
@@ -31,6 +33,8 @@ from components.dialogs import (
     abrir_dialogo_agregar_concepto,
     abrir_dialogo_agregar_actividades
 )
+
+from components.app_actions import crear_app_actions
 
 from export.excel_exporter import exportar_destajo
 
@@ -663,84 +667,26 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                         ),
                     ),
 
-                    ft.Container(
-                        padding=16,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-
-                            controls=[
-
-                                ft.Column(
-                                    spacing=4,
-                                    controls=[
-                                        ft.Text(
-                                            "Gestión de captura",
-                                            size=SUBTITLE_SIZE,
-                                            weight=ft.FontWeight.BOLD,
-                                            color=COLOR_TEXT,
-                                        ),
-
-                                        ft.Text(
-                                            "Agrega cuadrillas, trabajadores, subtítulos y conceptos.",
-                                            size=SMALL_TEXT_SIZE,
-                                            color=COLOR_MUTED,
-                                        ),
-                                    ],
-                                ),
-
-                                ft.Row(
-                                    spacing=10,
-                                    controls=[
-
-                                        ft.ElevatedButton(
-                                            height=BUTTON_HEIGHT,
-                                            bgcolor=COLOR_PRIMARY,
-                                            color="white",
-                                            content=ft.Text(
-                                                "Nueva cuadrilla",
-                                                size=TEXT_SIZE,
-                                                weight=ft.FontWeight.BOLD,
-                                            ),
-                                            on_click=nueva_cuadrilla,
-                                        ),
-
-                                        ft.ElevatedButton(
-                                            height=BUTTON_HEIGHT,
-                                            bgcolor=COLOR_PRIMARY,
-                                            color="white",
-                                            content=ft.Text(
-                                                "Tomar fotografía",
-                                                size=TEXT_SIZE,
-                                                weight=ft.FontWeight.BOLD,
-                                            ),
-                                            on_click=abrir_evidencias,
-                                        ),
-
-                                        ft.ElevatedButton(
-                                            height=BUTTON_HEIGHT,
-                                            bgcolor=COLOR_SUCCESS,
-                                            color="white",
-                                            content=ft.Text(
-                                                "Cerrar destajo",
-                                                size=TEXT_SIZE,
-                                                weight=ft.FontWeight.BOLD,
-                                            ),
-                                            on_click=cerrar_destajo,
-                                        ),
-                                    ],
-                                ),
-                            ],
-                        ),
+                    crear_app_actions(
+                        titulo="Gestión de captura",
+                        descripcion="Agrega cuadrillas, evidencias fotográficas o cierra el destajo.",
+                        acciones=[
+                            {
+                                "texto": "Nueva cuadrilla",
+                                "on_click": nueva_cuadrilla,
+                                "tipo": "primary",
+                            },
+                            {
+                                "texto": "Tomar fotografía",
+                                "on_click": abrir_evidencias,
+                                "tipo": "primary",
+                            },
+                            {
+                                "texto": "Cerrar destajo",
+                                "on_click": cerrar_destajo,
+                                "tipo": "success",
+                            },
+                        ],
                     ),
 
                     ft.Container(

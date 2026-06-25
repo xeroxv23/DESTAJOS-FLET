@@ -24,6 +24,8 @@ from styles import (
     PAGE_PADDING,
 )
 
+from components.app_header import crear_app_header
+
 
 #region EVIDENCIAS_VIEW.PY
 
@@ -201,56 +203,14 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
 
                 controls=[
 
-                    ft.Container(
-                        padding=20,
-                        bgcolor=COLOR_PRIMARY_DARK,
-                        border_radius=CARD_RADIUS,
-
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-
-                            controls=[
-
-                                ft.Column(
-                                    spacing=5,
-                                    expand=True,
-                                    controls=[
-                                        ft.Text(
-                                            "Evidencias fotográficas",
-                                            size=TITLE_SIZE,
-                                            weight=ft.FontWeight.BOLD,
-                                            color="white",
-                                        ),
-
-                                        ft.Text(
-                                            f"{clave_obra} - {nombre_obra}",
-                                            size=TEXT_SIZE,
-                                            color="white",
-                                        ),
-
-                                        ft.Text(
-                                            f"Semana {semana_actual['numero']}",
-                                            size=SMALL_TEXT_SIZE,
-                                            color="#E5E7EB",
-                                        ),
-                                    ],
-                                ),
-
-                                ft.ElevatedButton(
-                                    height=BUTTON_HEIGHT,
-                                    bgcolor=COLOR_SURFACE,
-                                    color=COLOR_PRIMARY_DARK,
-                                    content=ft.Text(
-                                        "Regresar",
-                                        size=TEXT_SIZE,
-                                        weight=ft.FontWeight.BOLD,
-                                    ),
-                                    on_click=regresar_obra,
-                                ),
-                            ],
-                        ),
+                    crear_app_header(
+                        titulo="Evidencias fotográficas",
+                        subtitulo=f"{clave_obra} - {nombre_obra}",
+                        descripcion=f"Semana {semana_actual['numero']}",
+                        texto_boton="Regresar",
+                        on_regresar=regresar_obra,
                     ),
+                    
 
                     ft.Container(
                         padding=16,

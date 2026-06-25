@@ -40,6 +40,28 @@
             ],
             "conceptos": [],
             "actividades": ""
+        },
+        {
+            "numero": 2,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 4480,
+                    "nombre": "VILLA LÓPEZ FRANCISCO",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 100.0
+                }
+            ],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": ""
         }
     ]
 }
