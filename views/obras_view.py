@@ -30,6 +30,8 @@ from styles import (
     PAGE_PADDING,
 )
 
+#COMPONENTES
+from components.app_header import crear_app_header
 
 #region OBRAS_VIEW.PY
 
@@ -435,49 +437,14 @@ def obras_view(page, semana_actual):
         controls=[
 
             # Header superior
-            ft.Container(
-                padding=20,
-                bgcolor=COLOR_PRIMARY_DARK,
-                border_radius=CARD_RADIUS,
-
-                content=ft.Row(
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-
-                    controls=[
-
-                        ft.Column(
-                            spacing=4,
-                            controls=[
-
-                                ft.Text(
-                                    f"Semana {semana_actual['numero']}",
-                                    size=TITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color="white",
-                                ),
-
-                                ft.Text(
-                                    f"{semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']}",
-                                    size=SMALL_TEXT_SIZE,
-                                    color="#E5E7EB",
-                                ),
-                            ],
-                        ),
-
-                        ft.ElevatedButton(
-                            height=BUTTON_HEIGHT,
-                            bgcolor=COLOR_SURFACE,
-                            color=COLOR_PRIMARY_DARK,
-                            content=ft.Text(
-                                "Regresar a semanas",
-                                size=TEXT_SIZE,
-                                weight=ft.FontWeight.BOLD,
-                            ),
-                            on_click=regresar_semanas,
-                        ),
-                    ],
+            crear_app_header(
+                titulo=f"Semana {semana_actual['numero']}",
+                subtitulo=(
+                    f"{semana_actual['fecha_inicio']} - "
+                    f"{semana_actual['fecha_fin']}"
                 ),
+                texto_boton="Regresar",
+                on_regresar=regresar_semanas,
             ),
 
             ft.Container(height=18),
