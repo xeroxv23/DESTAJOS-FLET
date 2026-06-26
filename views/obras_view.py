@@ -32,6 +32,7 @@ from styles import (
 
 #COMPONENTES
 from components.app_header import crear_app_header
+from components.app_panel import crear_app_panel
 
 #region OBRAS_VIEW.PY
 
@@ -437,6 +438,7 @@ def obras_view(page, semana_actual):
         controls=[
 
             # Header superior
+
             crear_app_header(
                 titulo=f"Semana {semana_actual['numero']}",
                 subtitulo=(
@@ -487,65 +489,19 @@ def obras_view(page, semana_actual):
                 vertical_alignment=ft.CrossAxisAlignment.START,
 
                 controls=[
-
+                    
                     # Panel izquierdo: resultados de búsqueda
-                    ft.Container(
+                    crear_app_panel(
+                        titulo="Resultados de búsqueda",
+                        contenido=lista_view,
                         expand=True,
-                        padding=16,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Column(
-                            expand=True,
-                            spacing=12,
-                            controls=[
-
-                                ft.Text(
-                                    "Resultados de búsqueda",
-                                    size=SUBTITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=COLOR_TEXT,
-                                ),
-
-                                lista_view,
-                            ],
-                        ),
                     ),
 
                     # Panel derecho: obras capturadas
-                    ft.Container(
-                        width=360,
-                        padding=16,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Column(
-                            expand=True,
-                            spacing=12,
-                            controls=[
-
-                                ft.Text(
-                                    "Obras capturadas",
-                                    size=SUBTITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=COLOR_TEXT,
-                                ),
-
-                                lista_capturadas,
-                            ],
-                        ),
+                    crear_app_panel(
+                        titulo="Obras capturadas",
+                        contenido=lista_capturadas,
+                        width=280,
                     ),
                 ],
             ),
