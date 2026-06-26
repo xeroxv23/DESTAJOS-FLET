@@ -1,21 +1,17 @@
 import flet as ft
 
 from styles import (
-    COLOR_PRIMARY,
-    COLOR_SUCCESS,
-    COLOR_DANGER,
     COLOR_SURFACE,
-    COLOR_PRIMARY_DARK,
     COLOR_TEXT,
     COLOR_MUTED,
     COLOR_BORDER,
     CARD_RADIUS,
-    BUTTON_HEIGHT,
     SUBTITLE_SIZE,
-    TEXT_SIZE,
     SMALL_TEXT_SIZE,
 )
 
+#COMPONENTES
+from components.app_button import crear_app_button
 
 #region APP_ACTIONS.PY
 
@@ -36,42 +32,6 @@ from styles import (
 # !! [Nueva cuadrilla] [Tomar fotografía] [Cerrar destajo]
 # !! ==========================================================
 
-
-def crear_boton_accion(
-    texto,
-    on_click,
-    tipo="primary",
-):
-
-    if tipo == "success":
-        bgcolor = COLOR_SUCCESS
-        color = "white"
-
-    elif tipo == "danger":
-        bgcolor = COLOR_DANGER
-        color = "white"
-
-    elif tipo == "secondary":
-        bgcolor = COLOR_SURFACE
-        color = COLOR_PRIMARY_DARK
-
-    else:
-        bgcolor = COLOR_PRIMARY
-        color = "white"
-
-    return ft.ElevatedButton(
-        height=BUTTON_HEIGHT,
-        bgcolor=bgcolor,
-        color=color,
-        content=ft.Text(
-            texto,
-            size=TEXT_SIZE,
-            weight=ft.FontWeight.BOLD,
-        ),
-        on_click=on_click,
-    )
-
-
 def crear_app_actions(
     titulo,
     descripcion="",
@@ -86,7 +46,7 @@ def crear_app_actions(
     for accion in acciones:
 
         botones.append(
-            crear_boton_accion(
+            crear_app_button(
                 texto=accion["texto"],
                 on_click=accion["on_click"],
                 tipo=accion.get("tipo", "primary"),
