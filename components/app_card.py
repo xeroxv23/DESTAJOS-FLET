@@ -13,6 +13,8 @@ from styles import (
     SMALL_TEXT_SIZE,
 )
 
+#COMPONENTES
+from components.app_empty import crear_app_empty
 
 #region APP_CARD.PY
 
@@ -95,25 +97,11 @@ def crear_app_empty_card(
 ):
 
     return crear_app_card(
-        contenido=ft.Column(
-            spacing=8,
-            controls=[
-                ft.Text(
-                    titulo,
-                    size=TEXT_SIZE,
-                    weight=ft.FontWeight.BOLD,
-                    color=COLOR_TEXT,
-                ),
-
-                ft.Text(
-                    descripcion,
-                    size=SMALL_TEXT_SIZE,
-                    color=COLOR_MUTED,
-                ),
-            ],
+        contenido=crear_app_empty(
+            titulo=titulo,
+            descripcion=descripcion,
         ),
         bgcolor=COLOR_BACKGROUND,
     )
-
 
 #endregion
