@@ -29,6 +29,11 @@ from styles import (
     PAGE_PADDING,
 )
 
+# COMPONENTES
+from components.app_card import (
+    crear_app_card,
+    crear_app_empty_card
+)
 
 #region SEMANAS_VIEW.PY
 
@@ -85,34 +90,12 @@ def semanas_view(page):
         if len(semanas) == 0:
 
             lista_semanas.controls.append(
-                ft.Container(
-                    padding=32,
-                    bgcolor=COLOR_SURFACE,
-                    border_radius=CARD_RADIUS,
-                    border=ft.Border(
-                        left=ft.BorderSide(1, COLOR_BORDER),
-                        top=ft.BorderSide(1, COLOR_BORDER),
-                        right=ft.BorderSide(1, COLOR_BORDER),
-                        bottom=ft.BorderSide(1, COLOR_BORDER),
-                    ),
-                    content=ft.Column(
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        spacing=10,
-                        controls=[
-                            ft.Text(
-                                "No hay semanas creadas",
-                                size=SUBTITLE_SIZE,
-                                weight=ft.FontWeight.BOLD,
-                                color=COLOR_TEXT,
-                            ),
-                            ft.Text(
-                                "Crea una nueva semana para comenzar la captura.",
-                                size=TEXT_SIZE,
-                                color=COLOR_MUTED,
-                                text_align=ft.TextAlign.CENTER,
-                            ),
-                        ],
-                    ),
+
+                lista_semanas.controls.append(
+                    crear_app_empty_card(
+                        titulo="No hay semanas creadas",
+                        descripcion="Crea una nueva semana para comenzar la captura.",
+                    )
                 )
             )
 
@@ -142,18 +125,8 @@ def semanas_view(page):
                     actualizar_semanas()
 
                 lista_semanas.controls.append(
-                    ft.Container(
-                        padding=CARD_PADDING,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Row(
+                    crear_app_card(
+                        contenido=ft.Row(
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
 
@@ -209,7 +182,7 @@ def semanas_view(page):
                                     ],
                                 ),
                             ],
-                        ),
+                        )
                     )
                 )
 
