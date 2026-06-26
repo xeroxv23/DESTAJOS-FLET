@@ -33,6 +33,8 @@ from styles import (
 #COMPONENTES
 from components.app_header import crear_app_header
 from components.app_panel import crear_app_panel
+from components.app_search import crear_app_search
+from components.app_sidebar import crear_app_sidebar
 
 #region OBRAS_VIEW.PY
 
@@ -407,17 +409,13 @@ def obras_view(page, semana_actual):
     # BUSCADOR PRINCIPAL
     # ======================================================
 
-    buscador = ft.TextField(
-        label="Buscar obra por clave",
-        hint_text="Ejemplo: A-001",
-        expand=True,
-        height=56,
-        text_size=TEXT_SIZE,
-        border_color=COLOR_BORDER,
-        focused_border_color=COLOR_PRIMARY,
-        autofocus=True,
-        on_change=filtrar_obras,
-    )
+    buscador = crear_app_search(
+    label="Buscar obra por clave",
+    hint_text="Ejemplo: A-001",
+    on_change=filtrar_obras,
+    width=520,
+    autofocus=True,
+)
 
     # Mensaje inicial
     lista_view.controls.append(
@@ -466,42 +464,52 @@ def obras_view(page, semana_actual):
 
             ft.Container(height=10),
 
-            # Buscador en tarjeta
-            ft.Container(
-                padding=16,
-                bgcolor=COLOR_SURFACE,
-                border_radius=CARD_RADIUS,
-                border=ft.Border(
-                    left=ft.BorderSide(1, COLOR_BORDER),
-                    top=ft.BorderSide(1, COLOR_BORDER),
-                    right=ft.BorderSide(1, COLOR_BORDER),
-                    bottom=ft.BorderSide(1, COLOR_BORDER),
-                ),
-                content=buscador,
-            ),
-
-            ft.Container(height=14),
-
-            # Panel principal
+            # Panel principal reorganizado
             ft.Row(
                 expand=True,
                 spacing=16,
                 vertical_alignment=ft.CrossAxisAlignment.START,
 
                 controls=[
-                    
-                    # Panel izquierdo: resultados de búsqueda
-                    crear_app_panel(
-                        titulo="Resultados de búsqueda",
-                        contenido=lista_view,
+
+                    # Columna izquierda:
+                    # Buscador + resultados
+                    ft.Column(
                         expand=True,
+                        spacing=14,
+                        controls=[
+
+                            # Buscador compacto
+                            ft.Container(
+                                width=960,
+                                padding=16,
+                                bgcolor=COLOR_SURFACE,
+                                border_radius=CARD_RADIUS,
+                                border=ft.Border(
+                                    left=ft.BorderSide(1, COLOR_BORDER),
+                                    top=ft.BorderSide(1, COLOR_BORDER),
+                                    right=ft.BorderSide(1, COLOR_BORDER),
+                                    bottom=ft.BorderSide(1, COLOR_BORDER),
+                                ),
+                                content=buscador,
+                            ),
+
+                            # Resultados de búsqueda
+                            crear_app_panel(
+                                titulo="Resultados de búsqueda",
+                                contenido=lista_view,
+                                expand=True,
+                            ),
+                        ],
                     ),
 
-                    # Panel derecho: obras capturadas
-                    crear_app_panel(
+                    # Columna derecha:
+                    # Obras capturadas más arriba
+                    crear_app_sidebar(
                         titulo="Obras capturadas",
                         contenido=lista_capturadas,
-                        width=280,
+                        width=260,
+                        height=420,
                     ),
                 ],
             ),

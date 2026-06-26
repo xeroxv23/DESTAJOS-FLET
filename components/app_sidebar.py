@@ -11,28 +11,27 @@ from styles import (
 )
 
 
-#region APP_PANEL.PY
+#region APP_SIDEBAR.PY
 
 # !! ==========================================================
-# !! APP_PANEL.PY
+# !! APP_SIDEBAR.PY
 # !!
-# !! Panel reutilizable para secciones grandes.
+# !! Componente reutilizable para paneles laterales.
 # !!
 # !! Uso recomendado:
-# !! - Resultados de búsqueda
 # !! - Obras capturadas
-# !! - Listados principales
-# !! - Módulos con contenido expandible
+# !! - Historial
+# !! - Menús laterales
+# !! - Listas pequeñas con scroll
 # !! ==========================================================
 
 
-def crear_app_panel(
+def crear_app_sidebar(
     titulo,
     contenido,
     subtitulo="",
-    expand=False,
-    width=None,
-    height=None,
+    width=360,
+    height=420,
     padding=16,
 ):
 
@@ -54,10 +53,14 @@ def crear_app_panel(
             )
         )
 
-    controles.append(contenido)
+    controles.append(
+        ft.Container(
+            expand=True,
+            content=contenido,
+        )
+    )
 
     return ft.Container(
-        expand=expand,
         width=width,
         height=height,
         padding=padding,
@@ -71,7 +74,7 @@ def crear_app_panel(
         ),
 
         content=ft.Column(
-            expand=expand,
+            expand=True,
             spacing=12,
             controls=controles,
         ),
