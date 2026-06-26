@@ -35,6 +35,9 @@ from components.app_card import (
     crear_app_empty_card
 )
 
+from components.app_header import crear_app_header
+from components.app_actions import crear_app_actions
+
 #region SEMANAS_VIEW.PY
 
 # !! ==========================================================
@@ -302,49 +305,21 @@ def semanas_view(page):
 
         controls=[
 
-            # Header superior
-            ft.Container(
-                padding=20,
-                bgcolor=COLOR_PRIMARY_DARK,
-                border_radius=CARD_RADIUS,
+            crear_app_header(
+                titulo="Capturador Destajos",
+                subtitulo="Administración de semanas de captura",
+            ),
 
-                content=ft.Row(
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-
-                    controls=[
-
-                        ft.Column(
-                            spacing=4,
-                            controls=[
-                                ft.Text(
-                                    "Capturador Destajos",
-                                    size=SUBTITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color="white",
-                                ),
-
-                                ft.Text(
-                                    "Administración de semanas de captura",
-                                    size=SMALL_TEXT_SIZE,
-                                    color="#E5E7EB",
-                                ),
-                            ],
-                        ),
-
-                        ft.ElevatedButton(
-                            height=BUTTON_HEIGHT,
-                            bgcolor=COLOR_SURFACE,
-                            color=COLOR_PRIMARY_DARK,
-                            content=ft.Text(
-                                "Nueva semana",
-                                size=TEXT_SIZE,
-                                weight=ft.FontWeight.BOLD,
-                            ),
-                            on_click=nueva_semana,
-                        ),
-                    ],
-                ),
+            crear_app_actions(
+                titulo="Gestión de semanas",
+                descripcion="Crea nuevas semanas de captura para organizar tus destajos.",
+                acciones=[
+                    {
+                        "texto": "Nueva semana",
+                        "on_click": nueva_semana,
+                        "tipo": "primary",
+                    },
+                ],
             ),
 
             ft.Container(height=18),
