@@ -1,0 +1,20 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "C-001",
+    "nombre_obra": "MANIJAUTO",
+    "direccion_obra": "CALZADA OLÍMPICA",
+    "cuadrillas": [
+        {
+            "numero": 1,
+            "tipo": "destajo",
+            "trabajadores": [],
+            "subtitulos": [],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

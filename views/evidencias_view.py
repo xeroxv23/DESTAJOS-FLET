@@ -25,6 +25,7 @@ from styles import (
 )
 
 #COMPONENTES
+from components.app_confirm import abrir_app_confirm
 from components.app_header import crear_app_header
 from components.app_card import (
     crear_app_card,
@@ -95,8 +96,18 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
 
                 def borrar_evidencia(e, ruta=evidencia["ruta"]):
 
-                    eliminar_evidencia(ruta)
-                    actualizar_evidencias()
+                    def confirmar_eliminacion():
+
+                        eliminar_evidencia(ruta)
+                        actualizar_evidencias()
+
+                    abrir_app_confirm(
+                        page=page,
+                        titulo="Eliminar evidencia",
+                        mensaje="¿Deseas eliminar esta evidencia fotográfica?",
+                        on_confirmar=confirmar_eliminacion,
+                        texto_confirmar="Eliminar",
+                    )
 
                 lista_evidencias.controls.append(
                     crear_app_card(
