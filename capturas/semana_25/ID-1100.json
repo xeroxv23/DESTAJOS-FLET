@@ -1,0 +1,40 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "ID-1100",
+    "nombre_obra": "PROYECTO PLAZA COUNTRY",
+    "direccion_obra": "AV. MANUEL ÁVILA CAMACHO 2659, CP 44668, ZAPOPAN, JALISCO",
+    "cuadrillas": [
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 1847,
+                    "nombre": "TORO RENTERÍA ALEJANDRO",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "PERSONAL POR EL DIA",
+                    "conceptos": [],
+                    "actividades": "Limpieza general y desempacar muebles."
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

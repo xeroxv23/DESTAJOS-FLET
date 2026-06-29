@@ -1,7 +1,7 @@
 import flet as ft
 import os
-import threading
 import pythoncom
+
 
 from database_manager import (
     buscar_trabajador,
@@ -36,6 +36,7 @@ from components.dialogs import (
 
 from components.app_actions import crear_app_actions
 from components.app_header import crear_app_header
+from components.app_loading import crear_app_loading_dialog
 
 from export.excel_exporter import exportar_destajo
 
@@ -301,16 +302,9 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                     dialog_maestreada.open = False
                     page.update()
 
-                    dialog_cargando = ft.AlertDialog(
-                        modal=True,
-                        title=ft.Text("Generando archivo"),
-                        content=ft.Column(
-                            controls=[
-                                ft.ProgressRing(),
-                                ft.Text("Creando archivo Excel, por favor espere...")
-                            ],
-                            tight=True
-                        )
+                    dialog_cargando = crear_app_loading_dialog(
+                        titulo="Generando archivo",
+                        mensaje="Creando archivo Excel, por favor espere..."
                     )
 
                     page.overlay.append(dialog_cargando)
@@ -381,10 +375,8 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
                             pythoncom.CoUninitialize()
 
-                    threading.Thread(
-                        target=proceso_exportacion,
-                        daemon=True
-                    ).start()
+
+                    page.run_thread(proceso_exportacion)
 
                 def cancelar(ev):
 

@@ -1,0 +1,64 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "C-429",
+    "nombre_obra": "CDN 4",
+    "direccion_obra": "TLAJOMULCO",
+    "cuadrillas": [
+        {
+            "numero": 1,
+            "tipo": "destajo",
+            "trabajadores": [
+                {
+                    "clave": 2835,
+                    "nombre": "ENRIQUEZ XILONZOCHILT JUAN",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 50.0
+                },
+                {
+                    "clave": 3932,
+                    "nombre": "ENRÍQUEZ XILONZÓCHITL CARLOS DAVID",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 60,
+                    "puntos": 420.0,
+                    "porcentaje": 50.0
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "BOVEDA INTERIOR",
+                    "conceptos": [
+                        {
+                            "clave": "bov01",
+                            "descripcion": "Boveda de cuña en limpio",
+                            "unidad": "M2",
+                            "largo": "21.2",
+                            "ancho": "2.2",
+                            "alto": "",
+                            "piezas": "2",
+                            "notas": ""
+                        }
+                    ],
+                    "actividades": ""
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

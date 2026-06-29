@@ -1,0 +1,66 @@
+{
+    "semana": {
+        "numero": 25,
+        "fecha_inicio": "22/06/26",
+        "fecha_fin": "28/06/26"
+    },
+    "clave_obra": "A-002B",
+    "nombre_obra": "MANTENIMIENTO DE APOYO VICKY AV ESPAÑA #1840",
+    "direccion_obra": "AV. ESPAÑA #1840 COL. MODERNA",
+    "cuadrillas": [
+        {
+            "numero": null,
+            "tipo": "dia",
+            "trabajadores": [
+                {
+                    "clave": 2220,
+                    "nombre": "GONZAGA LEON FERNANDO",
+                    "puesto": "PEON",
+                    "salario_diario": 307.25,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 4220,
+                    "nombre": "CORTES CAMPOS ROBERTO",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 2,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                },
+                {
+                    "clave": 3725,
+                    "nombre": "ARROYO SANCHEZ JOSE CARLOS",
+                    "puesto": "OF",
+                    "salario_diario": 638.8,
+                    "dias": 7.0,
+                    "numero_cuadrilla": 3,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
+                    "ponderacion": 0,
+                    "puntos": 0,
+                    "porcentaje": 0
+                }
+            ],
+            "subtitulos": [
+                {
+                    "nombre": "GENERALES",
+                    "conceptos": [],
+                    "actividades": "Limpieza general"
+                }
+            ],
+            "conceptos": [],
+            "actividades": ""
+        }
+    ]
+}

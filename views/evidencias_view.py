@@ -31,6 +31,7 @@ from components.app_card import (
     crear_app_card,
     crear_app_empty_card
 )
+from components.app_form import crear_app_textfield
 
 
 #region EVIDENCIAS_VIEW.PY
@@ -43,22 +44,14 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
         expand=True,
     )
 
-    nombre_evidencia_input = ft.TextField(
+    nombre_evidencia_input = crear_app_textfield(
         label="Nombre de la evidencia",
         hint_text="Ejemplo: fachada, recámara principal, baño planta alta",
-        height=56,
-        border_color=COLOR_BORDER,
-        focused_border_color=COLOR_PRIMARY,
-        text_size=TEXT_SIZE,
     )
 
-    ruta_evidencia_input = ft.TextField(
+    ruta_evidencia_input = crear_app_textfield(
         label="Ruta de la imagen",
         hint_text=r"Ejemplo: C:\Users\Carlos\Pictures\foto.jpg",
-        height=56,
-        border_color=COLOR_BORDER,
-        focused_border_color=COLOR_PRIMARY,
-        text_size=TEXT_SIZE,
     )
 
     mensaje = ft.Text(
