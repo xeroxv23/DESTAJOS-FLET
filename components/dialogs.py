@@ -505,11 +505,14 @@ def abrir_dialogo_agregar_actividades(
     actualizar_cuadrillas
 ):
 
-    mensaje = texto_error()
+    mensaje = ft.Text(
+        "",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_DANGER,
+    )
 
-    actividades_input = campo_texto(
-        "Actividades realizadas",
-        multiline=True,
+    actividades_input = crear_app_multiline(
+        label="Actividades realizadas",
         value=subtitulo.get("actividades", "")
     )
 
@@ -528,49 +531,20 @@ def abrir_dialogo_agregar_actividades(
         actualizar_cuadrillas()
 
     def cancelar(ev):
+
         dialog.open = False
         page.update()
 
-    dialog = ft.AlertDialog(
-        modal=True,
-
-        title=ft.Text(
-            "Agregar actividades",
-            size=SUBTITLE_SIZE,
-            weight=ft.FontWeight.BOLD,
-            color=COLOR_TEXT,
-        ),
-
-        content=ft.Container(
-            width=520,
-            content=ft.Column(
-                spacing=14,
-                tight=True,
-                controls=[
-                    ft.Text(
-                        "Describe las actividades realizadas en este subtítulo.",
-                        size=SMALL_TEXT_SIZE,
-                        color=COLOR_MUTED,
-                    ),
-                    actividades_input,
-                    mensaje,
-                ],
-            ),
-        ),
-
-        actions=[
-            ft.TextButton(
-                "Cancelar",
-                on_click=cancelar,
-            ),
-            ft.ElevatedButton(
-                height=BUTTON_HEIGHT,
-                bgcolor=COLOR_PRIMARY,
-                color="white",
-                content=ft.Text("Guardar"),
-                on_click=guardar,
-            ),
+    dialog = crear_app_dialog(
+        titulo="Agregar actividades",
+        descripcion="Describe las actividades realizadas en este subtítulo.",
+        contenido=[
+            actividades_input,
+            mensaje,
         ],
+        on_cancelar=cancelar,
+        on_guardar=guardar,
+        width=520,
     )
 
     page.overlay.append(dialog)
