@@ -9,28 +9,6 @@
     "direccion_obra": "TLAJOMULCO",
     "cuadrillas": [
         {
-            "numero": 1,
-            "tipo": "destajo",
-            "trabajadores": [
-                {
-                    "clave": 2446,
-                    "nombre": "ENRIQUEZ XILONZOCHITL MIGUEL ANGEL",
-                    "puesto": "OF",
-                    "salario_diario": 638.8,
-                    "dias": 2.3333333333333335,
-                    "numero_cuadrilla": 1,
-                    "horas_extras": "",
-                    "descripcion_horas_extras": "",
-                    "ponderacion": 60,
-                    "puntos": 140.0,
-                    "porcentaje": 100.0
-                }
-            ],
-            "subtitulos": [],
-            "conceptos": [],
-            "actividades": ""
-        },
-        {
             "numero": null,
             "tipo": "dia",
             "trabajadores": [
@@ -40,9 +18,9 @@
                     "puesto": "OF",
                     "salario_diario": 638.8,
                     "dias": 7.0,
-                    "numero_cuadrilla": 2,
-                    "horas_extras": "2",
-                    "descripcion_horas_extras": "HORAS DOMINGO",
+                    "numero_cuadrilla": 1,
+                    "horas_extras": "",
+                    "descripcion_horas_extras": "",
                     "ponderacion": 0,
                     "puntos": 0,
                     "porcentaje": 0

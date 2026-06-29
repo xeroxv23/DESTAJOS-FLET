@@ -55,14 +55,25 @@ def abrir_dialogo_nueva_cuadrilla(
     actualizar_cuadrillas
 ):
 
-    mensaje = texto_error()
+    mensaje = ft.Text(
+        "",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_DANGER,
+    )
 
     tipo = ft.RadioGroup(
         content=ft.Column(
             spacing=8,
             controls=[
-                ft.Radio(value="dia", label="Por día"),
-                ft.Radio(value="destajo", label="Destajo"),
+                ft.Radio(
+                    value="dia",
+                    label="Por día"
+                ),
+
+                ft.Radio(
+                    value="destajo",
+                    label="Destajo"
+                ),
             ],
         )
     )
@@ -75,67 +86,42 @@ def abrir_dialogo_nueva_cuadrilla(
             return
 
         if tipo.value == "destajo":
-            numero = obtener_siguiente_numero_cuadrilla(cuadrillas)
+            numero = obtener_siguiente_numero_cuadrilla(
+                cuadrillas
+            )
         else:
             numero = None
 
         cuadrillas.append(
-            crear_cuadrilla(numero, tipo.value)
+            crear_cuadrilla(
+                numero,
+                tipo.value
+            )
         )
 
         dialog.open = False
         actualizar_cuadrillas()
 
     def cancelar(ev):
+
         dialog.open = False
         page.update()
 
-    dialog = ft.AlertDialog(
-        modal=True,
-
-        title=ft.Text(
-            "Nueva cuadrilla",
-            size=SUBTITLE_SIZE,
-            weight=ft.FontWeight.BOLD,
-            color=COLOR_TEXT,
-        ),
-
-        content=ft.Container(
-            width=380,
-            content=ft.Column(
-                spacing=14,
-                tight=True,
-                controls=[
-                    ft.Text(
-                        "Selecciona cómo se capturará el trabajo.",
-                        size=TEXT_SIZE,
-                        color=COLOR_MUTED,
-                    ),
-                    tipo,
-                    mensaje,
-                ],
-            ),
-        ),
-
-        actions=[
-            ft.TextButton(
-                "Cancelar",
-                on_click=cancelar,
-            ),
-            ft.ElevatedButton(
-                height=BUTTON_HEIGHT,
-                bgcolor=COLOR_PRIMARY,
-                color="white",
-                content=ft.Text("Guardar"),
-                on_click=guardar,
-            ),
+    dialog = crear_app_dialog(
+        titulo="Nueva cuadrilla",
+        descripcion="Selecciona cómo se capturará el trabajo.",
+        contenido=[
+            tipo,
+            mensaje,
         ],
+        on_cancelar=cancelar,
+        on_guardar=guardar,
+        width=380,
     )
 
     page.overlay.append(dialog)
     dialog.open = True
     page.update()
-
 
 def abrir_dialogo_agregar_subtitulo(
     page,
@@ -262,42 +248,20 @@ def abrir_dialogo_agregar_trabajador(
 
         page.update()
 
-    def focus_dias(e):
-        dias_input.focus()
-        page.update()
-
-    def focus_horas_extras(e):
-        horas_extras_input.focus()
-        page.update()
-
-    def focus_descripcion(e):
-        descripcion_horas_extras_input.focus()
-        page.update()
-
-    def guardar_desde_enter(e):
-        guardar(e)
-
     clave_input = crear_app_textfield(
         label="Número de nómina",
         autofocus=True,
         on_change=validar_nomina,
-        on_submit=focus_dias,
     )
 
     dias_input = crear_app_numberfield(
         label="Días trabajados",
         hint_text="Ejemplo: 7, 7/6*5, 3+2",
         on_change=validar_dias,
-        on_submit=(
-            focus_horas_extras
-            if cuadrilla["tipo"] == "dia"
-            else guardar_desde_enter
-        ),
     )
 
     horas_extras_input = crear_app_numberfield(
         label="Horas extras",
-        on_submit=focus_descripcion,
     )
 
     descripcion_horas_extras_input = crear_app_multiline(
