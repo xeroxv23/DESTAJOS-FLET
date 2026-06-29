@@ -35,6 +35,7 @@ from components.app_header import crear_app_header
 from components.app_panel import crear_app_panel
 from components.app_search import crear_app_search
 from components.app_sidebar import crear_app_sidebar
+from components.app_confirm import abrir_app_confirm
 
 #region OBRAS_VIEW.PY
 
@@ -148,20 +149,30 @@ def obras_view(page, semana_actual):
 
                 def eliminar_captura(e, clave=clave_capturada):
 
-                    eliminar_captura_json(
-                        semana_actual,
-                        clave
+                    def confirmar_eliminacion():
+
+                        eliminar_captura_json(
+                            semana_actual,
+                            clave
+                        )
+
+                        actualizar_obras_capturadas()
+
+                        lista_view.controls.clear()
+
+                        lista_view.controls.append(
+                            mensaje_inicial()
+                        )
+
+                        page.update()
+
+                    abrir_app_confirm(
+                        page=page,
+                        titulo="Eliminar captura",
+                        mensaje=f"¿Deseas eliminar la captura de la obra {clave}?",
+                        on_confirmar=confirmar_eliminacion,
+                        texto_confirmar="Eliminar",
                     )
-
-                    actualizar_obras_capturadas()
-
-                    lista_view.controls.clear()
-
-                    lista_view.controls.append(
-                        mensaje_inicial()
-                    )
-
-                    page.update()
 
                 lista_capturadas.controls.append(
                     ft.Container(
