@@ -55,6 +55,22 @@
                         }
                     ],
                     "actividades": ""
+                },
+                {
+                    "nombre": "PATIO INTERIOR",
+                    "conceptos": [
+                        {
+                            "clave": "ins13",
+                            "descripcion": "Instalar panel W en bovedas",
+                            "unidad": "M2",
+                            "largo": "221",
+                            "ancho": "",
+                            "alto": "2.50",
+                            "piezas": "1",
+                            "notas": ""
+                        }
+                    ],
+                    "actividades": ""
                 }
             ],
             "conceptos": [],

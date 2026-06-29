@@ -17,6 +17,10 @@ from styles import (
 )
 
 
+#COMPONENTS
+from components.app_dialog import crear_app_dialog
+from components.app_form import crear_app_textfield
+
 #region DIALOGS.PY
 
 def campo_texto(label, multiline=False, value=""):
@@ -162,46 +166,14 @@ def abrir_dialogo_agregar_subtitulo(
         dialog.open = False
         page.update()
 
-    dialog = ft.AlertDialog(
-        modal=True,
-
-        title=ft.Text(
-            "Nuevo subtítulo",
-            size=SUBTITLE_SIZE,
-            weight=ft.FontWeight.BOLD,
-            color=COLOR_TEXT,
-        ),
-
-        content=ft.Container(
-            width=420,
-            content=ft.Column(
-                spacing=14,
-                tight=True,
-                controls=[
-                    ft.Text(
-                        "Ejemplo: RECÁMARA 1, BAÑO PRINCIPAL, PATIO.",
-                        size=SMALL_TEXT_SIZE,
-                        color=COLOR_MUTED,
-                    ),
-                    nombre_input,
-                    mensaje,
-                ],
-            ),
-        ),
-
-        actions=[
-            ft.TextButton(
-                "Cancelar",
-                on_click=cancelar,
-            ),
-            ft.ElevatedButton(
-                height=BUTTON_HEIGHT,
-                bgcolor=COLOR_PRIMARY,
-                color="white",
-                content=ft.Text("Guardar"),
-                on_click=guardar,
-            ),
+    dialog = crear_app_dialog(
+        titulo="Nuevo subtítulo",
+        descripcion="Ejemplo: RECÁMARA 1, BAÑO PRINCIPAL, PATIO.",
+        contenido=[
+            nombre_input
         ],
+        on_cancelar=cancelar,
+        on_guardar=guardar,
     )
 
     page.overlay.append(dialog)
