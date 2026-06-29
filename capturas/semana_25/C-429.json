@@ -68,6 +68,16 @@
                             "alto": "2.50",
                             "piezas": "1",
                             "notas": ""
+                        },
+                        {
+                            "clave": "mbo07",
+                            "descripcion": "Muro de tezon de block",
+                            "unidad": "M2",
+                            "largo": "2.25",
+                            "ancho": "",
+                            "alto": "3.20",
+                            "piezas": "2",
+                            "notas": "Muro ancho de capuccino"
                         }
                     ],
                     "actividades": ""

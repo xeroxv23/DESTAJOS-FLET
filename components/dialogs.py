@@ -399,44 +399,73 @@ def abrir_dialogo_agregar_concepto(
     actualizar_cuadrillas
 ):
 
-    mensaje = texto_error()
+    concepto_encontrado = {
+        "data": None
+    }
 
-    clave_input = campo_texto("Clave concepto")
-    largo_input = campo_texto("Largo")
-    ancho_input = campo_texto("Ancho")
-    alto_input = campo_texto("Alto")
-    piezas_input = campo_texto("Piezas")
-    notas_input = campo_texto("Notas", multiline=True)
-
-    concepto_info = ft.Container(
-        padding=12,
-        bgcolor=COLOR_BACKGROUND,
-        border_radius=CARD_RADIUS,
-        content=ft.Text(
-            "Escribe una clave para consultar el concepto.",
-            size=SMALL_TEXT_SIZE,
-            color=COLOR_MUTED,
-        ),
+    mensaje = ft.Text(
+        "",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_DANGER,
     )
 
-    def consultar_concepto(e):
+    concepto_info = ft.Text(
+        "Escribe una clave de concepto.",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_MUTED,
+    )
 
-        concepto_bd = buscar_concepto(
-            clave_input.value.strip().upper()
-        )
+    def validar_concepto(e):
+
+        clave = clave_input.value.strip().upper()
+
+        if clave == "":
+            concepto_encontrado["data"] = None
+            concepto_info.value = "Escribe una clave de concepto."
+            concepto_info.color = COLOR_MUTED
+            page.update()
+            return
+
+        concepto_bd = buscar_concepto(clave)
 
         if concepto_bd:
-            concepto_info.content.value = (
+            concepto_encontrado["data"] = concepto_bd
+            concepto_info.value = (
                 f"{concepto_bd[1]} | Unidad: {concepto_bd[2]}"
             )
-            concepto_info.content.color = COLOR_SUCCESS
+            concepto_info.color = COLOR_SUCCESS
         else:
-            concepto_info.content.value = "Concepto no encontrado"
-            concepto_info.content.color = COLOR_DANGER
+            concepto_encontrado["data"] = None
+            concepto_info.value = "Concepto no encontrado"
+            concepto_info.color = COLOR_DANGER
 
         page.update()
 
-    clave_input.on_change = consultar_concepto
+    clave_input = crear_app_textfield(
+        label="Clave concepto",
+        autofocus=True,
+        on_change=validar_concepto,
+    )
+
+    largo_input = crear_app_numberfield(
+        label="Largo",
+    )
+
+    ancho_input = crear_app_numberfield(
+        label="Ancho",
+    )
+
+    alto_input = crear_app_numberfield(
+        label="Alto",
+    )
+
+    piezas_input = crear_app_numberfield(
+        label="Piezas",
+    )
+
+    notas_input = crear_app_multiline(
+        label="Notas",
+    )
 
     def guardar(ev):
 
@@ -447,7 +476,10 @@ def abrir_dialogo_agregar_concepto(
             page.update()
             return
 
-        concepto_bd = buscar_concepto(clave)
+        concepto_bd = concepto_encontrado["data"]
+
+        if concepto_bd is None:
+            concepto_bd = buscar_concepto(clave)
 
         if not concepto_bd:
             mensaje.value = "Concepto no encontrado"
@@ -469,65 +501,33 @@ def abrir_dialogo_agregar_concepto(
         actualizar_cuadrillas()
 
     def cancelar(ev):
+
         dialog.open = False
         page.update()
 
-    dialog = ft.AlertDialog(
-        modal=True,
+    dialog = crear_app_dialog(
+        titulo="Nuevo concepto",
+        descripcion="Captura la clave del concepto y sus medidas.",
+        contenido=[
+            clave_input,
+            concepto_info,
 
-        title=ft.Text(
-            "Nuevo concepto",
-            size=SUBTITLE_SIZE,
-            weight=ft.FontWeight.BOLD,
-            color=COLOR_TEXT,
-        ),
-
-        content=ft.Container(
-            width=520,
-            content=ft.Column(
-                spacing=14,
-                tight=True,
+            ft.Row(
+                spacing=10,
                 controls=[
-                    ft.Text(
-                        "Captura la clave del concepto y sus medidas.",
-                        size=SMALL_TEXT_SIZE,
-                        color=COLOR_MUTED,
-                    ),
-                    clave_input,
-                    concepto_info,
-                    ft.Row(
-                        spacing=10,
-                        controls=[
-                            ft.Container(expand=True, content=largo_input),
-                            ft.Container(expand=True, content=ancho_input),
-                        ],
-                    ),
-                    ft.Row(
-                        spacing=10,
-                        controls=[
-                            ft.Container(expand=True, content=alto_input),
-                            ft.Container(expand=True, content=piezas_input),
-                        ],
-                    ),
-                    notas_input,
-                    mensaje,
+                    ft.Container(width=115, content=largo_input),
+                    ft.Container(width=115, content=ancho_input),
+                    ft.Container(width=115, content=alto_input),
+                    ft.Container(width=115, content=piezas_input),
                 ],
             ),
-        ),
 
-        actions=[
-            ft.TextButton(
-                "Cancelar",
-                on_click=cancelar,
-            ),
-            ft.ElevatedButton(
-                height=BUTTON_HEIGHT,
-                bgcolor=COLOR_PRIMARY,
-                color="white",
-                content=ft.Text("Guardar"),
-                on_click=guardar,
-            ),
+            notas_input,
+            mensaje,
         ],
+        on_cancelar=cancelar,
+        on_guardar=guardar,
+        width=620,
     )
 
     page.overlay.append(dialog)
