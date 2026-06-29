@@ -37,6 +37,7 @@ from components.app_card import (
 
 from components.app_header import crear_app_header
 from components.app_actions import crear_app_actions
+from components.app_confirm import abrir_app_confirm
 
 #region SEMANAS_VIEW.PY
 
@@ -121,11 +122,24 @@ def semanas_view(page):
 
                 def borrar_semana(e, semana=semana):
 
-                    eliminar_semana(
-                        semana
-                    )
+                    def confirmar_eliminacion():
 
-                    actualizar_semanas()
+                        eliminar_semana(
+                            semana
+                        )
+
+                        actualizar_semanas()
+
+                    abrir_app_confirm(
+                        page=page,
+                        titulo="Eliminar semana",
+                        mensaje=(
+                            f"¿Deseas eliminar la semana {semana['numero']}? "
+                            "Esta acción puede afectar las capturas relacionadas."
+                        ),
+                        on_confirmar=confirmar_eliminacion,
+                        texto_confirmar="Eliminar",
+                    )
 
                 lista_semanas.controls.append(
                     crear_app_card(
