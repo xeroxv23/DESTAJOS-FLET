@@ -19,7 +19,11 @@ from styles import (
 
 #COMPONENTS
 from components.app_dialog import crear_app_dialog
-from components.app_form import crear_app_textfield
+from components.app_form import (
+    crear_app_textfield,
+    crear_app_numberfield,
+    crear_app_multiline
+)
 
 #region DIALOGS.PY
 
@@ -180,7 +184,6 @@ def abrir_dialogo_agregar_subtitulo(
     dialog.open = True
     page.update()
 
-
 def abrir_dialogo_agregar_trabajador(
     page,
     cuadrillas,
@@ -193,19 +196,119 @@ def abrir_dialogo_agregar_trabajador(
     actualizar_cuadrillas
 ):
 
-    mensaje = texto_error()
+    trabajador_encontrado = {
+        "data": None
+    }
 
-    clave_input = campo_texto("Número de nómina")
-    dias_input = campo_texto("Días trabajados")
-    horas_extras_input = campo_texto("Horas extras")
-    descripcion_horas_extras_input = campo_texto(
-        "Descripción horas extras",
-        multiline=True,
+    mensaje = ft.Text(
+        "",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_DANGER,
+    )
+
+    info_trabajador = ft.Text(
+        "Escribe un número de nómina.",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_MUTED,
+    )
+
+    info_dias = ft.Text(
+        "",
+        size=SMALL_TEXT_SIZE,
+        color=COLOR_MUTED,
+    )
+
+    def validar_nomina(e):
+
+        clave = clave_input.value.strip()
+
+        if clave == "":
+            trabajador_encontrado["data"] = None
+            info_trabajador.value = "Escribe un número de nómina."
+            info_trabajador.color = COLOR_MUTED
+            page.update()
+            return
+
+        trabajador = buscar_trabajador(clave)
+
+        if trabajador:
+            trabajador_encontrado["data"] = trabajador
+            info_trabajador.value = f"{trabajador[1]} | {trabajador[2]}"
+            info_trabajador.color = COLOR_SUCCESS
+        else:
+            trabajador_encontrado["data"] = None
+            info_trabajador.value = "Trabajador no encontrado"
+            info_trabajador.color = COLOR_DANGER
+
+        page.update()
+
+    def validar_dias(e):
+
+        if dias_input.value.strip() == "":
+            info_dias.value = ""
+            page.update()
+            return
+
+        dias = calcular_valor(
+            dias_input.value
+        )
+
+        if dias is None:
+            info_dias.value = "Fórmula inválida"
+            info_dias.color = COLOR_DANGER
+        else:
+            info_dias.value = f"Resultado: {dias:.2f} días"
+            info_dias.color = COLOR_SUCCESS
+
+        page.update()
+
+    def focus_dias(e):
+        dias_input.focus()
+        page.update()
+
+    def focus_horas_extras(e):
+        horas_extras_input.focus()
+        page.update()
+
+    def focus_descripcion(e):
+        descripcion_horas_extras_input.focus()
+        page.update()
+
+    def guardar_desde_enter(e):
+        guardar(e)
+
+    clave_input = crear_app_textfield(
+        label="Número de nómina",
+        autofocus=True,
+        on_change=validar_nomina,
+        on_submit=focus_dias,
+    )
+
+    dias_input = crear_app_numberfield(
+        label="Días trabajados",
+        hint_text="Ejemplo: 7, 7/6*5, 3+2",
+        on_change=validar_dias,
+        on_submit=(
+            focus_horas_extras
+            if cuadrilla["tipo"] == "dia"
+            else guardar_desde_enter
+        ),
+    )
+
+    horas_extras_input = crear_app_numberfield(
+        label="Horas extras",
+        on_submit=focus_descripcion,
+    )
+
+    descripcion_horas_extras_input = crear_app_multiline(
+        label="Descripción horas extras",
     )
 
     controles_dialogo = [
         clave_input,
+        info_trabajador,
         dias_input,
+        info_dias,
     ]
 
     if cuadrilla["tipo"] == "dia":
@@ -225,14 +328,19 @@ def abrir_dialogo_agregar_trabajador(
             page.update()
             return
 
-        trabajador = buscar_trabajador(clave)
+        trabajador = trabajador_encontrado["data"]
+
+        if trabajador is None:
+            trabajador = buscar_trabajador(clave)
 
         if not trabajador:
             mensaje.value = "Trabajador no encontrado"
             page.update()
             return
 
-        dias = calcular_valor(dias_input.value)
+        dias = calcular_valor(
+            dias_input.value
+        )
 
         if dias is None:
             mensaje.value = "Días trabajados inválidos"
@@ -240,7 +348,9 @@ def abrir_dialogo_agregar_trabajador(
             return
 
         if cuadrilla["tipo"] == "dia":
-            numero_cuadrilla = obtener_siguiente_numero_cuadrilla(cuadrillas)
+            numero_cuadrilla = obtener_siguiente_numero_cuadrilla(
+                cuadrillas
+            )
         else:
             numero_cuadrilla = cuadrilla["numero"]
 
@@ -255,60 +365,31 @@ def abrir_dialogo_agregar_trabajador(
         )
 
         if cuadrilla["tipo"] == "destajo":
-            recalcular_cuadrilla(cuadrilla)
+            recalcular_cuadrilla(
+                cuadrilla
+            )
 
         dialog.open = False
+
         actualizar_cuadrillas()
 
     def cancelar(ev):
+
         dialog.open = False
         page.update()
 
-    dialog = ft.AlertDialog(
-        modal=True,
-
-        title=ft.Text(
-            "Agregar trabajador",
-            size=SUBTITLE_SIZE,
-            weight=ft.FontWeight.BOLD,
-            color=COLOR_TEXT,
-        ),
-
-        content=ft.Container(
-            width=460,
-            content=ft.Column(
-                spacing=14,
-                tight=True,
-                controls=[
-                    ft.Text(
-                        "Captura el número de nómina y los días trabajados.",
-                        size=SMALL_TEXT_SIZE,
-                        color=COLOR_MUTED,
-                    ),
-                    *controles_dialogo,
-                ],
-            ),
-        ),
-
-        actions=[
-            ft.TextButton(
-                "Cancelar",
-                on_click=cancelar,
-            ),
-            ft.ElevatedButton(
-                height=BUTTON_HEIGHT,
-                bgcolor=COLOR_PRIMARY,
-                color="white",
-                content=ft.Text("Guardar"),
-                on_click=guardar,
-            ),
-        ],
+    dialog = crear_app_dialog(
+        titulo="Agregar trabajador",
+        descripcion="Captura el número de nómina y los días trabajados.",
+        contenido=controles_dialogo,
+        on_cancelar=cancelar,
+        on_guardar=guardar,
+        width=460,
     )
 
     page.overlay.append(dialog)
     dialog.open = True
     page.update()
-
 
 def abrir_dialogo_agregar_concepto(
     page,
