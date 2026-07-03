@@ -34,11 +34,11 @@ from components.dialogs import (
     abrir_dialogo_agregar_actividades
 )
 
-from components.app_actions import crear_app_actions
-from components.app_header import crear_app_header
-from components.app_loading import crear_app_loading_dialog
-from components.app_dialog import crear_app_dialog
-from components.app_form import (
+from components import (
+    crear_app_actions,
+    crear_app_header,
+    crear_app_loading_dialog,
+    crear_app_dialog,
     crear_app_textfield,
     crear_app_numberfield,
     crear_app_multiline,
