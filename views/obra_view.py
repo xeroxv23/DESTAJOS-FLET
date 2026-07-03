@@ -37,6 +37,12 @@ from components.dialogs import (
 from components.app_actions import crear_app_actions
 from components.app_header import crear_app_header
 from components.app_loading import crear_app_loading_dialog
+from components.app_dialog import crear_app_dialog
+from components.app_form import (
+    crear_app_textfield,
+    crear_app_numberfield,
+    crear_app_multiline,
+)
 
 from export.excel_exporter import exportar_destajo
 
@@ -285,8 +291,8 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
                     return
 
-                porcentaje_input = ft.TextField(
-                    label="Porcentaje de maestreada"
+                porcentaje_input = crear_app_numberfield(
+                    label="Porcentaje de mandos intermedios",
                 )
 
                 def exportar_final(ev):
@@ -296,7 +302,7 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                     )
 
                     if porcentaje_maestreada is None:
-                        print("Porcentaje de maestreada inválido")
+                        print("Porcentaje de mandos intermedios inválido")
                         return
 
                     dialog_maestreada.open = False
@@ -383,19 +389,22 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                     dialog_maestreada.open = False
                     page.update()
 
-                dialog_maestreada = ft.AlertDialog(
-                    title=ft.Text("Maestreada"),
-                    content=ft.Column(
-                        controls=[
-                            ft.Text("Ingresa el porcentaje de maestreada de esta obra."),
-                            porcentaje_input
-                        ],
-                        tight=True
-                    ),
-                    actions=[
-                        ft.TextButton("Cancelar", on_click=cancelar),
-                        ft.TextButton("Exportar", on_click=exportar_final)
-                    ]
+                dialog_maestreada = crear_app_dialog(
+                    titulo="Mandos intermedios",
+                    descripcion="Ingresa el porcentaje de mandos intermedios de esta obra.",
+                    contenido=[
+                        porcentaje_input,
+
+                        ft.Text(
+                            "Mantto-7, Residencial-10 y 5 C/R , Industrial-12",
+                            size=SMALL_TEXT_SIZE,
+                            color=COLOR_MUTED,
+                        )
+                    ],
+                    on_cancelar=cancelar,
+                    on_guardar=exportar_final,
+                    texto_guardar="Exportar",
+                    width=420,
                 )
 
                 page.overlay.append(dialog_maestreada)
@@ -413,28 +422,57 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                 dialog_residente.open = False
                 page.update()
 
-                clave_input = ft.TextField(label="Número de nómina")
-                dias_input = ft.TextField(label="Días trabajados")
-                horas_extras_input = ft.TextField(label="Horas extras")
-
-                actividades_input = ft.TextField(
-                    label="Actividades del residente",
-                    multiline=True
+                mensaje_residente = ft.Text(
+                    "",
+                    size=SMALL_TEXT_SIZE,
+                    color=COLOR_DANGER,
                 )
 
-                descripcion_horas_extras_input = ft.TextField(
-                    label="Descripción horas extras",
-                    multiline=True
+                info_residente = ft.Text(
+                    "Escribe un número de nómina.",
+                    size=SMALL_TEXT_SIZE,
+                    color=COLOR_MUTED,
                 )
 
-                def guardar_residente(ev_guardar):
+                info_dias_residente = ft.Text(
+                    "",
+                    size=SMALL_TEXT_SIZE,
+                    color=COLOR_MUTED,
+                )
 
-                    trabajador_bd = buscar_trabajador(
-                        clave_input.value.strip()
-                    )
+                residente_encontrado = {
+                    "data": None
+                }
 
-                    if not trabajador_bd:
-                        print("Residente no encontrado")
+                def validar_residente(e):
+
+                    clave = clave_input.value.strip()
+
+                    if clave == "":
+                        residente_encontrado["data"] = None
+                        info_residente.value = "Escribe un número de nómina."
+                        info_residente.color = COLOR_MUTED
+                        page.update()
+                        return
+
+                    trabajador_bd = buscar_trabajador(clave)
+
+                    if trabajador_bd:
+                        residente_encontrado["data"] = trabajador_bd
+                        info_residente.value = f"{trabajador_bd[1]} | {trabajador_bd[2]}"
+                        info_residente.color = COLOR_SUCCESS
+                    else:
+                        residente_encontrado["data"] = None
+                        info_residente.value = "Residente no encontrado"
+                        info_residente.color = COLOR_DANGER
+
+                    page.update()
+
+                def validar_dias_residente(e):
+
+                    if dias_input.value.strip() == "":
+                        info_dias_residente.value = ""
+                        page.update()
                         return
 
                     dias = calcular_valor(
@@ -442,7 +480,58 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                     )
 
                     if dias is None:
-                        print("Días inválidos")
+                        info_dias_residente.value = "Fórmula inválida"
+                        info_dias_residente.color = COLOR_DANGER
+                    else:
+                        info_dias_residente.value = f"Resultado: {dias:.2f} días"
+                        info_dias_residente.color = COLOR_SUCCESS
+
+                    page.update()
+
+                clave_input = crear_app_numberfield(
+                    label="Número de nómina",
+                    autofocus=True,
+                    on_change=validar_residente,
+                )
+
+                dias_input = crear_app_numberfield(
+                    label="Días trabajados",
+                    on_change=validar_dias_residente,
+                )
+
+                horas_extras_input = crear_app_numberfield(
+                    label="Horas extras",
+                )
+
+                descripcion_horas_extras_input = crear_app_multiline(
+                    label="Descripción horas extras",
+                )
+
+                actividades_input = crear_app_multiline(
+                    label="Actividades del residente",
+                )
+
+                def guardar_residente(ev_guardar):
+
+                    trabajador_bd = residente_encontrado["data"]
+
+                    if trabajador_bd is None:
+                        trabajador_bd = buscar_trabajador(
+                            clave_input.value.strip()
+                        )
+
+                    if not trabajador_bd:
+                        mensaje_residente.value = "Residente no encontrado"
+                        page.update()
+                        return
+
+                    dias = calcular_valor(
+                        dias_input.value
+                    )
+
+                    if dias is None:
+                        mensaje_residente.value = "Días inválidos"
+                        page.update()
                         return
 
                     residentes.append({
@@ -471,28 +560,22 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
                     preguntar_otro_residente()
 
-                dialog_captura = ft.AlertDialog(
-                    title=ft.Text("Capturar Residente"),
-                    content=ft.Column(
-                        controls=[
-                            clave_input,
-                            dias_input,
-                            horas_extras_input,
-                            descripcion_horas_extras_input,
-                            actividades_input
-                        ],
-                        tight=True
-                    ),
-                    actions=[
-                        ft.TextButton(
-                            "Cancelar",
-                            on_click=cancelar_residente
-                        ),
-                        ft.TextButton(
-                            "Guardar",
-                            on_click=guardar_residente
-                        )
-                    ]
+                dialog_captura = crear_app_dialog(
+                    titulo="Capturar residente",
+                    descripcion="Captura los datos del residente para incluirlo en la exportación.",
+                    contenido=[
+                        clave_input,
+                        info_residente,
+                        dias_input,
+                        info_dias_residente,
+                        horas_extras_input,
+                        descripcion_horas_extras_input,
+                        actividades_input,
+                        mensaje_residente,
+                    ],
+                    on_cancelar=cancelar_residente,
+                    on_guardar=guardar_residente,
+                    width=520,
                 )
 
                 page.overlay.append(dialog_captura)
@@ -515,38 +598,30 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
                     exportar_con_residentes()
 
-                dialog_otro = ft.AlertDialog(
-                    title=ft.Text("Captura de Residente"),
-                    content=ft.Text("¿Desea capturar otro residente?"),
-                    actions=[
-                        ft.TextButton(
-                            "No",
-                            on_click=no_otro
-                        ),
-                        ft.TextButton(
-                            "Sí",
-                            on_click=si_otro
-                        )
-                    ]
+                dialog_otro = crear_app_dialog(
+                    titulo="Captura de residente",
+                    descripcion="¿Deseas capturar otro residente?",
+                    contenido=[],
+                    on_cancelar=no_otro,
+                    on_guardar=si_otro,
+                    texto_cancelar="No",
+                    texto_guardar="Sí",
+                    width=420,
                 )
 
                 page.overlay.append(dialog_otro)
                 dialog_otro.open = True
                 page.update()
 
-            dialog_residente = ft.AlertDialog(
-                title=ft.Text("Captura de Residente"),
-                content=ft.Text("¿Desea capturar residente?"),
-                actions=[
-                    ft.TextButton(
-                        "No",
-                        on_click=no_capturar_residente
-                    ),
-                    ft.TextButton(
-                        "Sí",
-                        on_click=lambda ev: capturar_residente(ev)
-                    )
-                ]
+            dialog_residente = crear_app_dialog(
+                titulo="Captura de residente",
+                descripcion="¿Deseas capturar residente para este destajo?",
+                contenido=[],
+                on_cancelar=no_capturar_residente,
+                on_guardar=lambda ev: capturar_residente(ev),
+                texto_cancelar="No",
+                texto_guardar="Sí",
+                width=420,
             )
 
             page.overlay.append(dialog_residente)
