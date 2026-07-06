@@ -25,8 +25,9 @@ def crear_app_view(
     route,
     controls,
     spacing=16,
+    expand=True,
+    scroll=None,
 ):
-
     return ft.View(
         route=route,
         bgcolor=COLOR_BACKGROUND,
@@ -34,8 +35,9 @@ def crear_app_view(
 
         controls=[
             ft.Column(
-                expand=True,
+                expand=expand,
                 spacing=spacing,
+                scroll=scroll,
                 controls=controls,
             )
         ],
