@@ -39,6 +39,8 @@ from components.app_header import crear_app_header
 from components.app_actions import crear_app_actions
 from components.app_confirm import abrir_app_confirm
 
+from layouts.app_view_layout import crear_app_view
+
 #region SEMANAS_VIEW.PY
 
 # !! ==========================================================
@@ -312,11 +314,8 @@ def semanas_view(page):
     # CONSTRUCCIÓN VISUAL DE LA VISTA
     # ======================================================
 
-    return ft.View(
+    return crear_app_view(
         route="/semanas",
-        bgcolor=COLOR_BACKGROUND,
-        padding=PAGE_PADDING,
-
         controls=[
 
             crear_app_header(
