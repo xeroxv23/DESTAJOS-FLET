@@ -12,7 +12,6 @@ from services.persistencia_json import (
 
 from styles import (
     COLOR_PRIMARY,
-    COLOR_PRIMARY_DARK,
     COLOR_BACKGROUND,
     COLOR_SURFACE,
     COLOR_TEXT,
@@ -23,7 +22,6 @@ from styles import (
     CARD_RADIUS,
     CARD_PADDING,
     BUTTON_HEIGHT,
-    TITLE_SIZE,
     SUBTITLE_SIZE,
     TEXT_SIZE,
     SMALL_TEXT_SIZE,
@@ -31,14 +29,14 @@ from styles import (
 )
 
 #COMPONENTES
-from components.app_header import crear_app_header
 from components.app_panel import crear_app_panel
 from components.app_search import crear_app_search
 from components.app_sidebar import crear_app_sidebar
 from components.app_confirm import abrir_app_confirm
 
 
-from layouts.app_view_layout import crear_app_view
+from layouts import crear_work_layout
+
 
 #region OBRAS_VIEW.PY
 
@@ -442,55 +440,32 @@ def obras_view(page, semana_actual):
     # RETURN DE LA VISTA
     # ======================================================
 
-    return crear_app_view(
+    return crear_work_layout(
         route="/obras",
+
+        header_titulo=f"Semana {semana_actual['numero']}",
+        header_subtitulo=(
+            f"{semana_actual['fecha_inicio']} - "
+            f"{semana_actual['fecha_fin']}"
+        ),
+
+        titulo="Listado de obras",
+        descripcion="Busca una obra por clave para abrir o continuar su captura.",
+
+        texto_boton="Regresar",
+        on_regresar=regresar_semanas,
+
         controls=[
-
-            # Header superior
-
-            crear_app_header(
-                titulo=f"Semana {semana_actual['numero']}",
-                subtitulo=(
-                    f"{semana_actual['fecha_inicio']} - "
-                    f"{semana_actual['fecha_fin']}"
-                ),
-                texto_boton="Regresar",
-                on_regresar=regresar_semanas,
-            ),
-
-            ft.Container(height=18),
-
-            ft.Text(
-                "Listado de obras",
-                size=TITLE_SIZE,
-                weight=ft.FontWeight.BOLD,
-                color=COLOR_TEXT,
-            ),
-
-            ft.Text(
-                "Busca una obra por clave para abrir o continuar su captura.",
-                size=TEXT_SIZE,
-                color=COLOR_MUTED,
-            ),
-
-            ft.Container(height=10),
-
-            # Panel principal reorganizado
             ft.Row(
                 expand=True,
                 spacing=16,
                 vertical_alignment=ft.CrossAxisAlignment.START,
 
                 controls=[
-
-                    # Columna izquierda:
-                    # Buscador + resultados
                     ft.Column(
                         expand=True,
                         spacing=14,
                         controls=[
-
-                            # Buscador compacto
                             ft.Container(
                                 width=960,
                                 padding=16,
@@ -505,7 +480,6 @@ def obras_view(page, semana_actual):
                                 content=buscador,
                             ),
 
-                            # Resultados de búsqueda
                             crear_app_panel(
                                 titulo="Resultados de búsqueda",
                                 contenido=lista_view,
@@ -514,8 +488,6 @@ def obras_view(page, semana_actual):
                         ],
                     ),
 
-                    # Columna derecha:
-                    # Obras capturadas más arriba
                     crear_app_sidebar(
                         titulo="Obras capturadas",
                         contenido=lista_capturadas,
