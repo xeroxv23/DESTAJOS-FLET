@@ -37,6 +37,9 @@ from components.app_search import crear_app_search
 from components.app_sidebar import crear_app_sidebar
 from components.app_confirm import abrir_app_confirm
 
+
+from layouts.app_view_layout import crear_app_view
+
 #region OBRAS_VIEW.PY
 
 # !! ==========================================================
@@ -439,11 +442,8 @@ def obras_view(page, semana_actual):
     # RETURN DE LA VISTA
     # ======================================================
 
-    return ft.View(
+    return crear_app_view(
         route="/obras",
-        bgcolor=COLOR_BACKGROUND,
-        padding=PAGE_PADDING,
-
         controls=[
 
             # Header superior
