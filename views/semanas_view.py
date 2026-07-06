@@ -12,21 +12,14 @@ from services.persistencia_json import listar_capturas_semana
 
 from styles import (
     COLOR_PRIMARY,
-    COLOR_PRIMARY_DARK,
-    COLOR_BACKGROUND,
-    COLOR_SURFACE,
     COLOR_TEXT,
     COLOR_MUTED,
     COLOR_DANGER,
     COLOR_BORDER,
-    CARD_RADIUS,
-    CARD_PADDING,
     BUTTON_HEIGHT,
-    TITLE_SIZE,
     SUBTITLE_SIZE,
     TEXT_SIZE,
     SMALL_TEXT_SIZE,
-    PAGE_PADDING,
 )
 
 # COMPONENTES
@@ -35,11 +28,9 @@ from components.app_card import (
     crear_app_empty_card
 )
 
-from components.app_header import crear_app_header
-from components.app_actions import crear_app_actions
 from components.app_confirm import abrir_app_confirm
 
-from layouts import crear_app_view
+from layouts import crear_list_layout
 
 #region SEMANAS_VIEW.PY
 
@@ -312,46 +303,26 @@ def semanas_view(page):
     # CONSTRUCCIÓN VISUAL DE LA VISTA
     # ======================================================
 
-    return crear_app_view(
+    return crear_list_layout(
         route="/semanas",
-        controls=[
 
-            crear_app_header(
-                titulo="Capturador Destajos",
-                subtitulo="Administración de semanas de captura",
-            ),
+        header_titulo="Capturador Destajos",
+        header_subtitulo="Administración de semanas de captura",
 
-            crear_app_actions(
-                titulo="Gestión de semanas",
-                descripcion="Crea nuevas semanas de captura para organizar tus destajos.",
-                acciones=[
-                    {
-                        "texto": "Nueva semana",
-                        "on_click": nueva_semana,
-                        "tipo": "primary",
-                    },
-                ],
-            ),
-
-            ft.Container(height=18),
-
-            ft.Text(
-                "Semanas de captura",
-                size=TITLE_SIZE,
-                weight=ft.FontWeight.BOLD,
-                color=COLOR_TEXT,
-            ),
-
-            ft.Text(
-                "Selecciona una semana para continuar con la captura de obras.",
-                size=TEXT_SIZE,
-                color=COLOR_MUTED,
-            ),
-
-            ft.Container(height=10),
-
-            lista_semanas,
+        acciones_titulo="Gestión de semanas",
+        acciones_descripcion="Crea nuevas semanas de captura para organizar tus destajos.",
+        acciones=[
+            {
+                "texto": "Nueva semana",
+                "on_click": nueva_semana,
+                "tipo": "primary",
+            },
         ],
+
+        titulo="Semanas de captura",
+        descripcion="Selecciona una semana para continuar con la captura de obras.",
+
+        contenido=lista_semanas,
     )
 
 #endregion
