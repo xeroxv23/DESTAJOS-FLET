@@ -68,6 +68,7 @@ from styles import (
     PAGE_PADDING,
 )
 
+from layouts.app_view_layout import crear_app_view
 
 #region OBRA_VIEW.PY
 
@@ -663,96 +664,85 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
     actualizar_cuadrillas()
 
-    return ft.View(
+    return crear_app_view(
         route="/obra",
-        bgcolor=COLOR_BACKGROUND,
-        padding=PAGE_PADDING,
-
         controls=[
 
-            ft.Column(
+            crear_app_header(
+                titulo=clave_obra,
+                subtitulo=nombre_obra,
+                descripcion=(
+                    f"Semana {semana_actual['numero']} "
+                    f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
+                ),
+                detalle=direccion_obra,
+                texto_boton="Regresar a obras",
+                on_regresar=regresar_obras,
+            ),
+
+            crear_app_actions(
+                titulo="Gestión de captura",
+                descripcion="Agrega cuadrillas, evidencias fotográficas o cierra el destajo.",
+                acciones=[
+                    {
+                        "texto": "Nueva cuadrilla",
+                        "on_click": nueva_cuadrilla,
+                        "tipo": "primary",
+                    },
+                    {
+                        "texto": "Tomar fotografía",
+                        "on_click": abrir_evidencias,
+                        "tipo": "primary",
+                    },
+                    {
+                        "texto": "Cerrar destajo",
+                        "on_click": cerrar_destajo,
+                        "tipo": "success",
+                    },
+                ],
+            ),
+
+            ft.Container(
                 expand=True,
-                spacing=16,
+                padding=CARD_PADDING,
+                bgcolor=COLOR_SURFACE,
+                border_radius=CARD_RADIUS,
+                border=ft.Border(
+                    left=ft.BorderSide(1, COLOR_BORDER),
+                    top=ft.BorderSide(1, COLOR_BORDER),
+                    right=ft.BorderSide(1, COLOR_BORDER),
+                    bottom=ft.BorderSide(1, COLOR_BORDER),
+                ),
 
-                controls=[
+                content=ft.Column(
+                    expand=True,
+                    spacing=12,
 
-                    crear_app_header(
-                        titulo=clave_obra,
-                        subtitulo=nombre_obra,
-                        descripcion=(
-                            f"Semana {semana_actual['numero']} "
-                            f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
-                        ),
-                        detalle=direccion_obra,
-                        texto_boton="Regresar a obras",
-                        on_regresar=regresar_obras,
-                    ),
+                    controls=[
 
-                    crear_app_actions(
-                        titulo="Gestión de captura",
-                        descripcion="Agrega cuadrillas, evidencias fotográficas o cierra el destajo.",
-                        acciones=[
-                            {
-                                "texto": "Nueva cuadrilla",
-                                "on_click": nueva_cuadrilla,
-                                "tipo": "primary",
-                            },
-                            {
-                                "texto": "Tomar fotografía",
-                                "on_click": abrir_evidencias,
-                                "tipo": "primary",
-                            },
-                            {
-                                "texto": "Cerrar destajo",
-                                "on_click": cerrar_destajo,
-                                "tipo": "success",
-                            },
-                        ],
-                    ),
-
-                    ft.Container(
-                        expand=True,
-                        padding=CARD_PADDING,
-                        bgcolor=COLOR_SURFACE,
-                        border_radius=CARD_RADIUS,
-                        border=ft.Border(
-                            left=ft.BorderSide(1, COLOR_BORDER),
-                            top=ft.BorderSide(1, COLOR_BORDER),
-                            right=ft.BorderSide(1, COLOR_BORDER),
-                            bottom=ft.BorderSide(1, COLOR_BORDER),
-                        ),
-
-                        content=ft.Column(
-                            expand=True,
-                            spacing=12,
-
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             controls=[
 
-                                ft.Row(
-                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                    controls=[
-
-                                        ft.Text(
-                                            "Cuadrillas capturadas",
-                                            size=SUBTITLE_SIZE,
-                                            weight=ft.FontWeight.BOLD,
-                                            color=COLOR_TEXT,
-                                        ),
-
-                                        ft.Text(
-                                            f"Total: {len(cuadrillas)}",
-                                            size=SMALL_TEXT_SIZE,
-                                            color=COLOR_MUTED,
-                                        ),
-                                    ],
+                                ft.Text(
+                                    "Cuadrillas capturadas",
+                                    size=SUBTITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
                                 ),
 
-                                lista_cuadrillas,
+                                ft.Text(
+                                    f"Total: {len(cuadrillas)}",
+                                    size=SMALL_TEXT_SIZE,
+                                    color=COLOR_MUTED,
+                                ),
                             ],
                         ),
-                    ),
-                ],
-            )
+
+                        lista_cuadrillas,
+                    ],
+                ),
+            ),
         ],
     )
 
