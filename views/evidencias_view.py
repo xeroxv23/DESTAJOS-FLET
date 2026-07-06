@@ -34,6 +34,8 @@ from components.app_card import (
 from components.app_form import crear_app_textfield
 
 
+from layouts.app_view_layout import crear_app_view
+
 #region EVIDENCIAS_VIEW.PY
 
 def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
@@ -183,63 +185,49 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
 
     actualizar_evidencias()
 
-    return ft.View(
+    return crear_app_view(
         route="/evidencias",
-        bgcolor=COLOR_BACKGROUND,
-        padding=PAGE_PADDING,
-
         controls=[
-            ft.Column(
+            crear_app_header(
+                titulo="Evidencias fotográficas",
+                subtitulo=f"{clave_obra} - {nombre_obra}",
+                descripcion=f"Semana {semana_actual['numero']}",
+                texto_boton="Regresar",
+                on_regresar=regresar_obra,
+            ),
+
+            crear_app_card(
+                titulo="Agregar evidencia",
+                subtitulo=(
+                    "Temporalmente usaremos una ruta de imagen en Windows. "
+                    "En Android se cambiará por cámara o galería."
+                ),
+                contenido=ft.Column(
+                    spacing=12,
+                    controls=[
+                        nombre_evidencia_input,
+                        ruta_evidencia_input,
+                        mensaje,
+                        ft.ElevatedButton(
+                            height=BUTTON_HEIGHT,
+                            bgcolor=COLOR_PRIMARY,
+                            color="white",
+                            content=ft.Text(
+                                "Agregar evidencia",
+                                size=TEXT_SIZE,
+                                weight=ft.FontWeight.BOLD,
+                            ),
+                            on_click=agregar_evidencia,
+                        ),
+                    ],
+                ),
+            ),
+
+            crear_app_card(
+                titulo="Evidencias guardadas",
+                contenido=lista_evidencias,
                 expand=True,
-                spacing=16,
-
-                controls=[
-
-                    crear_app_header(
-                        titulo="Evidencias fotográficas",
-                        subtitulo=f"{clave_obra} - {nombre_obra}",
-                        descripcion=f"Semana {semana_actual['numero']}",
-                        texto_boton="Regresar",
-                        on_regresar=regresar_obra,
-                    ),
-                    
-                    crear_app_card(
-                        titulo="Agregar evidencia",
-                        subtitulo=(
-                            "Temporalmente usaremos una ruta de imagen en Windows. "
-                            "En Android se cambiará por cámara o galería."
-                        ),
-                        contenido=ft.Column(
-                            spacing=12,
-                            controls=[
-                                nombre_evidencia_input,
-
-                                ruta_evidencia_input,
-
-                                mensaje,
-
-                                ft.ElevatedButton(
-                                    height=BUTTON_HEIGHT,
-                                    bgcolor=COLOR_PRIMARY,
-                                    color="white",
-                                    content=ft.Text(
-                                        "Agregar evidencia",
-                                        size=TEXT_SIZE,
-                                        weight=ft.FontWeight.BOLD,
-                                    ),
-                                    on_click=agregar_evidencia,
-                                ),
-                            ],
-                        ),
-                    ),
-
-                    crear_app_card(
-                        titulo="Evidencias guardadas",
-                        contenido=lista_evidencias,
-                        expand=True,
-                    ),
-                ],
-            )
+            ),
         ],
     )
 
