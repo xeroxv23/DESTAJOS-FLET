@@ -36,7 +36,6 @@ from components.dialogs import (
 
 from components import (
     crear_app_actions,
-    crear_app_header,
     crear_app_loading_dialog,
     crear_app_dialog,
     crear_app_textfield,
@@ -68,7 +67,7 @@ from styles import (
     PAGE_PADDING,
 )
 
-from layouts import crear_app_view
+from layouts import crear_work_layout
 
 #region OBRA_VIEW.PY
 
@@ -664,25 +663,28 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
     actualizar_cuadrillas()
 
-    return crear_app_view(
+    return crear_work_layout(
         route="/obra",
+
+        header_titulo=clave_obra,
+        header_subtitulo=nombre_obra,
+        header_descripcion=(
+            f"Semana {semana_actual['numero']} "
+            f"({semana_actual['fecha_inicio']} - "
+            f"{semana_actual['fecha_fin']})"
+        ),
+        header_detalle=direccion_obra,
+
+        texto_boton="Regresar a obras",
+        on_regresar=regresar_obras,
+
         controls=[
-
-            crear_app_header(
-                titulo=clave_obra,
-                subtitulo=nombre_obra,
-                descripcion=(
-                    f"Semana {semana_actual['numero']} "
-                    f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
-                ),
-                detalle=direccion_obra,
-                texto_boton="Regresar a obras",
-                on_regresar=regresar_obras,
-            ),
-
             crear_app_actions(
                 titulo="Gestión de captura",
-                descripcion="Agrega cuadrillas, evidencias fotográficas o cierra el destajo.",
+                descripcion=(
+                    "Agrega cuadrillas, evidencias fotográficas "
+                    "o cierra el destajo."
+                ),
                 acciones=[
                     {
                         "texto": "Nueva cuadrilla",
@@ -719,11 +721,9 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                     spacing=12,
 
                     controls=[
-
                         ft.Row(
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             controls=[
-
                                 ft.Text(
                                     "Cuadrillas capturadas",
                                     size=SUBTITLE_SIZE,
