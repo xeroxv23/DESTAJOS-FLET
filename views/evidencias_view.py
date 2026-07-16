@@ -3,42 +3,43 @@ import flet as ft
 from services.evidencias_service import (
     guardar_evidencia_desde_archivo,
     listar_evidencias,
-    eliminar_evidencia
+    eliminar_evidencia,
 )
 
 from styles import (
     COLOR_PRIMARY,
-    COLOR_PRIMARY_DARK,
-    COLOR_BACKGROUND,
-    COLOR_SURFACE,
     COLOR_TEXT,
     COLOR_MUTED,
     COLOR_DANGER,
-    COLOR_BORDER,
-    CARD_RADIUS,
     BUTTON_HEIGHT,
-    TITLE_SIZE,
-    SUBTITLE_SIZE,
     TEXT_SIZE,
     SMALL_TEXT_SIZE,
-    PAGE_PADDING,
 )
 
-#COMPONENTES
+# COMPONENTES
 from components.app_confirm import abrir_app_confirm
-from components.app_header import crear_app_header
 from components.app_card import (
     crear_app_card,
-    crear_app_empty_card
+    crear_app_empty_card,
 )
 from components.app_form import crear_app_textfield
 
+from layouts import crear_work_layout
 
-from layouts.app_view_layout import crear_app_view
 
 #region EVIDENCIAS_VIEW.PY
 
-def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
+
+def evidencias_view(
+    page,
+    semana_actual,
+    clave_obra,
+    nombre_obra,
+):
+
+    # ======================================================
+    # LISTADO DE EVIDENCIAS
+    # ======================================================
 
     lista_evidencias = ft.Column(
         spacing=10,
@@ -46,9 +47,16 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
         expand=True,
     )
 
+    # ======================================================
+    # CAMPOS DEL FORMULARIO
+    # ======================================================
+
     nombre_evidencia_input = crear_app_textfield(
         label="Nombre de la evidencia",
-        hint_text="Ejemplo: fachada, recámara principal, baño planta alta",
+        hint_text=(
+            "Ejemplo: fachada, recámara principal, "
+            "baño planta alta"
+        ),
     )
 
     ruta_evidencia_input = crear_app_textfield(
@@ -62,26 +70,28 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
         color=COLOR_DANGER,
     )
 
+    # ======================================================
+    # ACTUALIZAR EVIDENCIAS
+    # ======================================================
+
     def actualizar_evidencias():
 
         lista_evidencias.controls.clear()
 
         evidencias = listar_evidencias(
             semana_actual,
-            clave_obra
+            clave_obra,
         )
 
         if len(evidencias) == 0:
 
             lista_evidencias.controls.append(
                 crear_app_empty_card(
-
                     titulo="Sin evidencias fotográficas",
-
                     descripcion=(
                         "Todavía no se han agregado imágenes "
                         "para esta obra."
-                    )
+                    ),
                 )
             )
 
@@ -89,7 +99,10 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
 
             for evidencia in evidencias:
 
-                def borrar_evidencia(e, ruta=evidencia["ruta"]):
+                def borrar_evidencia(
+                    e,
+                    ruta=evidencia["ruta"],
+                ):
 
                     def confirmar_eliminacion():
 
@@ -99,7 +112,10 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                     abrir_app_confirm(
                         page=page,
                         titulo="Eliminar evidencia",
-                        mensaje="¿Deseas eliminar esta evidencia fotográfica?",
+                        mensaje=(
+                            "¿Deseas eliminar esta evidencia "
+                            "fotográfica?"
+                        ),
                         on_confirmar=confirmar_eliminacion,
                         texto_confirmar="Eliminar",
                     )
@@ -107,10 +123,13 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                 lista_evidencias.controls.append(
                     crear_app_card(
                         contenido=ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            alignment=(
+                                ft.MainAxisAlignment.SPACE_BETWEEN
+                            ),
+                            vertical_alignment=(
+                                ft.CrossAxisAlignment.CENTER
+                            ),
                             controls=[
-
                                 ft.Column(
                                     spacing=4,
                                     expand=True,
@@ -145,6 +164,10 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
 
         page.update()
 
+    # ======================================================
+    # AGREGAR EVIDENCIA
+    # ======================================================
+
     def agregar_evidencia(e):
 
         nombre = nombre_evidencia_input.value.strip()
@@ -165,8 +188,9 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                 semana_actual,
                 clave_obra,
                 ruta,
-                nombre
+                nombre,
             )
+
         except Exception as error:
             mensaje.value = str(error)
             page.update()
@@ -178,29 +202,41 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
 
         actualizar_evidencias()
 
+    # ======================================================
+    # REGRESAR A LA OBRA
+    # ======================================================
+
     def regresar_obra(e):
 
         page.views.pop()
         page.update()
 
+    # Cargar evidencias al entrar a la vista
     actualizar_evidencias()
 
-    return crear_app_view(
-        route="/evidencias",
-        controls=[
-            crear_app_header(
-                titulo="Evidencias fotográficas",
-                subtitulo=f"{clave_obra} - {nombre_obra}",
-                descripcion=f"Semana {semana_actual['numero']}",
-                texto_boton="Regresar",
-                on_regresar=regresar_obra,
-            ),
+    # ======================================================
+    # CONSTRUCCIÓN VISUAL DE LA VISTA
+    # ======================================================
 
+    return crear_work_layout(
+        route="/evidencias",
+
+        header_titulo="Evidencias fotográficas",
+        header_subtitulo=f"{clave_obra} - {nombre_obra}",
+        header_descripcion=(
+            f"Semana {semana_actual['numero']}"
+        ),
+
+        texto_boton="Regresar",
+        on_regresar=regresar_obra,
+
+        controls=[
             crear_app_card(
                 titulo="Agregar evidencia",
                 subtitulo=(
-                    "Temporalmente usaremos una ruta de imagen en Windows. "
-                    "En Android se cambiará por cámara o galería."
+                    "Temporalmente usaremos una ruta de imagen "
+                    "en Windows. En Android se cambiará por "
+                    "cámara o galería."
                 ),
                 contenido=ft.Column(
                     spacing=12,
@@ -208,6 +244,7 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
                         nombre_evidencia_input,
                         ruta_evidencia_input,
                         mensaje,
+
                         ft.ElevatedButton(
                             height=BUTTON_HEIGHT,
                             bgcolor=COLOR_PRIMARY,
@@ -230,5 +267,6 @@ def evidencias_view(page, semana_actual, clave_obra, nombre_obra):
             ),
         ],
     )
+
 
 #endregion

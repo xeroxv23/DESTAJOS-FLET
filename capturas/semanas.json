@@ -3,5 +3,10 @@
         "numero": 25,
         "fecha_inicio": "22/06/26",
         "fecha_fin": "28/06/26"
+    },
+    {
+        "numero": 27,
+        "fecha_inicio": "06/07/26",
+        "fecha_fin": "12/07/26"
     }
 ]

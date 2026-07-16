@@ -68,7 +68,7 @@ from styles import (
     PAGE_PADDING,
 )
 
-from layouts.app_view_layout import crear_app_view
+from layouts import crear_app_view
 
 #region OBRA_VIEW.PY
 
