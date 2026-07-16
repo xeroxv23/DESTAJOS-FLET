@@ -38,18 +38,18 @@ from components import (
     crear_app_actions,
     crear_app_loading_dialog,
     crear_app_dialog,
-    crear_app_textfield,
     crear_app_numberfield,
     crear_app_multiline,
+    abrir_app_confirm,
 )
+
+from components.app_confirm import abrir_app_confirm
 
 from export.excel_exporter import exportar_destajo
 
 from views.evidencias_view import evidencias_view
 
 from styles import (
-    COLOR_PRIMARY,
-    COLOR_PRIMARY_DARK,
     COLOR_BACKGROUND,
     COLOR_SURFACE,
     COLOR_TEXT,
@@ -59,15 +59,15 @@ from styles import (
     COLOR_BORDER,
     CARD_RADIUS,
     CARD_PADDING,
-    BUTTON_HEIGHT,
-    TITLE_SIZE,
     SUBTITLE_SIZE,
     TEXT_SIZE,
     SMALL_TEXT_SIZE,
-    PAGE_PADDING,
 )
 
-from layouts import crear_work_layout
+from layouts import (
+    crear_work_layout,
+    crear_master_detail_layout,
+)
 
 #region OBRA_VIEW.PY
 
@@ -94,11 +94,41 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
     cuadrillas = captura["cuadrillas"]
 
+    cuadrilla_seleccionada = {
+        "data": (
+            cuadrillas[0]
+            if len(cuadrillas) > 0
+            else None
+        )
+    }
+
     lista_cuadrillas = ft.ListView(
         expand=True,
         spacing=12,
         auto_scroll=False,
         padding=0,
+    )
+
+    detalle_cuadrilla = ft.Column(
+        expand=True,
+        spacing=12,
+        controls=[
+            ft.Text(
+                "Selecciona una cuadrilla",
+                size=SUBTITLE_SIZE,
+                weight=ft.FontWeight.BOLD,
+                color=COLOR_TEXT,
+            ),
+
+            ft.Text(
+                (
+                    "Elige una cuadrilla del panel izquierdo para "
+                    "consultar sus actividades, subtítulos y conceptos."
+                ),
+                size=TEXT_SIZE,
+                color=COLOR_MUTED,
+            ),
+        ],
     )
 
     def mensaje_sin_cuadrillas():
@@ -132,6 +162,16 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
         )
 
     def actualizar_cuadrillas():
+        
+        if (
+            cuadrilla_seleccionada["data"]
+            not in cuadrillas
+        ):
+            cuadrilla_seleccionada["data"] = (
+                cuadrillas[0]
+                if len(cuadrillas) > 0
+                else None
+            )
 
         lista_cuadrillas.controls.clear()
 
@@ -169,6 +209,47 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
             crear_cuadrilla,
             obtener_siguiente_numero_cuadrilla,
             actualizar_cuadrillas
+        )
+
+    def eliminar_cuadrilla(cuadrilla):
+
+        def confirmar_eliminacion():
+
+            if cuadrilla not in cuadrillas:
+                return
+
+            indice = cuadrillas.index(cuadrilla)
+
+            cuadrillas.remove(cuadrilla)
+
+            if len(cuadrillas) == 0:
+
+                cuadrilla_seleccionada["data"] = None
+
+            else:
+
+                nuevo_indice = min(
+                    indice,
+                    len(cuadrillas) - 1,
+                )
+
+                cuadrilla_seleccionada["data"] = (
+                    cuadrillas[nuevo_indice]
+                )
+
+            actualizar_cuadrillas()
+
+        abrir_app_confirm(
+            page=page,
+            titulo="Eliminar cuadrilla",
+            mensaje=(
+                f"¿Deseas eliminar la cuadrilla "
+                f"{cuadrilla['numero']}? "
+                "También se eliminarán sus trabajadores, "
+                "actividades, subtítulos y conceptos."
+            ),
+            on_confirmar=confirmar_eliminacion,
+            texto_confirmar="Eliminar",
         )
 
     def agregar_trabajador(cuadrilla):
@@ -704,44 +785,63 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                 ],
             ),
 
-            ft.Container(
-                expand=True,
-                padding=CARD_PADDING,
-                bgcolor=COLOR_SURFACE,
-                border_radius=CARD_RADIUS,
-                border=ft.Border(
-                    left=ft.BorderSide(1, COLOR_BORDER),
-                    top=ft.BorderSide(1, COLOR_BORDER),
-                    right=ft.BorderSide(1, COLOR_BORDER),
-                    bottom=ft.BorderSide(1, COLOR_BORDER),
-                ),
-
-                content=ft.Column(
+            crear_master_detail_layout(
+                master=ft.Container(
                     expand=True,
-                    spacing=12,
+                    padding=CARD_PADDING,
+                    bgcolor=COLOR_SURFACE,
+                    border_radius=CARD_RADIUS,
+                    border=ft.Border(
+                        left=ft.BorderSide(1, COLOR_BORDER),
+                        top=ft.BorderSide(1, COLOR_BORDER),
+                        right=ft.BorderSide(1, COLOR_BORDER),
+                        bottom=ft.BorderSide(1, COLOR_BORDER),
+                    ),
 
-                    controls=[
-                        ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            controls=[
-                                ft.Text(
-                                    "Cuadrillas capturadas",
-                                    size=SUBTITLE_SIZE,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=COLOR_TEXT,
-                                ),
+                    content=ft.Column(
+                        expand=True,
+                        spacing=12,
+                        controls=[
+                            ft.Row(
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text(
+                                        "Cuadrillas capturadas",
+                                        size=SUBTITLE_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=COLOR_TEXT,
+                                    ),
 
-                                ft.Text(
-                                    f"Total: {len(cuadrillas)}",
-                                    size=SMALL_TEXT_SIZE,
-                                    color=COLOR_MUTED,
-                                ),
-                            ],
-                        ),
+                                    ft.Text(
+                                        f"Total: {len(cuadrillas)}",
+                                        size=SMALL_TEXT_SIZE,
+                                        color=COLOR_MUTED,
+                                    ),
+                                ],
+                            ),
 
-                        lista_cuadrillas,
-                    ],
+                            lista_cuadrillas,
+                        ],
+                    ),
                 ),
+
+                detail=ft.Container(
+                    expand=True,
+                    padding=CARD_PADDING,
+                    bgcolor=COLOR_SURFACE,
+                    border_radius=CARD_RADIUS,
+                    border=ft.Border(
+                        left=ft.BorderSide(1, COLOR_BORDER),
+                        top=ft.BorderSide(1, COLOR_BORDER),
+                        right=ft.BorderSide(1, COLOR_BORDER),
+                        bottom=ft.BorderSide(1, COLOR_BORDER),
+                    ),
+                    content=detalle_cuadrilla,
+                ),
+
+                master_width=420,
+                spacing=16,
             ),
         ],
     )
