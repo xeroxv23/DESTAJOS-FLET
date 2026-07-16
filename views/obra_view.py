@@ -25,6 +25,7 @@ from services.captura_service import (
 
 # IMPORTES DE COMPONENTES
 from components.cuadrilla_card import crear_cuadrilla_card
+from components.cuadrilla_card import crear_cuadrilla_resumen
 
 from components.dialogs import (
     abrir_dialogo_nueva_cuadrilla,
@@ -161,6 +162,12 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
             ),
         )
 
+    def seleccionar_cuadrilla(cuadrilla):
+
+        cuadrilla_seleccionada["data"] = cuadrilla
+
+        actualizar_cuadrillas()
+
     def actualizar_cuadrillas():
         
         if (
@@ -185,16 +192,17 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
 
             for cuadrilla in cuadrillas:
 
+                seleccionada = (
+                    cuadrilla
+                    is cuadrilla_seleccionada["data"]
+                )
+
                 lista_cuadrillas.controls.append(
-                    crear_cuadrilla_card(
-                        cuadrilla,
-                        agregar_trabajador,
-                        agregar_subtitulo,
-                        agregar_concepto,
-                        eliminar_trabajador,
-                        eliminar_subtitulo,
-                        eliminar_concepto,
-                        agregar_actividades
+                    crear_cuadrilla_resumen(
+                        cuadrilla=cuadrilla,
+                        seleccionada=seleccionada,
+                        on_click=lambda e, c=cuadrilla:
+                        seleccionar_cuadrilla(c),
                     )
                 )
 

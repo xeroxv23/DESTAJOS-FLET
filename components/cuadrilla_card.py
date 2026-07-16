@@ -456,4 +456,118 @@ def crear_cuadrilla_card(
         ),
     )
 
+def crear_cuadrilla_resumen(
+    cuadrilla,
+    seleccionada=False,
+    on_click=None,
+):
+
+    trabajadores = cuadrilla["trabajadores"]
+
+    resumen_trabajadores = []
+
+    for trabajador in trabajadores[:3]:
+
+        if cuadrilla["tipo"] == "destajo":
+            detalle = f"{trabajador['porcentaje']:.0f}%"
+        else:
+            detalle = f"{trabajador['dias']:.1f} días"
+
+        resumen_trabajadores.append(
+            ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                controls=[
+                    ft.Text(
+                        f"{trabajador['clave']} - {trabajador['nombre']}",
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_TEXT,
+                        expand=True,
+                    ),
+
+                    ft.Text(
+                        detalle,
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                ],
+            )
+        )
+
+    if len(trabajadores) > 3:
+
+        resumen_trabajadores.append(
+            ft.Text(
+                f"+ {len(trabajadores) - 3} trabajadores más",
+                size=SMALL_TEXT_SIZE,
+                color=COLOR_MUTED,
+            )
+        )
+
+    return ft.Container(
+        padding=16,
+
+        bgcolor=(
+            COLOR_BACKGROUND
+            if seleccionada
+            else COLOR_SURFACE
+        ),
+
+        border_radius=CARD_RADIUS,
+
+        border=ft.Border(
+            left=ft.BorderSide(
+                2 if seleccionada else 1,
+                COLOR_PRIMARY if seleccionada else COLOR_BORDER,
+            ),
+            top=ft.BorderSide(
+                2 if seleccionada else 1,
+                COLOR_PRIMARY if seleccionada else COLOR_BORDER,
+            ),
+            right=ft.BorderSide(
+                2 if seleccionada else 1,
+                COLOR_PRIMARY if seleccionada else COLOR_BORDER,
+            ),
+            bottom=ft.BorderSide(
+                2 if seleccionada else 1,
+                COLOR_PRIMARY if seleccionada else COLOR_BORDER,
+            ),
+        ),
+
+        ink=True,
+
+        on_click=on_click,
+
+        content=ft.Column(
+            spacing=8,
+            controls=[
+
+                ft.Text(
+                    f"Cuadrilla {cuadrilla['numero']}",
+                    size=TEXT_SIZE,
+                    weight=ft.FontWeight.BOLD,
+                    color=COLOR_TEXT,
+                ),
+
+                ft.Text(
+                    cuadrilla["tipo"].upper(),
+                    size=SMALL_TEXT_SIZE,
+                    color=COLOR_PRIMARY,
+                ),
+
+                *resumen_trabajadores,
+
+                ft.Divider(),
+
+                ft.Text(
+                    (
+                        f"{len(trabajadores)} trabajadores · "
+                        f"{len(cuadrilla['subtitulos'])} subtítulos"
+                    ),
+                    size=SMALL_TEXT_SIZE,
+                    color=COLOR_MUTED,
+                ),
+            ],
+        ),
+    )
+
 #endregion
