@@ -2,6 +2,15 @@ import flet as ft
 
 from services.persistencia_json import cargar_captura
 
+from layouts import crear_work_layout
+
+from styles import (
+    COLOR_TEXT,
+    COLOR_MUTED,
+    SUBTITLE_SIZE,
+    TEXT_SIZE,
+)
+
 
 def preview_view(page, semana_actual, clave_obra):
 
@@ -25,37 +34,13 @@ def preview_view(page, semana_actual, clave_obra):
 
         contenido.controls.append(
             ft.Text(
-                "No existe captura para esta obra."
+                "No existe captura para esta obra.",
+                size=TEXT_SIZE,
+                color=COLOR_MUTED,
             )
         )
 
     else:
-
-        contenido.controls.append(
-            ft.Text(
-                f"OBRA: {captura['clave_obra']}",
-                size=24,
-                weight=ft.FontWeight.BOLD
-            )
-        )
-
-        contenido.controls.append(
-            ft.Text(
-                captura["nombre_obra"],
-                size=18
-            )
-        )
-
-        contenido.controls.append(
-            ft.Text(
-                f"Semana {semana_actual['numero']} "
-                f"({semana_actual['fecha_inicio']} - {semana_actual['fecha_fin']})"
-            )
-        )
-
-        contenido.controls.append(
-            ft.Divider()
-        )
 
         for cuadrilla in captura["cuadrillas"]:
 
@@ -169,27 +154,30 @@ def preview_view(page, semana_actual, clave_obra):
                 ft.Divider()
             )
 
-    return ft.View(
+    return crear_work_layout(
         route="/preview",
 
+        header_titulo="Vista previa de captura",
+        header_subtitulo=(
+            captura["nombre_obra"]
+            if captura
+            else clave_obra
+        ),
+        header_descripcion=(
+            f"Semana {semana_actual['numero']} "
+            f"({semana_actual['fecha_inicio']} - "
+            f"{semana_actual['fecha_fin']})"
+        ),
+        header_detalle=(
+            captura["clave_obra"]
+            if captura
+            else None
+        ),
+
+        texto_boton="Regresar",
+        on_regresar=regresar,
+
         controls=[
-
-            ft.Text(
-                "VISTA PREVIA DE CAPTURA",
-                size=28,
-                weight=ft.FontWeight.BOLD
-            ),
-
-            ft.ElevatedButton(
-                content=ft.Text(
-                    "Regresar"
-                ),
-                on_click=regresar
-            ),
-
-            ft.Divider(),
-
-            contenido
-
-        ]
+            contenido,
+        ],
     )
