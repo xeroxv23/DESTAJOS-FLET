@@ -113,23 +113,6 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
     detalle_cuadrilla = ft.Column(
         expand=True,
         spacing=12,
-        controls=[
-            ft.Text(
-                "Selecciona una cuadrilla",
-                size=SUBTITLE_SIZE,
-                weight=ft.FontWeight.BOLD,
-                color=COLOR_TEXT,
-            ),
-
-            ft.Text(
-                (
-                    "Elige una cuadrilla del panel izquierdo para "
-                    "consultar sus actividades, subtítulos y conceptos."
-                ),
-                size=TEXT_SIZE,
-                color=COLOR_MUTED,
-            ),
-        ],
     )
 
     def mensaje_sin_cuadrillas():
@@ -167,6 +150,227 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
         cuadrilla_seleccionada["data"] = cuadrilla
 
         actualizar_cuadrillas()
+        actualizar_detalle_cuadrilla()
+
+    def actualizar_detalle_cuadrilla():
+
+        detalle_cuadrilla.controls.clear()
+
+        cuadrilla = cuadrilla_seleccionada["data"]
+
+        # ======================================================
+        # SIN CUADRILLA SELECCIONADA
+        # ======================================================
+
+        if cuadrilla is None:
+
+            detalle_cuadrilla.controls.extend(
+                [
+                    ft.Text(
+                        "Selecciona una cuadrilla",
+                        size=SUBTITLE_SIZE,
+                        weight=ft.FontWeight.BOLD,
+                        color=COLOR_TEXT,
+                    ),
+
+                    ft.Text(
+                        (
+                            "Elige una cuadrilla del panel "
+                            "izquierdo para comenzar."
+                        ),
+                        size=TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                ]
+            )
+
+            return
+
+        # ======================================================
+        # ENCABEZADO DE LA CUADRILLA SELECCIONADA
+        # ======================================================
+
+        detalle_cuadrilla.controls.extend(
+            [
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+
+                    controls=[
+                        ft.Column(
+                            spacing=4,
+                            controls=[
+                                ft.Text(
+                                    f"Cuadrilla {cuadrilla['numero']}",
+                                    size=SUBTITLE_SIZE,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=COLOR_TEXT,
+                                ),
+
+                                ft.Text(
+                                    (
+                                        f"{cuadrilla['tipo'].upper()} · "
+                                        f"{len(cuadrilla['trabajadores'])} "
+                                        f"trabajadores"
+                                    ),
+                                    size=TEXT_SIZE,
+                                    color=COLOR_MUTED,
+                                ),
+                            ],
+                        ),
+
+                        ft.TextButton(
+                            content=ft.Text(
+                                "Eliminar cuadrilla",
+                                color=COLOR_DANGER,
+                            ),
+                            on_click=lambda e:
+                            eliminar_cuadrilla(cuadrilla),
+                        ),
+                    ],
+                ),
+
+                ft.Divider(),
+
+                ft.Row(
+                    wrap=True,
+                    spacing=12,
+                    controls=[
+                        ft.ElevatedButton(
+                            content=ft.Text(
+                                "Agregar trabajador"
+                            ),
+                            on_click=lambda e:
+                            agregar_trabajador(cuadrilla),
+                        ),
+
+                        ft.ElevatedButton(
+                            content=ft.Text(
+                                "Agregar subtítulo"
+                            ),
+                            on_click=lambda e:
+                            agregar_subtitulo(cuadrilla),
+                        ),
+                    ],
+                ),
+            ]
+        )
+
+        # ======================================================
+        # SECCIÓN DE SUBTÍTULOS
+        # ======================================================
+
+        detalle_cuadrilla.controls.append(
+            ft.Divider()
+        )
+
+        detalle_cuadrilla.controls.append(
+            ft.Text(
+                "Subtítulos / Actividades",
+                size=TEXT_SIZE,
+                weight=ft.FontWeight.BOLD,
+                color=COLOR_TEXT,
+            )
+        )
+
+        # ======================================================
+        # SIN SUBTÍTULOS
+        # ======================================================
+
+        if len(cuadrilla["subtitulos"]) == 0:
+
+            detalle_cuadrilla.controls.append(
+                ft.Container(
+                    padding=16,
+                    bgcolor=COLOR_BACKGROUND,
+                    border_radius=CARD_RADIUS,
+                    content=ft.Text(
+                        (
+                            "Esta cuadrilla todavía no tiene "
+                            "subtítulos."
+                        ),
+                        size=SMALL_TEXT_SIZE,
+                        color=COLOR_MUTED,
+                    ),
+                )
+            )
+
+            return
+
+        # ======================================================
+        # LISTADO DE SUBTÍTULOS
+        # ======================================================
+
+        for subtitulo in cuadrilla["subtitulos"]:
+
+            detalle_cuadrilla.controls.append(
+                ft.Container(
+                    padding=14,
+                    bgcolor=COLOR_BACKGROUND,
+                    border_radius=CARD_RADIUS,
+
+                    border=ft.Border(
+                        left=ft.BorderSide(
+                            1,
+                            COLOR_BORDER,
+                        ),
+                        top=ft.BorderSide(
+                            1,
+                            COLOR_BORDER,
+                        ),
+                        right=ft.BorderSide(
+                            1,
+                            COLOR_BORDER,
+                        ),
+                        bottom=ft.BorderSide(
+                            1,
+                            COLOR_BORDER,
+                        ),
+                    ),
+
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+
+                        controls=[
+                            ft.Column(
+                                spacing=4,
+                                expand=True,
+                                controls=[
+                                    ft.Text(
+                                        subtitulo["nombre"],
+                                        size=TEXT_SIZE,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=COLOR_TEXT,
+                                    ),
+
+                                    ft.Text(
+                                        (
+                                            f"{len(subtitulo['conceptos'])} "
+                                            f"conceptos"
+                                        ),
+                                        size=SMALL_TEXT_SIZE,
+                                        color=COLOR_MUTED,
+                                    ),
+                                ],
+                            ),
+
+                            ft.TextButton(
+                                content=ft.Text(
+                                    "Eliminar",
+                                    size=SMALL_TEXT_SIZE,
+                                    color=COLOR_DANGER,
+                                ),
+                                on_click=lambda e, s=subtitulo:
+                                eliminar_subtitulo(
+                                    cuadrilla,
+                                    s,
+                                ),
+                            ),
+                        ],
+                    ),
+                )
+            )
 
     def actualizar_cuadrillas():
         
@@ -207,6 +411,7 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
                 )
 
         guardar_captura_obra(captura)
+        actualizar_detalle_cuadrilla()
         page.update()
 
     def nueva_cuadrilla(e):
@@ -749,8 +954,8 @@ def obra_view(page, clave_obra, nombre_obra, semana_actual):
             actualizar_cuadrillas
         )
 
-
     actualizar_cuadrillas()
+    actualizar_detalle_cuadrilla()
 
     return crear_work_layout(
         route="/obra",
